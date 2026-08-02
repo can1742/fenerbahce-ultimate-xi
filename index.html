@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fenerbahçe Ultimate XI - Tarihine Ne Kadar Hakimsin?</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    .font-athletic { font-family: 'Bebas Neue', sans-serif; }
+    body { font-family: 'Nunito', sans-serif; }
+
+    .draft-card {
+      width: 180px;
+      height: 240px;
+      flex-shrink: 0;
+      perspective: 1000px;
+      cursor: pointer;
+      transition: transform 0.3s ease, opacity 0.5s ease;
+    }
+    
+    @media (min-width: 640px) {
+      .draft-card {
+        width: 210px;
+        height: 280px;
+      }
+    }
+
+    @media (hover: hover) {
+      .draft-card:hover {
+        transform: translateY(-5px);
+      }
+    }
+    
+    .draft-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    }
+
+    .draft-card-front, .draft-card-back {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 0.75rem;
+      overflow: hidden;
+    }
+
+    .draft-card-front {
+      background-color: #F7F4EB;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+    
+    .draft-card-back {
+      background-color: #0B132B;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transform: rotateY(180deg);
+    }
+
+    .is-flipped { transform: rotateY(180deg); }
+
+    .front-content-left {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 55%;
+      height: 100%;
+      padding: 1.2rem 0.8rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 10;
+    }
+
+    .front-content-right {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 75%;
+      height: 90%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      pointer-events: none;
+    }
+    
+    .front-content-right img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: bottom right;
+    }
+
+    .football-pitch {
+      background-image: url('https://sqecxfgbdfdebyaocrce.supabase.co/storage/v1/object/public/Generated%20Cards/Empty%20Field.png');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      height: 520px;
+    }
+
+    @media (min-width: 768px) {
+      .football-pitch {
+        height: 600px;
+      }
+    }
+
+    #flying-card-container {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+  </style>
+</head>
+<body class="bg-[#020617] min-h-screen text-white flex flex-col justify-between p-4 sm:p-6 overflow-x-hidden">
+
+  <div id="file-loader-container" class="fixed inset-0 bg-[#020617]/95 z-50 flex flex-col items-center justify-center p-6 backdrop-blur-md">
+    <div class="bg-white/5 border border-white/10 p-8 rounded-2xl max-w-md w-full text-center shadow-2xl">
+      <h2 class="text-[#FDE802] font-athletic text-4xl mb-2 tracking-wide">SUPABASE BAĞLANTISI</h2>
+      <p id="loader-status" class="text-gray-300 text-sm mb-6">Veritabanı ve oluşturulan kartlar yükleniyor...</p>
+      <div class="inline-block w-8 h-8 border-4 border-[#FDE802] border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  </div>
+
+  <div class="w-full max-w-[1600px] mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-white/10 pb-4 mb-4 gap-3">
+    <div>
+      <h1 class="text-[#FDE802] font-black text-2xl sm:text-3xl tracking-widest uppercase font-athletic drop-shadow-md">
+        FENERBAHÇE TARİHİNE NE KADAR HAKİMSİN?
+      </h1>
+      <p id="sub-title" class="text-gray-300 font-bold text-xs sm:text-sm mt-1">
+        99-00 ve 25-26 sezonları arasında oynamış oyunculardan kendi 11'ini oluştur, kendini kanıtla.
+      </p>
+    </div>
+    <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+      <button id="sound-toggle-btn" onclick="toggleSound()" class="bg-white/5 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold text-[#FDE802] hover:bg-white/10 transition-all flex items-center gap-2 shadow-md">
+        🔊 Ses: Açık
+      </button>
+      <div id="round-indicator" class="bg-white/5 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold text-[#FDE802] shadow-md">
+        Bekleniyor...
+      </div>
+    </div>
+  </div>
+
+  <div class="w-full max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start my-auto">
+    
+    <div class="lg:col-span-5 flex flex-col justify-between items-center px-2 sm:px-4 min-h-[500px] lg:h-[600px]">
+      <h3 id="draft-prompt-title" class="text-[#FDE802] font-athletic text-xl sm:text-2xl tracking-wider mb-2 text-center">TUR SEÇİMİ</h3>
+      <div id="board" class="grid grid-cols-2 gap-4 sm:gap-6 w-full justify-items-center my-auto">
+        <div class="text-center text-gray-400 col-span-2 py-20">Veriler yükleniyor...</div>
+      </div>
+      <div class="h-2"></div>
+    </div>
+
+    <div class="lg:col-span-7 flex justify-center items-start w-full">
+      <div id="pitch-container" class="football-pitch w-full max-w-[680px] rounded-2xl shadow-2xl flex flex-col justify-between p-4 sm:p-6">
+      </div>
+    </div>
+
+  </div>
+
+  <div class="w-full max-w-[1600px] mx-auto border-t border-white/10 pt-4 mt-4 flex items-center justify-between gap-3">
+    <div class="flex items-center gap-3 overflow-x-auto w-full pb-2">
+      <span class="text-xs text-gray-400 uppercase tracking-wider font-bold shrink-0">Kurulan Kadro:</span>
+      <div id="squad-list" class="flex gap-2"></div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://sqecxfgbdfdebyaocrce.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNxZWN4ZmdiZGZkZWJ5YW9jcmNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2MjAzMTMsImV4cCI6MjEwMTE5NjMxM30.pWIjfCsQn1mwrIt9aDNLDn6usotI_Uf6iYSgkjwHQX8';
+    const SUPABASE_TABLE_NAME = 'master_database';
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const OUT_OF_POSITION_PENALTY = 15.0;
+
+    const DEFENSE_SLOTS = [
+        ["LB", ["LB"]], ["CB1", ["CB"]], ["CB2", ["CB"]], ["RB", ["RB"]]
+    ];
+    const ATTACK_SLOTS = [
+        ["LEFT", ["LM", "LW"]], ["CENTER", ["CF", "ST"]], ["RIGHT", ["RM", "RW"]]
+    ];
+
+    const MIDFIELD_COMPOSITION_PENALTIES = {
+        "DM,DM,DM": 3.0,
+        "AM,AM,AM": 3.0,
+        "AM,AM,DM": 1.5,
+        "AM,DM,DM": 1.5
+    };
+
+    const SEASON_GRADE_TABLE = [
+        [87.0, 34, 0, 0, "Kusursuz Sezon"],
+        [85.5, 33, 1, 0, "Neredeyse Kusursuz"],
+        [84.0, 32, 1, 1, "Efsanevi Sezon"],
+        [82.5, 31, 1, 2, "Tarihi Sezon"],
+        [81.0, 30, 2, 2, "Şampiyonluk Seviyesi"],
+        [80.0, 28, 3, 3, "Şampiyonluk Sezonu"],
+        [79.0, 27, 3, 4, "Çok Güçlü Sezon"],
+        [78.0, 25, 5, 4, "Güçlü Sezon"],
+        [77.0, 24, 5, 5, "Başarılı Sezon"],
+        [76.0, 22, 6, 6, "İyi Sezon"],
+        [75.0, 21, 6, 7, "Rekabetçi Sezon"],
+        [74.0, 19, 7, 8, "Orta Üst Sezon"],
+        [73.0, 18, 7, 9, "Dengeli Sezon"],
+        [72.0, 16, 8, 10, "Dalgalı Sezon"],
+        [71.0, 15, 8, 11, "Zorlu Sezon"],
+        [70.0, 13, 9, 12, "Zayıf Sezon"],
+        [69.0, 12, 9, 13, "Çok Zayıf Sezon"],
+        [68.0, 11, 7, 16, "Başarısız Sezon"],
+        [67.0, 9, 8, 17, "Kötü Sezon"],
+        [66.0, 8, 8, 18, "Çok Kötü Sezon"],
+        [-Infinity, 6, 8, 20, "Felaket Sezon"]
+    ];
+
+    const POSITION_GROUPS = {
+      "GOALKEEPER": ["GK"],
+      "DEFENSE": ["LB", "RB", "CB"],
+      "MIDFIELD": ["CM", "DM", "AM"],
+      "ATTACK": ["LM", "RM", "LW", "RW", "CF", "ST"]
+    };
+
+    const ROUND_PLAN = [
+      { stage: "GOALKEEPER", stageRound: 1, stageTotal: 1 },
+      { stage: "DEFENSE", stageRound: 1, stageTotal: 4 },
+      { stage: "DEFENSE", stageRound: 2, stageTotal: 4 },
+      { stage: "DEFENSE", stageRound: 3, stageTotal: 4 },
+      { stage: "DEFENSE", stageRound: 4, stageTotal: 4 },
+      { stage: "MIDFIELD", stageRound: 1, stageTotal: 3 },
+      { stage: "MIDFIELD", stageRound: 2, stageTotal: 3 },
+      { stage: "MIDFIELD", stageRound: 3, stageTotal: 3 },
+      { stage: "ATTACK", stageRound: 1, stageTotal: 3 },
+      { stage: "ATTACK", stageRound: 2, stageTotal: 3 },
+      { stage: "ATTACK", stageRound: 3, stageTotal: 3 },
+    ];
+
+    const STAGE_NAMES = {
+      "GOALKEEPER": "KALECİ",
+      "DEFENSE": "DEFANS",
+      "MIDFIELD": "ORTA SAHA",
+      "ATTACK": "HÜCUM"
+    };
+
+    let audioCtx = null;
+    let isMuted = false;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function toggleSound() {
+      isMuted = !isMuted;
+      const btn = document.getElementById('sound-toggle-btn');
+      if (isMuted) {
+        btn.innerHTML = '🔇 Ses: Kapalı';
+        btn.classList.add('text-gray-400', 'border-gray-600', 'bg-gray-800/40');
+        btn.classList.remove('text-[#FDE802]', 'bg-white/5');
+      } else {
+        btn.innerHTML = '🔊 Ses: Açık';
+        btn.classList.remove('text-gray-400', 'border-gray-600', 'bg-gray-800/40');
+        btn.classList.add('text-[#FDE802]', 'bg-white/5');
+      }
+    }
+
+    function playSound(type) {
+      if (isMuted) return;
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+
+        if (type === 'click') {
+          const bufferSize = ctx.sampleRate * 0.03;
+          const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+          }
+          const noise = ctx.createBufferSource();
+          noise.buffer = buffer;
+          
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'highpass';
+          filter.frequency.setValueAtTime(2000, now);
+
+          const gain = ctx.createGain();
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+
+          noise.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+
+          noise.start(now);
+          noise.stop(now + 0.03);
+        } 
+        else if (type === 'drum') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(150, now);
+          osc.frequency.exponentialRampToValueAtTime(35, now + 0.18);
+          
+          gain.gain.setValueAtTime(0.35, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+          
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.18);
+
+          const bufferSize = ctx.sampleRate * 0.06;
+          const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+          }
+          const noise = ctx.createBufferSource();
+          noise.buffer = buffer;
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(250, now);
+          const noiseGain = ctx.createGain();
+          noiseGain.gain.setValueAtTime(0.2, now);
+          noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+          noise.connect(filter);
+          filter.connect(noiseGain);
+          noiseGain.connect(ctx.destination);
+          noise.start(now);
+          noise.stop(now + 0.06);
+        }
+        else if (type === 'swosh') {
+          const bufferSize = ctx.sampleRate * 0.35;
+          const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+          }
+          const noise = ctx.createBufferSource();
+          noise.buffer = buffer;
+
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.setValueAtTime(250, now);
+          filter.frequency.exponentialRampToValueAtTime(1800, now + 0.18);
+          filter.frequency.exponentialRampToValueAtTime(400, now + 0.35);
+          filter.Q.value = 2.5;
+
+          const gain = ctx.createGain();
+          gain.gain.setValueAtTime(0.01, now);
+          gain.gain.linearRampToValueAtTime(0.18, now + 0.15);
+          gain.gain.linearRampToValueAtTime(0.001, now + 0.35);
+
+          noise.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+
+          noise.start(now);
+          noise.stop(now + 0.35);
+        }
+      } catch (e) {
+        console.log("Ses çalınamadı:", e);
+      }
+    }
+
+    function getPermutations(arr) {
+        if (arr.length <= 1) return [arr];
+        let result = [];
+        for (let i = 0; i < arr.length; i++) {
+            let current = arr[i];
+            let remaining = arr.slice(0, i).concat(arr.slice(i + 1));
+            let remainingPerms = getPermutations(remaining);
+            for (let j = 0; j < remainingPerms.length; j++) {
+                result.push([current].concat(remainingPerms[j]));
+            }
+        }
+        return result;
+    }
+
+    function bestSlotAssignment(cards, slots) {
+        const perms = getPermutations(cards);
+        let bestPenalty = Infinity;
+        for (const perm of perms) {
+            let totalPenalty = 0.0;
+            for (let i = 0; i < perm.length; i++) {
+                const card = perm[i];
+                const allowedPositions = slots[i][1];
+                if (!allowedPositions.includes(card.position)) {
+                    totalPenalty += OUT_OF_POSITION_PENALTY;
+                }
+            }
+            if (totalPenalty < bestPenalty) {
+                bestPenalty = totalPenalty;
+            }
+        }
+        return bestPenalty;
+    }
+
+    function evaluateSelectedTeam(selectedCards) {
+        const defenders = selectedCards.filter(c => ["LB", "RB", "CB"].includes(c.position));
+        const midfielders = selectedCards.filter(c => ["CM", "DM", "AM"].includes(c.position));
+        const attackers = selectedCards.filter(c => ["LM", "RM", "LW", "RW", "CF", "ST"].includes(c.position));
+
+        const defensePenalty = bestSlotAssignment(defenders, DEFENSE_SLOTS);
+        const attackPenalty = bestSlotAssignment(attackers, ATTACK_SLOTS);
+
+        const midfieldKey = midfielders.map(c => c.position).sort().join(",");
+        const midfieldPenalty = MIDFIELD_COMPOSITION_PENALTIES[midfieldKey] || 0.0;
+
+        const baseRating = selectedCards.reduce((sum, c) => sum + (c.overall_rating || 75), 0) / 11.0;
+        const oopPoints = defensePenalty + attackPenalty;
+        const positionEffect = oopPoints / 11.0;
+        
+        const finalRating = baseRating - positionEffect - midfieldPenalty;
+        return gradeTeamRating(finalRating);
+    }
+
+    function gradeTeamRating(rating) {
+        for (const [minRating, w, d, l, label] of SEASON_GRADE_TABLE) {
+            if (rating >= minRating) {
+                return { wins: w, draws: d, losses: l, points: (w * 3) + d, label: label, finalRating: rating.toFixed(1) };
+            }
+        }
+    }
+
+    function getSarcasticComment(points) {
+        if (points >= 100) return "Vay canına... FM'de maçı kaybedince oyundan çıkıp tekrar giren tayfadansın demek. Git biraz çimenlere dokun.";
+        if (points >= 85) return "Tebrikler! Ali Koç seni görse hemen sportif direktör yapardı. (İlk puan kaybında kovulacaksın).";
+        if (points >= 75) return "Fena değil. Aykut Kocaman olsa bu takıma 1-0'a yatmayı öğretir, saç baş yoldurur ama yine de şampiyon yapardı.";
+        if (points >= 60) return "Ortalama bir performans. 'Sivas deplasmanından alınan 1 puan iyidir' deyip taraftarı kanser edersin.";
+        if (points >= 40) return "Kasım ayında istifa sesleri yükselir, devre arası olmadan yüklü tazminatını alıp gidersin.";
+        return "Tebrikler! Fenerbahçe tarihinin en felaket sezonunu yaşattın. Kadıköy'ün semtinden bile geçme.";
+    }
+
+    class BrowserDraftEngine {
+      constructor(data) {
+        this.rawPool = data;
+        this.cardPool = [];
+        this.currentRoundIndex = 0;
+        this.shownPlayerKeys = new Set();
+        this.selectedCards = [];
+        this.completed = false;
+        this._initPool();
+      }
+
+      _normalizeText(value) {
+        if (!value) return "";
+        const charMap = { 'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u', 'Ç': 'C', 'Ğ': 'G', 'İ': 'I', 'Ö': 'O', 'Ş': 'S', 'Ü': 'U' };
+        let str = String(value).replace(/[çğışöüÇĞİŞÖÜ]/g, match => charMap[match]);
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+      }
+
+      _initPool() {
+        const eligibleRows = this.rawPool.filter(row => String(row.Eligible || "").trim().toLowerCase() === "yes");
+        const filtered = eligibleRows.filter(row => String(row.Position || "").trim() !== "");
+
+        this.cardPool = filtered.map(row => {
+          const name = String(row.Name || "").trim();
+          const season = String(row.Season || "").trim();
+          const position = String(row.Position || "").trim().toUpperCase();
+          let shirtNum = parseInt(row.Shirt_Number);
+
+          const playerKey = row.Player_ID ? `id_${row.Player_ID}` : this._normalizeText(name);
+          const cardId = `${playerKey}_${this._normalizeText(season)}_${this._normalizeText(position)}`;
+          const imgFilename = `${row.Transfermarkt_Player_ID}_${season}.png`;
+          const imagePath = `${SUPABASE_URL}/storage/v1/object/public/Generated%20Cards/${imgFilename}`;
+
+          return {
+            card_id: cardId,
+            player_key: playerKey,
+            name: name,
+            season: season,
+            position: position,
+            shirt_number: !isNaN(shirtNum) ? shirtNum : null,
+            country_code: String(row.Country_Code || "").trim(),
+            image_path: imagePath,
+            overall_rating: parseFloat(row.Overall_Rating) || 75
+          };
+        });
+      }
+
+      startDraft() {
+        this.currentRoundIndex = 0;
+        this.shownPlayerKeys.clear();
+        this.selectedCards = [];
+        this.completed = false;
+        return this._generateCurrentRound();
+      }
+
+      _generateCurrentRound() {
+        if (this.currentRoundIndex >= ROUND_PLAN.length) {
+          this.completed = true;
+          return null;
+        }
+
+        const plan = ROUND_PLAN[this.currentRoundIndex];
+        const allowedPositions = POSITION_GROUPS[plan.stage];
+
+        const availableCards = this.cardPool.filter(card => 
+          allowedPositions.includes(card.position) && !this.shownPlayerKeys.has(card.player_key)
+        );
+
+        const playerMap = {};
+        availableCards.forEach(card => {
+          if (!playerMap[card.player_key]) playerMap[card.player_key] = [];
+          playerMap[card.player_key].push(card);
+        });
+
+        const uniquePlayerKeys = Object.keys(playerMap);
+        if (uniquePlayerKeys.length < 4) {
+          throw new Error(`${plan.stage} havuzunda yeterli yeni oyuncu kalmadı!`);
+        }
+
+        const shuffledKeys = [...uniquePlayerKeys].sort(() => Math.random() - 0.5);
+        const selectedKeys = shuffledKeys.slice(0, 4);
+
+        const options = [];
+        selectedKeys.forEach(pKey => {
+          const playerCards = playerMap[pKey];
+          const randomCard = playerCards[Math.floor(Math.random() * playerCards.length)];
+          options.push(randomCard);
+        });
+
+        options.forEach(card => this.shownPlayerKeys.add(card.player_key));
+
+        return {
+          round_number: this.currentRoundIndex + 1,
+          total_rounds: ROUND_PLAN.length,
+          stage: plan.stage,
+          stage_name: STAGE_NAMES[plan.stage],
+          stage_round: plan.stageRound,
+          stage_total: plan.stageTotal,
+          options: options
+        };
+      }
+
+      selectCard(cardId, currentRoundOptions) {
+        if (this.completed) return;
+        const selectedCard = currentRoundOptions.find(c => c.card_id === cardId);
+        if (!selectedCard) throw new Error("Seçilen kart bulunamadı.");
+
+        this.selectedCards.push(selectedCard);
+        this.currentRoundIndex++;
+
+        if (this.currentRoundIndex >= ROUND_PLAN.length) {
+          this.completed = true;
+          return null;
+        }
+        return this._generateCurrentRound();
+      }
+    }
+
+    let engine = null;
+    let currentRoundData = null;
+
+    function getFlagImg(countryCode) {
+      if (!countryCode) return '';
+      const cleanCode = countryCode.trim().toLowerCase();
+      const mapping = { "tur": "tr", "bra": "br", "nld": "nl", "ned": "nl", "prt": "pt", "sen": "sn", "bih": "ba", "rus": "ru", "fra": "fr", "deu": "de", "esp": "es", "arg": "ar" };
+      const code = mapping[cleanCode] || (cleanCode.length === 3 ? cleanCode.slice(0, 2) : cleanCode);
+      return `<img src="https://flagcdn.com/w80/${code}.png" crossorigin="anonymous" alt="${countryCode}" class="w-full h-full object-cover" onerror="this.src='https://flagcdn.com/w80/un.png'">`;
+    }
+
+    async function initApp() {
+      try {
+        const { data, error } = await supabaseClient.from(SUPABASE_TABLE_NAME).select('*');
+        if (error) throw error;
+        document.getElementById('file-loader-container').style.display = 'none';
+        
+        engine = new BrowserDraftEngine(data);
+        currentRoundData = engine.startDraft();
+        
+        renderPitchView(engine.selectedCards);
+        renderRound(currentRoundData);
+      } catch (err) {
+        document.getElementById('loader-status').innerText = `Bağlantı Hatası: ${err.message}`;
+        console.error("Supabase veri çekme hatası:", err);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', initApp);
+
+    function renderRound(round) {
+      document.getElementById("round-indicator").innerText = `Tur: ${round.round_number} / ${round.total_rounds}`;
+      document.getElementById("draft-prompt-title").innerText = `${round.stage_name} SEÇİMİ (${round.stage_round}/${round.stage_total})`;
+      
+      const board = document.getElementById("board");
+      board.innerHTML = "";
+
+      round.options.forEach(player => {
+        const cardContainer = document.createElement("div");
+        cardContainer.className = "draft-card";
+
+        cardContainer.innerHTML = `
+          <div class="draft-card-inner">
+            <div class="draft-card-front">
+               <div class="front-content-left">
+                 <div class="text-[#111827] font-athletic text-3xl sm:text-4xl tracking-wider leading-none whitespace-nowrap">${player.season}</div>
+                 <div class="text-[#111827] font-athletic text-3xl sm:text-4xl tracking-wider leading-none whitespace-nowrap">${player.position}</div>
+                 <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-white shadow-md overflow-hidden flex items-center justify-center bg-gray-200 shrink-0">
+                    ${getFlagImg(player.country_code)}
+                 </div>
+               </div>
+               <div class="front-content-right">
+                 <img src="${SUPABASE_URL}/storage/v1/object/public/Generated%20Cards/Gemini_Generated31.PNG" crossorigin="anonymous" alt="Siluet" onerror="this.style.display='none'">
+               </div>
+            </div>
+            <div class="draft-card-back">
+                <img src="${player.image_path}" crossorigin="anonymous" alt="${player.name}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<div class=\'w-full h-full flex flex-col items-center justify-center p-2 text-center bg-[#0B132B]\'><span class=\'text-[#FDE802] font-athletic text-lg\'>${player.name}</span><span class=\'text-[10px] text-gray-400 mt-1\'>Görsel Yüklenemedi</span></div>'">
+            </div>
+          </div>
+        `;
+
+        const cardInner = cardContainer.querySelector('.draft-card-inner');
+
+        cardContainer.addEventListener("click", () => {
+          if (cardContainer.classList.contains("selected-animating")) return;
+          
+          playSound('click');
+
+          const allCards = document.querySelectorAll(".draft-card");
+          allCards.forEach(c => {
+            if (c !== cardContainer) {
+              c.style.opacity = '0';
+              c.style.transform = 'scale(0.8)';
+              c.style.pointerEvents = 'none';
+            }
+          });
+
+          cardContainer.classList.add("selected-animating");
+          cardContainer.style.zIndex = "50";
+
+          const boardRect = board.getBoundingClientRect();
+          const cardRect = cardContainer.getBoundingClientRect();
+          
+          const targetX = (boardRect.left + boardRect.width / 2) - (cardRect.left + cardRect.width / 2);
+          const targetY = (boardRect.top + boardRect.height / 2) - (cardRect.top + cardRect.height / 2);
+
+          cardContainer.style.transition = "transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+          cardContainer.style.transform = `translate(${targetX}px, ${targetY}px) scale(1.3)`;
+
+          setTimeout(() => {
+            cardInner.classList.add("is-flipped");
+            playSound('drum');
+
+            setTimeout(() => {
+              animateCardFlyToPitch(cardContainer, player, round);
+            }, 1000);
+
+          }, 600);
+        });
+
+        board.appendChild(cardContainer);
+      });
+    }
+
+    function animateCardFlyToPitch(cardContainer, player, round) {
+      playSound('swosh');
+
+      const startRect = cardContainer.getBoundingClientRect();
+      
+      const flyer = document.createElement("div");
+      flyer.id = "flying-card-container";
+      flyer.style.left = startRect.left + "px";
+      flyer.style.top = startRect.top + "px";
+      flyer.style.width = startRect.width + "px";
+      flyer.style.height = startRect.height + "px";
+      
+      flyer.innerHTML = cardContainer.innerHTML;
+      document.body.appendChild(flyer);
+      cardContainer.style.opacity = '0';
+
+      const updatedSquad = engine.selectedCards.concat(player);
+      renderPitchView(updatedSquad);
+      updateSquadBar(updatedSquad);
+
+      setTimeout(() => {
+        const targetSlot = document.querySelector(`[data-player-id="${player.card_id}"]`) || document.querySelector(`[data-pos="${player.position}"]`) || document.getElementById("pitch-container");
+        const targetRect = targetSlot.getBoundingClientRect();
+
+        flyer.style.left = targetRect.left + "px";
+        flyer.style.top = targetRect.top + "px";
+        flyer.style.width = targetRect.width + "px";
+        flyer.style.height = targetRect.height + "px";
+        flyer.style.opacity = "0.9";
+        flyer.style.transform = "scale(0.8)";
+
+        setTimeout(() => {
+          flyer.remove();
+          
+          const nextRound = engine.selectCard(player.card_id, round.options);
+          if (nextRound === null) {
+            document.getElementById("draft-prompt-title").innerText = "SEZON SONUCU!";
+            const seasonResult = evaluateSelectedTeam(engine.selectedCards);
+            const sarcasticText = getSarcasticComment(seasonResult.points);
+
+            document.getElementById("board").innerHTML = `
+              <div class="col-span-2 flex flex-col items-center justify-center py-2 w-full">
+                <div class="bg-[#0B132B]/95 border-2 border-[#FDE802] rounded-2xl p-4 sm:p-6 flex flex-col items-center shadow-[0_0_40px_rgba(253,232,2,0.2)] backdrop-blur-md w-full max-w-lg">
+                  <div class="text-[#FDE802] text-[10px] sm:text-xs uppercase tracking-[0.3em] font-bold mb-1">34 MAÇLIK LİG SİMÜLASYONU</div>
+                  <span class="text-white font-athletic text-2xl sm:text-3xl tracking-widest mb-4 text-center">${seasonResult.label.toUpperCase()}</span>
+                  
+                  <div class="flex items-center gap-4 sm:gap-6 mb-4">
+                    <div class="flex flex-col items-center">
+                      <span class="text-gray-400 text-[10px] sm:text-xs tracking-widest uppercase mb-1">Galibiyet</span>
+                      <span class="text-3xl sm:text-4xl font-black text-[#10B981]">${seasonResult.wins}</span>
+                    </div>
+                    <div class="text-2xl sm:text-3xl text-white/25 font-light">-</div>
+                    <div class="flex flex-col items-center">
+                      <span class="text-gray-400 text-[10px] sm:text-xs tracking-widest uppercase mb-1">Beraberlik</span>
+                      <span class="text-3xl sm:text-4xl font-black text-[#F59E0B]">${seasonResult.draws}</span>
+                    </div>
+                    <div class="text-2xl sm:text-3xl text-white/25 font-light">-</div>
+                    <div class="flex flex-col items-center">
+                      <span class="text-gray-400 text-[10px] sm:text-xs tracking-widest uppercase mb-1">Mağlubiyet</span>
+                      <span class="text-3xl sm:text-4xl font-black text-[#EF4444]">${seasonResult.losses}</span>
+                    </div>
+                  </div>
+
+                  <div class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-center mb-4 shadow-inner">
+                    <p class="text-gray-200 text-xs italic">"${sarcasticText}"</p>
+                  </div>
+
+                  <div class="w-full border-t border-white/10 pt-4 flex justify-between items-center px-2 mb-4">
+                     <div class="flex flex-col items-start">
+                       <div class="text-gray-400 text-[9px] sm:text-[10px] uppercase tracking-widest font-bold">Gerçek Takım Reytingi</div>
+                       <div class="text-[#FDE802] font-black text-lg sm:text-xl">${seasonResult.finalRating}</div>
+                     </div>
+                     <div class="flex flex-col items-end">
+                       <div class="text-gray-400 text-[9px] sm:text-[10px] uppercase tracking-widest font-bold">Toplam Puan</div>
+                       <div class="text-white font-black text-2xl sm:text-3xl">${seasonResult.points}</div>
+                     </div>
+                  </div>
+
+                  <div class="flex flex-col sm:flex-row items-center gap-3 w-full">
+                    <button onclick="shareSquadImage()" class="w-full sm:flex-1 bg-white text-[#0B132B] font-athletic text-lg py-2.5 rounded-xl hover:bg-[#FDE802] transition-all shadow-lg flex items-center justify-center gap-2">
+                      KADROYU İNDİR / PAYLAŞ
+                    </button>
+                    <button onclick="location.reload()" class="w-full sm:flex-1 bg-[#FDE802] text-[#0B132B] font-athletic text-lg py-2.5 rounded-xl hover:bg-white hover:scale-105 transition-all shadow-lg">
+                      YENİDEN DRAFT YAP
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+          } else {
+            currentRoundData = nextRound;
+            renderRound(currentRoundData);
+          }
+        }, 900);
+      }, 50);
+    }
+
+    function updateSquadBar(squad) {
+      const squadList = document.getElementById("squad-list");
+      squadList.innerHTML = "";
+      squad.forEach(p => {
+        const item = document.createElement("div");
+        item.className = "bg-white/10 border border-white/20 px-3 py-1.5 rounded-lg text-sm font-bold text-[#FDE802] shrink-0 flex items-center gap-1.5";
+        item.innerHTML = `<span>${p.position}</span> <span class="text-white font-normal">${p.name} (${p.season})</span>`;
+        squadList.appendChild(item);
+      });
+    }
+
+    function renderPitchView(squad) {
+      let assignedIds = new Set();
+      function findPlayer(predicate) {
+        let found = squad.find(p => predicate(p) && !assignedIds.has(p.card_id));
+        if (found) { assignedIds.add(found.card_id); return found; }
+        return null;
+      }
+
+      let gk = findPlayer(p => p.position === 'GK');
+      let lb = findPlayer(p => p.position === 'LB');
+      let rb = findPlayer(p => p.position === 'RB');
+      let cb1 = findPlayer(p => p.position === 'CB');
+      let cb2 = findPlayer(p => p.position === 'CB');
+
+      if (!lb) lb = findPlayer(p => ['CB', 'RB'].includes(p.position));
+      if (!rb) rb = findPlayer(p => ['CB', 'LB'].includes(p.position));
+      if (!cb1) cb1 = findPlayer(p => ['LB', 'RB'].includes(p.position));
+      if (!cb2) cb2 = findPlayer(p => ['LB', 'RB'].includes(p.position));
+
+      let cm1 = findPlayer(p => ['CM', 'DM', 'AM'].includes(p.position));
+      let cam = findPlayer(p => ['CM', 'DM', 'AM'].includes(p.position));
+      let cm2 = findPlayer(p => ['CM', 'DM', 'AM'].includes(p.position));
+
+      let lw = findPlayer(p => ['LW', 'LM'].includes(p.position));
+      let st = findPlayer(p => ['ST', 'CF'].includes(p.position));
+      let rw = findPlayer(p => ['RW', 'RM'].includes(p.position));
+
+      if (!lw) lw = findPlayer(p => ['ST', 'CF', 'RW', 'RM', 'AM'].includes(p.position));
+      if (!rw) rw = findPlayer(p => ['ST', 'CF', 'LW', 'LM', 'AM'].includes(p.position));
+      if (!st) st = findPlayer(p => ['LW', 'RW', 'LM', 'RM', 'AM', 'CM'].includes(p.position));
+
+      const remaining = squad.filter(p => !assignedIds.has(p.card_id));
+      let remIdx = 0;
+      if (!lw && remaining[remIdx]) lw = remaining[remIdx++];
+      if (!st && remaining[remIdx]) st = remaining[remIdx++];
+      if (!rw && remaining[remIdx]) rw = remaining[remIdx++];
+      if (!cm1 && remaining[remIdx]) cm1 = remaining[remIdx++];
+      if (!cam && remaining[remIdx]) cam = remaining[remIdx++];
+      if (!cm2 && remaining[remIdx]) cm2 = remaining[remIdx++];
+      if (!lb && remaining[remIdx]) lb = remaining[remIdx++];
+      if (!cb1 && remaining[remIdx]) cb1 = remaining[remIdx++];
+      if (!cb2 && remaining[remIdx]) cb2 = remaining[remIdx++];
+      if (!rb && remaining[remIdx]) rb = remaining[remIdx++];
+      if (!gk && remaining[remIdx]) gk = remaining[remIdx++];
+
+      const pitchContainer = document.getElementById("pitch-container");
+      pitchContainer.innerHTML = `
+        <div class="flex justify-around items-center z-10 w-full px-2 sm:px-6 mt-1">
+          ${createSlot(lw, 'LW')}
+          ${createSlot(st, 'ST')}
+          ${createSlot(rw, 'RW')}
+        </div>
+        <div class="flex justify-around items-center z-10 w-full px-2 sm:px-4">
+          ${createSlot(cm1, 'CM')}
+          ${createSlot(cam, 'CAM')}
+          ${createSlot(cm2, 'CM')}
+        </div>
+        <div class="flex justify-around items-center z-10 w-full px-1 sm:px-2">
+          ${createSlot(lb, 'LB')}
+          ${createSlot(cb1, 'CB')}
+          ${createSlot(cb2, 'CB')}
+          ${createSlot(rb, 'RB')}
+        </div>
+        <div class="flex justify-center items-center z-10 w-full mb-1">
+          ${createSlot(gk, 'GK')}
+        </div>
+      `;
+    }
+
+    function createSlot(player, defaultPos) {
+      if (player) {
+        return `
+          <div class="pitch-slot-item relative flex flex-col items-center justify-end rounded-lg overflow-hidden shadow-xl border-2 border-[#FDE802] bg-[#0B132B] transition-all duration-300" style="width: 70px; height: 95px;" data-player-id="${player.card_id}" data-pos="${defaultPos}">
+            <img src="${player.image_path}" crossorigin="anonymous" alt="${player.name}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'">
+            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent p-1 text-center">
+              <span class="text-[#FDE802] font-bold text-[8px] sm:text-[9px] block truncate">${player.name}</span>
+              <span class="text-white text-[7px] sm:text-[8px] block">${player.season} • ${player.position}</span>
+            </div>
+          </div>
+        `;
+      } else {
+        return `
+          <div class="pitch-slot-item flex flex-col items-center justify-center bg-black/40 border-2 border-dashed border-white/30 rounded-lg text-center backdrop-blur-sm" style="width: 70px; height: 95px;" data-pos="${defaultPos}">
+            <span class="text-[#FDE802] font-athletic text-sm sm:text-base opacity-60">${defaultPos}</span>
+            <span class="text-[7px] sm:text-[8px] text-gray-400">BOŞ</span>
+          </div>
+        `;
+      }
+    }
+
+    function shareSquadImage() {
+      const pitchElement = document.getElementById("pitch-container");
+      
+      html2canvas(pitchElement, { 
+        backgroundColor: '#020617', 
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        logging: false
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'fenerbahce-ultimate-xi.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }).catch(err => {
+        console.error("Görsel oluşturulurken hata:", err);
+        alert("Görsel indirilirken bir sorun oluştu.");
+      });
+    }
+  </script>
+
+</body>
+</html>
