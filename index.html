@@ -77,7 +77,8 @@
       padding: 1.1rem 0.7rem;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: space-between; /* Dört eleman arasına eşit boşluk bırakır */
+      align-items: flex-start; /* Tüm elemanları sola hizalar */
       z-index: 10;
     }
 
@@ -476,7 +477,6 @@
           const position = String(row.Position || "").trim().toUpperCase();
           let shirtNum = parseInt(row.Shirt_Number);
           
-          // Güncelleme: Doğrudan league_apps veya League_Apps aranır
           let matchesCount = row.league_apps || row.League_Apps || row.Matches || null;
 
           const playerKey = row.Player_ID ? `id_${row.Player_ID}` : this._normalizeText(name);
@@ -611,25 +611,27 @@
         const cardContainer = document.createElement("div");
         cardContainer.className = "draft-card";
 
-        // Maç sayısı yazısı için kontrol
-        const matchText = player.matches ? `${player.matches} MAÇ` : '';
+        // Maç sayısındaki virgül, küsurat ve "MAÇ" yazısını temizliyoruz, sadece yuvarlanmış net rakam alınıyor
+        let matchVal = '';
+        if (player.matches !== null && player.matches !== undefined && player.matches !== '') {
+          matchVal = Math.round(parseFloat(String(player.matches).replace(',', '.')));
+          if (isNaN(matchVal)) matchVal = '';
+        }
 
-        // HTML yapısı tasarımı bozulmadan maç sayısı büyük fontla eklendi
         cardContainer.innerHTML = `
           <div class="draft-card-inner">
             <div class="draft-card-front">
-               <div class="front-content-left flex flex-col justify-between">
-                 <div class="flex flex-col">
-                   <div class="text-[#111827] font-athletic text-2xl sm:text-3xl tracking-wider leading-none whitespace-nowrap">${player.season}</div>
-                   <div class="text-[#111827] font-athletic text-2xl sm:text-3xl tracking-wider leading-none whitespace-nowrap">${player.position}</div>
-                   <div class="text-[#111827] font-athletic text-2xl sm:text-3xl tracking-wider leading-none whitespace-nowrap mt-1">${matchText}</div>
-                 </div>
-                 <div class="flex items-center gap-2 mt-auto">
-                   <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-white shadow-md overflow-hidden flex items-center justify-center bg-gray-200 shrink-0">
-                      ${getFlagImg(player.country_code)}
-                   </div>
+               
+               <!-- Sol Kısım: Formadaki lacivert (#0B132B), eşit boşluklu (justify-between) ve sola hizalı (items-start), Fontu %10 büyüttük -->
+               <div class="front-content-left">
+                 <div class="text-[#0B132B] font-athletic text-[1.65rem] sm:text-[2.05rem] tracking-wider leading-none whitespace-nowrap">${player.season}</div>
+                 <div class="text-[#0B132B] font-athletic text-[1.65rem] sm:text-[2.05rem] tracking-wider leading-none whitespace-nowrap">${player.position}</div>
+                 <div class="text-[#0B132B] font-athletic text-[1.65rem] sm:text-[2.05rem] tracking-wider leading-none whitespace-nowrap">${matchVal}</div>
+                 <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-white shadow-md overflow-hidden flex items-center justify-center bg-gray-200 shrink-0">
+                    ${getFlagImg(player.country_code)}
                  </div>
                </div>
+
                <div class="front-content-right">
                  <img src="${SUPABASE_URL}/storage/v1/object/public/Generated%20Cards/Gemini_Generated31.PNG" crossorigin="anonymous" alt="Siluet" onerror="this.style.display='none'">
                </div>
