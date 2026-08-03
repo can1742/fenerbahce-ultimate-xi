@@ -182,8 +182,6 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNxZWN4ZmdiZGZkZWJ5YW9jcmNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2MjAzMTMsImV4cCI6MjEwMTE5NjMxM30.pWIjfCsQn1mwrIt9aDNLDn6usotI_Uf6iYSgkjwHQX8';
     const SUPABASE_TABLE_NAME = 'master_database';
 
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
     const OUT_OF_POSITION_PENALTY = 15.0;
 
     const DEFENSE_SLOTS = [
@@ -251,6 +249,8 @@
       "MIDFIELD": "ORTA SAHA",
       "ATTACK": "HÜCUM"
     };
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let audioCtx = null;
     let isMuted = false;
@@ -475,7 +475,9 @@
           const season = String(row.Season || "").trim();
           const position = String(row.Position || "").trim().toUpperCase();
           let shirtNum = parseInt(row.Shirt_Number);
-          let matchesCount = row.Matches || row.Appearances || row.Match_Count || row.Apps || null;
+          
+          // Güncelleme: Doğrudan league_apps veya League_Apps aranır
+          let matchesCount = row.league_apps || row.League_Apps || row.Matches || null;
 
           const playerKey = row.Player_ID ? `id_${row.Player_ID}` : this._normalizeText(name);
           const cardId = `${playerKey}_${this._normalizeText(season)}_${this._normalizeText(position)}`;
@@ -609,22 +611,22 @@
         const cardContainer = document.createElement("div");
         cardContainer.className = "draft-card";
 
-        const hintText = player.matches ? `Maç: ${player.matches}` : `Reyting: ${player.overall_rating}`;
+        // Maç sayısı yazısı için kontrol
+        const matchText = player.matches ? `${player.matches} MAÇ` : '';
 
+        // HTML yapısı tasarımı bozulmadan maç sayısı büyük fontla eklendi
         cardContainer.innerHTML = `
           <div class="draft-card-inner">
             <div class="draft-card-front">
-               <div class="front-content-left">
-                 <div>
+               <div class="front-content-left flex flex-col justify-between">
+                 <div class="flex flex-col">
                    <div class="text-[#111827] font-athletic text-2xl sm:text-3xl tracking-wider leading-none whitespace-nowrap">${player.season}</div>
                    <div class="text-[#111827] font-athletic text-2xl sm:text-3xl tracking-wider leading-none whitespace-nowrap">${player.position}</div>
+                   <div class="text-[#111827] font-athletic text-2xl sm:text-3xl tracking-wider leading-none whitespace-nowrap mt-1">${matchText}</div>
                  </div>
-                 <div class="flex items-center gap-2">
+                 <div class="flex items-center gap-2 mt-auto">
                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-white shadow-md overflow-hidden flex items-center justify-center bg-gray-200 shrink-0">
                       ${getFlagImg(player.country_code)}
-                   </div>
-                   <div class="text-[9px] sm:text-[10px] font-bold text-[#111827] bg-white/90 px-1.5 py-0.5 rounded shadow-sm border border-gray-300 truncate">
-                      ${hintText}
                    </div>
                  </div>
                </div>
