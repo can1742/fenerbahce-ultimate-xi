@@ -3,11 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fenerbahçe Ultimate XI - Tarihine Ne Kadar Hakimsin?</title>
+  <title>Çubuklu 11 - Kendi Efsane Fenerbahçe Kadronu Kur (cubuklu11.win)</title>
+
+  <!-- Google Analytics 4 (GA4) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+
+  <!-- Open Graph & Social Media Preview Meta Tags -->
+  <meta property="og:title" content="Çubuklu 11 - Kendi Efsane Fenerbahçe Kadronu Kur" />
+  <meta property="og:description" content="90'lar albüm konseptiyle efsane Fenerbahçe kadronu oluştur! 34 maçın 34'ünü de kazanıp 102 puan yapabilir misin?" />
+  <meta property="og:image" content="https://sqecxfgbdfdebyaocrce.supabase.co/storage/v1/object/public/Generated%20Cards/Empty%20Field.png" />
+  <meta property="og:url" content="https://cubuklu11.win" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
   
   <style>
     .font-athletic { font-family: 'Bebas Neue', sans-serif; }
@@ -77,8 +98,8 @@
       padding: 1.1rem 0.7rem;
       display: flex;
       flex-direction: column;
-      justify-content: space-between; /* Dört eleman arasına eşit boşluk bırakır */
-      align-items: flex-start; /* Tüm elemanları sola hizalar */
+      justify-content: space-between;
+      align-items: flex-start;
       z-index: 10;
     }
 
@@ -127,26 +148,79 @@
 </head>
 <body class="bg-[#020617] min-h-screen text-white flex flex-col justify-between p-4 sm:p-6 overflow-x-hidden">
 
-  <div id="file-loader-container" class="fixed inset-0 bg-[#020617]/95 z-50 flex flex-col items-center justify-center p-6 backdrop-blur-md">
+  <!-- Kullanıcı Adı Belirleme Modalı -->
+  <div id="username-modal" class="fixed inset-0 bg-[#020617]/95 z-50 flex flex-col items-center justify-center p-6 backdrop-blur-md">
     <div class="bg-white/5 border border-white/10 p-8 rounded-2xl max-w-md w-full text-center shadow-2xl">
-      <h2 class="text-[#FDE802] font-athletic text-4xl mb-2 tracking-wide">SUPABASE BAĞLANTISI</h2>
+      <h2 class="text-[#FDE802] font-athletic text-4xl mb-2 tracking-wide">ÇUBUKLUDRAFT</h2>
+      <p class="text-gray-300 text-sm mb-6">Günlük Liderlik Tablosunda yerini al ve 34/34 rekorunu kır!</p>
+      
+      <input type="text" id="username-input" maxlength="20" placeholder="Kullanıcı Adın (Örn: Kanarya1907)" class="w-full bg-white/10 border border-white/20 px-4 py-3 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-[#FDE802] mb-4 text-center font-bold">
+      
+      <div class="flex flex-col gap-3">
+        <button onclick="saveUsername()" class="w-full bg-[#FDE802] text-[#0B132B] font-athletic text-xl py-3 rounded-xl hover:bg-white transition-all shadow-lg">
+          KAYDET VE BAŞLA
+        </button>
+        <button onclick="playAnonymous()" class="text-gray-400 text-xs hover:text-white underline">
+          Anonim Olarak Devam Et
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Yükleyici Modal -->
+  <div id="file-loader-container" class="fixed inset-0 bg-[#020617]/95 z-40 flex flex-col items-center justify-center p-6 backdrop-blur-md hidden">
+    <div class="bg-white/5 border border-white/10 p-8 rounded-2xl max-w-md w-full text-center shadow-2xl">
+      <h2 class="text-[#FDE802] font-athletic text-4xl mb-2 tracking-wide">VERİTABANI BAĞLANTISI</h2>
       <p id="loader-status" class="text-gray-300 text-sm mb-6">Veritabanı ve oluşturulan kartlar yükleniyor...</p>
       <div class="inline-block w-8 h-8 border-4 border-[#FDE802] border-t-transparent rounded-full animate-spin"></div>
     </div>
   </div>
 
+  <!-- Günlük Liderlik Tablosu Modalı -->
+  <div id="leaderboard-modal" class="fixed inset-0 bg-[#020617]/95 z-50 flex flex-col items-center justify-center p-6 backdrop-blur-md hidden">
+    <div class="bg-white/5 border border-white/10 p-6 sm:p-8 rounded-2xl max-w-lg w-full text-center shadow-2xl relative">
+      <button onclick="closeLeaderboard()" class="absolute top-4 right-4 text-gray-400 hover:text-white font-bold text-xl">&times;</button>
+      <h2 class="text-[#FDE802] font-athletic text-3xl sm:text-4xl mb-1 tracking-wide">🏆 GÜNLÜK LİDERLİK TABLOSU</h2>
+      <p class="text-gray-300 text-xs sm:text-sm mb-4">Bugün en yüksek puanı toplayan şampiyon menajerler</p>
+      
+      <div id="leaderboard-list" class="max-h-[300px] overflow-y-auto my-4 pr-1">
+        <div class="text-center text-gray-400 py-4">Liderlik verileri çekiliyor...</div>
+      </div>
+
+      <button onclick="closeLeaderboard()" class="w-full bg-white/10 border border-white/20 text-white font-athletic text-lg py-2.5 rounded-xl hover:bg-white hover:text-[#0B132B] transition-all mt-2">
+        KAPAT
+      </button>
+    </div>
+  </div>
+
+  <!-- Bilgi Modalları (AdSense Sayfaları) -->
+  <div id="info-modal" class="fixed inset-0 bg-[#020617]/95 z-50 flex flex-col items-center justify-center p-6 backdrop-blur-md hidden">
+    <div class="bg-white/5 border border-white/10 p-6 sm:p-8 rounded-2xl max-w-lg w-full text-left shadow-2xl relative">
+      <button onclick="closeInfoModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white font-bold text-xl">&times;</button>
+      <h3 id="info-modal-title" class="text-[#FDE802] font-athletic text-2xl sm:text-3xl mb-4">BASLIK</h3>
+      <div id="info-modal-content" class="text-gray-300 text-xs sm:text-sm leading-relaxed max-h-[300px] overflow-y-auto pr-2"></div>
+    </div>
+  </div>
+
+  <!-- Üst Bar / Header -->
   <div class="w-full max-w-[1600px] mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-white/10 pb-4 mb-4 gap-3">
     <div>
       <h1 class="text-[#FDE802] font-black text-2xl sm:text-3xl tracking-widest uppercase font-athletic drop-shadow-md">
-        FENERBAHÇE TARİHİNE NE KADAR HAKİMSİN?
+        ÇUBUKLUDRAFT - FENERBAHÇE ULTIMATE XI
       </h1>
       <p id="sub-title" class="text-gray-300 font-bold text-xs sm:text-sm mt-1">
-        99-00 ve 25-26 sezonları arasında oynamış oyunculardan kendi 11'ini oluştur, kendini kanıtla.
+        99-00 ve 25-26 sezonları arasında oynamış oyunculardan kendi 11'ini oluştur, 34/34 yap!
       </p>
     </div>
-    <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-      <button id="sound-toggle-btn" onclick="toggleSound()" class="bg-white/5 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold text-[#FDE802] hover:bg-white/10 transition-all flex items-center gap-2 shadow-md">
-        🔊 Ses: Açık
+    <div class="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end flex-wrap">
+      <div id="user-badge" onclick="openUsernameModal()" class="bg-white/5 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold text-gray-200 cursor-pointer hover:bg-white/10 transition-all flex items-center gap-1.5 shadow-md">
+        👤 <span id="current-username-display">Anonim</span>
+      </div>
+      <button onclick="openLeaderboard()" class="bg-[#FDE802]/10 border border-[#FDE802]/30 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold text-[#FDE802] hover:bg-[#FDE802] hover:text-[#0B132B] transition-all shadow-md">
+        🏆 Sıralama
+      </button>
+      <button id="sound-toggle-btn" onclick="toggleSound()" class="bg-white/5 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold text-[#FDE802] hover:bg-white/10 transition-all shadow-md">
+        🔊 Ses
       </button>
       <div id="round-indicator" class="bg-white/5 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold text-[#FDE802] shadow-md">
         Bekleniyor...
@@ -154,8 +228,15 @@
     </div>
   </div>
 
+  <!-- Psikolojik Hırs Vurgusu Mesajı -->
+  <div id="stats-message" class="w-full max-w-[1600px] mx-auto text-center font-bold text-[#FDE802] bg-[#FDE802]/10 border border-[#FDE802]/20 py-2 rounded-xl text-xs sm:text-sm mb-4 shadow-sm">
+    🔥 Şu ana kadar kurulan kadroların sadece %0.3'ü 34/34 yapmayı başarabildi.
+  </div>
+
+  <!-- Ana Oyun Alanı -->
   <div class="w-full max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start my-auto">
     
+    <!-- Sol Panel: Kart Seçimleri ve Sonuç Alanı -->
     <div class="lg:col-span-5 flex flex-col justify-between items-center px-2 sm:px-4 min-h-[500px] lg:h-[600px]">
       <h3 id="draft-prompt-title" class="text-[#FDE802] font-athletic text-xl sm:text-2xl tracking-wider mb-2 text-center">TUR SEÇİMİ</h3>
       <div id="board" class="grid grid-cols-2 gap-4 sm:gap-6 w-full justify-items-center my-auto">
@@ -164,13 +245,34 @@
       <div class="h-2"></div>
     </div>
 
+    <!-- Sağ Panel: İndirilecek & Paylaşılacak Bütünleşik Saha Kartı (Capture Area) -->
     <div class="lg:col-span-7 flex justify-center items-start w-full">
-      <div id="pitch-container" class="football-pitch w-full max-w-[680px] rounded-2xl shadow-2xl flex flex-col justify-between p-4 sm:p-6">
+      <div id="capture-area" class="w-full max-w-[680px] bg-[#020617] p-3 sm:p-5 rounded-2xl border border-white/10 shadow-2xl">
+        
+        <!-- Kart Üst Başlık (34-0 / Flex Rozeti) -->
+        <div id="card-header" class="text-center mb-3">
+          <div class="text-gray-400 text-[10px] sm:text-xs tracking-[0.2em] font-bold uppercase">34 MAÇLIK LİG SİMÜLASYONU</div>
+          <h2 id="dynamic-score-display" class="text-[#FDE802] font-black text-2xl sm:text-3xl tracking-widest uppercase font-athletic my-0.5">
+            ÇUBUKLUDRAFT KADROSU
+          </h2>
+        </div>
+
+        <!-- Saha Container -->
+        <div id="pitch-container" class="football-pitch w-full rounded-2xl flex flex-col justify-between p-3 sm:p-5">
+        </div>
+
+        <!-- Kart Alt Bilgi (Viral CTA) -->
+        <div id="card-footer" class="text-center mt-3 pt-3 border-t border-white/10 flex justify-between items-center px-2">
+          <span class="text-gray-300 text-xs sm:text-sm font-bold">Efsane kadronla 34/34 yapabilir misin?</span>
+          <span class="text-[#FDE802] font-athletic text-lg sm:text-xl tracking-wider">cubuklu11.win</span>
+        </div>
+
       </div>
     </div>
 
   </div>
 
+  <!-- Kurulan Kadro Çubuğu -->
   <div class="w-full max-w-[1600px] mx-auto border-t border-white/10 pt-4 mt-4 flex items-center justify-between gap-3">
     <div class="flex items-center gap-3 overflow-x-auto w-full pb-2">
       <span class="text-xs text-gray-400 uppercase tracking-wider font-bold shrink-0">Kurulan Kadro:</span>
@@ -178,10 +280,25 @@
     </div>
   </div>
 
+  <!-- Footer ve Yasal İbareler (AdSense Uyumlu) -->
+  <footer class="w-full max-w-[1600px] mx-auto border-t border-white/10 pt-4 mt-6 text-center text-xs text-gray-500 flex flex-col sm:flex-row items-center justify-between gap-3 pb-4">
+    <div>
+      <p>© 2026 <strong>cubuklu11.win</strong> - Tüm hakları saklıdır.</p>
+      <p class="text-[10px] text-gray-600 mt-0.5">Bu site bağımsız bir taraftar projesidir. Fenerbahçe SK veya bağlı kuruluşları ile resmi bir bağı bulunmamaktadır.</p>
+    </div>
+    <div class="flex items-center gap-4 text-xs">
+      <button onclick="showInfoPage('privacy')" class="hover:text-gray-300 underline">Gizlilik Politikası</button>
+      <button onclick="showInfoPage('about')" class="hover:text-gray-300 underline">Hakkımızda</button>
+      <button onclick="showInfoPage('contact')" class="hover:text-gray-300 underline">İletişim</button>
+    </div>
+  </footer>
+
   <script>
     const SUPABASE_URL = 'https://sqecxfgbdfdebyaocrce.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNxZWN4ZmdiZGZkZWJ5YW9jcmNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2MjAzMTMsImV4cCI6MjEwMTE5NjMxM30.pWIjfCsQn1mwrIt9aDNLDn6usotI_Uf6iYSgkjwHQX8';
     const SUPABASE_TABLE_NAME = 'master_database';
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const OUT_OF_POSITION_PENALTY = 15.0;
 
@@ -251,11 +368,110 @@
       "ATTACK": "HÜCUM"
     };
 
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
     let audioCtx = null;
     let isMuted = false;
+    let currentUsername = localStorage.getItem('cubuklu11_username') || null;
 
+    // --- KULLANICI ADI & LİDERLİK TABLOSU ---
+    const BAD_WORDS = ["gs", "bjk", "ts", "fetö", "sik", "piç", "yarrak", "amk", "aq", "oc", "orospu"];
+
+    function filterProfanity(str) {
+      let lower = str.toLowerCase();
+      for (let word of BAD_WORDS) {
+        if (lower.includes(word)) {
+          return "Kanarya_" + Math.floor(1000 + Math.random() * 9000);
+        }
+      }
+      return str;
+    }
+
+    function openUsernameModal() {
+      document.getElementById('username-modal').style.display = 'flex';
+    }
+
+    function saveUsername() {
+      const input = document.getElementById('username-input').value.trim();
+      if (input) {
+        currentUsername = filterProfanity(input);
+        localStorage.setItem('cubuklu11_username', currentUsername);
+      } else {
+        currentUsername = "Anonim_Kanarya";
+      }
+      updateUserDisplay();
+      document.getElementById('username-modal').style.display = 'none';
+    }
+
+    function playAnonymous() {
+      currentUsername = "Anonim_Kanarya";
+      localStorage.setItem('cubuklu11_username', currentUsername);
+      updateUserDisplay();
+      document.getElementById('username-modal').style.display = 'none';
+    }
+
+    function updateUserDisplay() {
+      document.getElementById('current-username-display').innerText = currentUsername || "Anonim";
+    }
+
+    async function openLeaderboard() {
+      const modal = document.getElementById('leaderboard-modal');
+      const list = document.getElementById('leaderboard-list');
+      modal.style.display = 'flex';
+      list.innerHTML = '<div class="text-center text-gray-400 py-4">Yükleniyor...</div>';
+      
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const { data, error } = await supabaseClient
+          .from('leaderboard')
+          .select('*')
+          .gte('created_at', today)
+          .order('points', { ascending: false })
+          .limit(10);
+
+        if (error || !data || data.length === 0) {
+          list.innerHTML = '<div class="text-center text-gray-400 py-4">Bugün henüz skor kaydedilmedi. İlk 34/34 rekorunu sen kır!</div>';
+          return;
+        }
+
+        list.innerHTML = data.map((item, index) => `
+          <div class="flex items-center justify-between bg-white/5 border border-white/10 p-2.5 rounded-xl text-xs sm:text-sm mb-2">
+            <div class="flex items-center gap-2">
+              <span class="font-black text-[#FDE802] w-5">#${index + 1}</span>
+              <span class="font-bold text-white">${item.username || 'Anonim'}</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-gray-300 font-mono">${item.wins}G-${item.draws}B-${item.losses}Y</span>
+              <span class="font-black text-[#FDE802] text-sm sm:text-base">${item.points} P</span>
+            </div>
+          </div>
+        `).join('');
+      } catch(e) {
+        list.innerHTML = '<div class="text-center text-red-400 py-4">Liderlik tablosu çekilemedi.</div>';
+      }
+    }
+
+    function closeLeaderboard() {
+      document.getElementById('leaderboard-modal').style.display = 'none';
+    }
+
+    async function saveScoreToSupabase(seasonResult) {
+      try {
+        await supabaseClient.from('leaderboard').insert([
+          {
+            username: currentUsername || 'Anonim_Kanarya',
+            wins: seasonResult.wins,
+            draws: seasonResult.draws,
+            losses: seasonResult.losses,
+            points: seasonResult.points,
+            rating: seasonResult.finalRating,
+            created_at: new Date().toISOString()
+          }
+        ]);
+      } catch(e) {
+        console.error("Skor kaydedilemedi:", e);
+      }
+    }
+
+    // --- SES MOTORU ---
     function getAudioContext() {
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -270,11 +486,11 @@
       isMuted = !isMuted;
       const btn = document.getElementById('sound-toggle-btn');
       if (isMuted) {
-        btn.innerHTML = '🔇 Ses: Kapalı';
+        btn.innerHTML = '🔇 Ses';
         btn.classList.add('text-gray-400', 'border-gray-600', 'bg-gray-800/40');
         btn.classList.remove('text-[#FDE802]', 'bg-white/5');
       } else {
-        btn.innerHTML = '🔊 Ses: Açık';
+        btn.innerHTML = '🔊 Ses';
         btn.classList.remove('text-gray-400', 'border-gray-600', 'bg-gray-800/40');
         btn.classList.add('text-[#FDE802]', 'bg-white/5');
       }
@@ -290,24 +506,18 @@
           const bufferSize = ctx.sampleRate * 0.03;
           const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
           const data = buffer.getChannelData(0);
-          for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
-          }
+          for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
           const noise = ctx.createBufferSource();
           noise.buffer = buffer;
-          
           const filter = ctx.createBiquadFilter();
           filter.type = 'highpass';
           filter.frequency.setValueAtTime(2000, now);
-
           const gain = ctx.createGain();
           gain.gain.setValueAtTime(0.2, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
-
           noise.connect(filter);
           filter.connect(gain);
           gain.connect(ctx.destination);
-
           noise.start(now);
           noise.stop(now + 0.03);
         } 
@@ -317,69 +527,42 @@
           osc.type = 'sine';
           osc.frequency.setValueAtTime(150, now);
           osc.frequency.exponentialRampToValueAtTime(35, now + 0.18);
-          
           gain.gain.setValueAtTime(0.35, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
-          
           osc.connect(gain);
           gain.connect(ctx.destination);
           osc.start(now);
           osc.stop(now + 0.18);
-
-          const bufferSize = ctx.sampleRate * 0.06;
-          const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-          const data = buffer.getChannelData(0);
-          for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
-          }
-          const noise = ctx.createBufferSource();
-          noise.buffer = buffer;
-          const filter = ctx.createBiquadFilter();
-          filter.type = 'lowpass';
-          filter.frequency.setValueAtTime(250, now);
-          const noiseGain = ctx.createGain();
-          noiseGain.gain.setValueAtTime(0.2, now);
-          noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
-          noise.connect(filter);
-          filter.connect(noiseGain);
-          noiseGain.connect(ctx.destination);
-          noise.start(now);
-          noise.stop(now + 0.06);
         }
         else if (type === 'swosh') {
           const bufferSize = ctx.sampleRate * 0.35;
           const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
           const data = buffer.getChannelData(0);
-          for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
-          }
+          for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
           const noise = ctx.createBufferSource();
           noise.buffer = buffer;
-
           const filter = ctx.createBiquadFilter();
           filter.type = 'bandpass';
           filter.frequency.setValueAtTime(250, now);
           filter.frequency.exponentialRampToValueAtTime(1800, now + 0.18);
           filter.frequency.exponentialRampToValueAtTime(400, now + 0.35);
           filter.Q.value = 2.5;
-
           const gain = ctx.createGain();
           gain.gain.setValueAtTime(0.01, now);
           gain.gain.linearRampToValueAtTime(0.18, now + 0.15);
           gain.gain.linearRampToValueAtTime(0.001, now + 0.35);
-
           noise.connect(filter);
           filter.connect(gain);
           gain.connect(ctx.destination);
-
           noise.start(now);
           noise.stop(now + 0.35);
         }
       } catch (e) {
-        console.log("Ses çalınamadı:", e);
+        console.log("Ses hatası:", e);
       }
     }
 
+    // --- TAKIM VE HESAPLAMA MANTIĞI ---
     function getPermutations(arr) {
         if (arr.length <= 1) return [arr];
         let result = [];
@@ -406,9 +589,7 @@
                     totalPenalty += OUT_OF_POSITION_PENALTY;
                 }
             }
-            if (totalPenalty < bestPenalty) {
-                bestPenalty = totalPenalty;
-            }
+            if (totalPenalty < bestPenalty) bestPenalty = totalPenalty;
         }
         return bestPenalty;
     }
@@ -441,14 +622,16 @@
     }
 
     function getSarcasticComment(points) {
-        if (points >= 100) return "Vay canına... FM'de maçı kaybedince oyundan çıkıp tekrar giren tayfadansın demek. Git biraz çimenlere dokun.";
+        if (points >= 102) return "KUSURSUZ SEZON! 34/34 İMKANSIZI BAŞARDIN! Kadıköy efsaneleri arasına adını yazdırdın.";
+        if (points >= 98) return "Neredeyse Kusursuz! Sadece 1 beraberlik yüzünden 34/34 kaçtı. Bir tur daha atsan yaparsın!";
         if (points >= 85) return "Tebrikler! Ali Koç seni görse hemen sportif direktör yapardı. (İlk puan kaybında kovulacaksın).";
-        if (points >= 75) return "Fena değil. Aykut Kocaman olsa bu takıma 1-0'a yatmayı öğretir, saç baş yoldurur ama yine de şampiyon yapardı.";
+        if (points >= 75) return "Fena değil. Aykut Kocaman olsa bu takıma 1-0'a yatmayı öğretir, saç baş yoldurur ama şampiyon yapardı.";
         if (points >= 60) return "Ortalama bir performans. 'Sivas deplasmanından alınan 1 puan iyidir' deyip taraftarı kanser edersin.";
         if (points >= 40) return "Kasım ayında istifa sesleri yükselir, devre arası olmadan yüklü tazminatını alıp gidersin.";
         return "Tebrikler! Fenerbahçe tarihinin en felaket sezonunu yaşattın. Kadıköy'ün semtinden bile geçme.";
     }
 
+    // --- DRAFT MOTORU ---
     class BrowserDraftEngine {
       constructor(data) {
         this.rawPool = data;
@@ -476,7 +659,6 @@
           const season = String(row.Season || "").trim();
           const position = String(row.Position || "").trim().toUpperCase();
           let shirtNum = parseInt(row.Shirt_Number);
-          
           let matchesCount = row.league_apps || row.League_Apps || row.Matches || null;
 
           const playerKey = row.Player_ID ? `id_${row.Player_ID}` : this._normalizeText(name);
@@ -572,6 +754,7 @@
 
     let engine = null;
     let currentRoundData = null;
+    let lastSeasonResult = null;
 
     function getFlagImg(countryCode) {
       if (!countryCode) return '';
@@ -582,6 +765,14 @@
     }
 
     async function initApp() {
+      if (!currentUsername) {
+        openUsernameModal();
+      } else {
+        updateUserDisplay();
+      }
+
+      document.getElementById('file-loader-container').style.display = 'flex';
+
       try {
         const { data, error } = await supabaseClient.from(SUPABASE_TABLE_NAME).select('*');
         if (error) throw error;
@@ -611,7 +802,6 @@
         const cardContainer = document.createElement("div");
         cardContainer.className = "draft-card";
 
-        // Maç sayısındaki virgül, küsurat ve "MAÇ" yazısını temizliyoruz, sadece yuvarlanmış net rakam alınıyor
         let matchVal = '';
         if (player.matches !== null && player.matches !== undefined && player.matches !== '') {
           matchVal = Math.round(parseFloat(String(player.matches).replace(',', '.')));
@@ -621,8 +811,6 @@
         cardContainer.innerHTML = `
           <div class="draft-card-inner">
             <div class="draft-card-front">
-               
-               <!-- Sol Kısım: Formadaki lacivert (#0B132B), eşit boşluklu (justify-between) ve sola hizalı (items-start), Fontu %10 büyüttük -->
                <div class="front-content-left">
                  <div class="text-[#0B132B] font-athletic text-[1.65rem] sm:text-[2.05rem] tracking-wider leading-none whitespace-nowrap">${player.season}</div>
                  <div class="text-[#0B132B] font-athletic text-[1.65rem] sm:text-[2.05rem] tracking-wider leading-none whitespace-nowrap">${player.position}</div>
@@ -722,29 +910,36 @@
           const nextRound = engine.selectCard(player.card_id, round.options);
           if (nextRound === null) {
             document.getElementById("draft-prompt-title").innerText = "SEZON SONUCU!";
-            const seasonResult = evaluateSelectedTeam(engine.selectedCards);
-            const sarcasticText = getSarcasticComment(seasonResult.points);
+            
+            lastSeasonResult = evaluateSelectedTeam(engine.selectedCards);
+            const sarcasticText = getSarcasticComment(lastSeasonResult.points);
+
+            // Dinamik skor başlığını "32W - 1D - 1L" formatında karta yaz
+            document.getElementById("dynamic-score-display").innerText = `${lastSeasonResult.wins}W - ${lastSeasonResult.draws}D - ${lastSeasonResult.losses}L (${lastSeasonResult.points} PUAN)`;
+
+            // Skor veritabanına kaydet
+            saveScoreToSupabase(lastSeasonResult);
 
             document.getElementById("board").innerHTML = `
               <div class="col-span-2 flex flex-col items-center justify-center py-2 w-full">
                 <div class="bg-[#0B132B]/95 border-2 border-[#FDE802] rounded-2xl p-4 sm:p-6 flex flex-col items-center shadow-[0_0_40px_rgba(253,232,2,0.2)] backdrop-blur-md w-full max-w-lg">
                   <div class="text-[#FDE802] text-[10px] sm:text-xs uppercase tracking-[0.3em] font-bold mb-1">34 MAÇLIK LİG SİMÜLASYONU</div>
-                  <span class="text-white font-athletic text-2xl sm:text-3xl tracking-widest mb-4 text-center">${seasonResult.label.toUpperCase()}</span>
+                  <span class="text-white font-athletic text-2xl sm:text-3xl tracking-widest mb-4 text-center">${lastSeasonResult.label.toUpperCase()}</span>
                   
                   <div class="flex items-center gap-4 sm:gap-6 mb-4">
                     <div class="flex flex-col items-center">
                       <span class="text-gray-400 text-[10px] sm:text-xs tracking-widest uppercase mb-1">Galibiyet</span>
-                      <span class="text-3xl sm:text-4xl font-black text-[#10B981]">${seasonResult.wins}</span>
+                      <span class="text-3xl sm:text-4xl font-black text-[#10B981]">${lastSeasonResult.wins}</span>
                     </div>
                     <div class="text-2xl sm:text-3xl text-white/25 font-light">-</div>
                     <div class="flex flex-col items-center">
                       <span class="text-gray-400 text-[10px] sm:text-xs tracking-widest uppercase mb-1">Beraberlik</span>
-                      <span class="text-3xl sm:text-4xl font-black text-[#F59E0B]">${seasonResult.draws}</span>
+                      <span class="text-3xl sm:text-4xl font-black text-[#F59E0B]">${lastSeasonResult.draws}</span>
                     </div>
                     <div class="text-2xl sm:text-3xl text-white/25 font-light">-</div>
                     <div class="flex flex-col items-center">
                       <span class="text-gray-400 text-[10px] sm:text-xs tracking-widest uppercase mb-1">Mağlubiyet</span>
-                      <span class="text-3xl sm:text-4xl font-black text-[#EF4444]">${seasonResult.losses}</span>
+                      <span class="text-3xl sm:text-4xl font-black text-[#EF4444]">${lastSeasonResult.losses}</span>
                     </div>
                   </div>
 
@@ -754,22 +949,27 @@
 
                   <div class="w-full border-t border-white/10 pt-4 flex justify-between items-center px-2 mb-4">
                      <div class="flex flex-col items-start">
-                       <div class="text-gray-400 text-[9px] sm:text-[10px] uppercase tracking-widest font-bold">Gerçek Takım Reytingi</div>
-                       <div class="text-[#FDE802] font-black text-lg sm:text-xl">${seasonResult.finalRating}</div>
+                       <div class="text-gray-400 text-[9px] sm:text-[10px] uppercase tracking-widest font-bold">Takım Reytingi</div>
+                       <div class="text-[#FDE802] font-black text-lg sm:text-xl">${lastSeasonResult.finalRating}</div>
                      </div>
                      <div class="flex flex-col items-end">
                        <div class="text-gray-400 text-[9px] sm:text-[10px] uppercase tracking-widest font-bold">Toplam Puan</div>
-                       <div class="text-white font-black text-2xl sm:text-3xl">${seasonResult.points}</div>
+                       <div class="text-white font-black text-2xl sm:text-3xl">${lastSeasonResult.points}</div>
                      </div>
                   </div>
 
-                  <div class="flex flex-col sm:flex-row items-center gap-3 w-full">
-                    <button onclick="shareSquadImage()" class="w-full sm:flex-1 bg-white text-[#0B132B] font-athletic text-lg py-2.5 rounded-xl hover:bg-[#FDE802] transition-all shadow-lg flex items-center justify-center gap-2">
-                      KADROYU İNDİR / PAYLAŞ
+                  <div class="flex flex-col gap-2.5 w-full">
+                    <button onclick="shareToWhatsApp()" class="w-full bg-[#25D366] text-white font-athletic text-lg py-2.5 rounded-xl hover:opacity-90 transition-all shadow-lg flex items-center justify-center gap-2">
+                      💬 WHATSAPP'TA MEYDAN OKU
                     </button>
-                    <button onclick="location.reload()" class="w-full sm:flex-1 bg-[#FDE802] text-[#0B132B] font-athletic text-lg py-2.5 rounded-xl hover:bg-white hover:scale-105 transition-all shadow-lg">
-                      YENİDEN DRAFT YAP
-                    </button>
+                    <div class="flex items-center gap-2 w-full">
+                      <button onclick="shareSquadImage()" class="flex-1 bg-white text-[#0B132B] font-athletic text-base sm:text-lg py-2.5 rounded-xl hover:bg-[#FDE802] transition-all shadow-lg flex items-center justify-center gap-1.5">
+                        📷 KADROYU İNDİR / PAYLAŞ
+                      </button>
+                      <button onclick="location.reload()" class="flex-1 bg-[#FDE802] text-[#0B132B] font-athletic text-base sm:text-lg py-2.5 rounded-xl hover:bg-white transition-all shadow-lg">
+                        🔄 YENİ DRAFT
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -883,11 +1083,21 @@
       }
     }
 
+    // --- PAYLAŞIM VE İNDİRME SİSTEMİ ---
+    function shareToWhatsApp() {
+      if (!lastSeasonResult) return;
+      const text = `🟡🔵 ÇUBUKLUDRAFT SEZON KARNESİ 🏆\n\nEfsane Fenerbahçe kadromla 34 maçlık maratonu ${lastSeasonResult.wins}G - ${lastSeasonResult.draws}B - ${lastSeasonResult.losses}Y (${lastSeasonResult.points} Puan) ile tamamladım!\n\nEfsane kadronla 34/34 yapabilir misin?\n👉 https://cubuklu11.win`;
+      const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+      window.open(url, '_blank');
+    }
+
     async function shareSquadImage() {
-      const pitchElement = document.getElementById("pitch-container");
-      
+      const captureArea = document.getElementById("capture-area");
+      const wins = lastSeasonResult ? lastSeasonResult.wins : 34;
+      const fileName = `cubuklu11-skor-${wins}G.png`;
+
       try {
-        const canvas = await html2canvas(pitchElement, { 
+        const canvas = await html2canvas(captureArea, { 
           backgroundColor: '#020617', 
           scale: 2,
           useCORS: true,
@@ -895,35 +1105,65 @@
           logging: false
         });
 
-        canvas.toBlob(async (blob) => {
-          const file = new File([blob], 'fenerbahce-ultimate-xi.png', { type: 'image/png' });
-          
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            try {
-              await navigator.share({
-                title: 'Fenerbahçe Ultimate XI',
-                text: 'Fenerbahçe tarihindeki en iyi 11\'imi kurdum! Sen de kadronu oluştur:',
-                files: [file],
-                url: window.location.href
-              });
-              return;
-            } catch (err) {
-              if (err.name !== 'AbortError') {
-                console.log("Paylaşım iptal edildi:", err);
-              }
-            }
-          }
+        const dataUrl = canvas.toDataURL('image/png');
 
-          const link = document.createElement('a');
-          link.download = 'fenerbahce-ultimate-xi.png';
-          link.href = canvas.toDataURL('image/png');
-          link.click();
-        }, 'image/png');
+        // Web Share API Desteği (Mobil cihazlar için native dosya paylaşımı)
+        if (navigator.share) {
+          const blob = await (await fetch(dataUrl)).blob();
+          const file = new File([blob], fileName, { type: 'image/png' });
+
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: 'Çubuklu 11 Sezon Karnem',
+              text: `Efsane Fenerbahçe kadromla ligi tamamladım! Efsane kadronla 34/34 yapabilir misin?`,
+              files: [file],
+              url: 'https://cubuklu11.win'
+            });
+            return;
+          }
+        }
+
+        // Web Share API yoksa standart indirme
+        const link = document.createElement('a');
+        link.download = fileName;
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
 
       } catch (err) {
-        console.error("Görsel oluşturulurken hata:", err);
+        console.error("Görsel paylaşım hatası:", err);
         alert("Görsel indirilirken bir sorun oluştu.");
       }
+    }
+
+    // --- BİLGİ SAYFALARI (ADSENSE UYUMU) ---
+    function showInfoPage(type) {
+      const modal = document.getElementById('info-modal');
+      const title = document.getElementById('info-modal-title');
+      const content = document.getElementById('info-modal-content');
+
+      if (type === 'privacy') {
+        title.innerText = "GİZLİLİK POLITIKASI";
+        content.innerHTML = `<p class="mb-2"><strong>cubuklu11.win</strong> olarak kullanıcılarımızın gizliliğine önem veriyoruz.</p>
+        <p class="mb-2">Sitemizde kullanılan istatistik ve skor verileri kullanıcı deneyimini iyileştirmek amacıyla Supabase ve Google Analytics 4 (GA4) altyapısında anonim/takma ad olarak saklanır.</p>
+        <p>Google AdSense gibi üçüncü taraf sağlayıcılar, sitemizde yayınlanan reklamları sunmak için çerezler (cookies) kullanabilir.</p>`;
+      } else if (type === 'about') {
+        title.innerText = "HAKKIMIZDA";
+        content.innerHTML = `<p class="mb-2"><strong>Çubuklu 11 (cubuklu11.win)</strong>, Fenerbahçe tarihinin unutulmaz oyuncularını ve efsaneleşmiş kadrolarını 90'lar nostaljik kart albümü konseptiyle dijital ortama taşıyan bağımsız bir taraftar projesidir.</p>
+        <p>Amacımız taraftarlara eğlenceli, rekabetçi ve nostaljik bir futbol simülasyonu deneyimi sunmaktır.</p>`;
+      } else if (type === 'contact') {
+        title.innerText = "İLETİŞİM";
+        content.innerHTML = `<p class="mb-2">Proje hakkındaki soru, öneri veya telif bildirimleriniz için bizimle iletişime geçebilirsiniz:</p>
+        <p><strong>E-posta:</strong> iletisim@cubuklu11.win</p>
+        <p><strong>Web:</strong> https://cubuklu11.win</p>`;
+      }
+
+      modal.style.display = 'flex';
+    }
+
+    function closeInfoModal() {
+      document.getElementById('info-modal').style.display = 'none';
     }
   </script>
 
