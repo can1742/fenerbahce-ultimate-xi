@@ -8,8 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
-
-
+  
   <style>
     .font-athletic { font-family: 'Bebas Neue', sans-serif; }
     body { font-family: 'Nunito', sans-serif; }
@@ -73,9 +72,9 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 55%;
+      width: 65%;
       height: 100%;
-      padding: 1.2rem 0.8rem;
+      padding: 1.1rem 0.7rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -476,6 +475,7 @@
           const season = String(row.Season || "").trim();
           const position = String(row.Position || "").trim().toUpperCase();
           let shirtNum = parseInt(row.Shirt_Number);
+          let matchesCount = row.Matches || row.Appearances || row.Match_Count || row.Apps || null;
 
           const playerKey = row.Player_ID ? `id_${row.Player_ID}` : this._normalizeText(name);
           const cardId = `${playerKey}_${this._normalizeText(season)}_${this._normalizeText(position)}`;
@@ -491,7 +491,8 @@
             shirt_number: !isNaN(shirtNum) ? shirtNum : null,
             country_code: String(row.Country_Code || "").trim(),
             image_path: imagePath,
-            overall_rating: parseFloat(row.Overall_Rating) || 75
+            overall_rating: parseFloat(row.Overall_Rating) || 75,
+            matches: matchesCount
           };
         });
       }
@@ -608,14 +609,23 @@
         const cardContainer = document.createElement("div");
         cardContainer.className = "draft-card";
 
+        const hintText = player.matches ? `Maç: ${player.matches}` : `Reyting: ${player.overall_rating}`;
+
         cardContainer.innerHTML = `
           <div class="draft-card-inner">
             <div class="draft-card-front">
                <div class="front-content-left">
-                 <div class="text-[#111827] font-athletic text-3xl sm:text-4xl tracking-wider leading-none whitespace-nowrap">${player.season}</div>
-                 <div class="text-[#111827] font-athletic text-3xl sm:text-4xl tracking-wider leading-none whitespace-nowrap">${player.position}</div>
-                 <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-white shadow-md overflow-hidden flex items-center justify-center bg-gray-200 shrink-0">
-                    ${getFlagImg(player.country_code)}
+                 <div>
+                   <div class="text-[#111827] font-athletic text-2xl sm:text-3xl tracking-wider leading-none whitespace-nowrap">${player.season}</div>
+                   <div class="text-[#111827] font-athletic text-2xl sm:text-3xl tracking-wider leading-none whitespace-nowrap">${player.position}</div>
+                 </div>
+                 <div class="flex items-center gap-2">
+                   <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-white shadow-md overflow-hidden flex items-center justify-center bg-gray-200 shrink-0">
+                      ${getFlagImg(player.country_code)}
+                   </div>
+                   <div class="text-[9px] sm:text-[10px] font-bold text-[#111827] bg-white/90 px-1.5 py-0.5 rounded shadow-sm border border-gray-300 truncate">
+                      ${hintText}
+                   </div>
                  </div>
                </div>
                <div class="front-content-right">
@@ -869,24 +879,47 @@
       }
     }
 
-    function shareSquadImage() {
+    async function shareSquadImage() {
       const pitchElement = document.getElementById("pitch-container");
       
-      html2canvas(pitchElement, { 
-        backgroundColor: '#020617', 
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        logging: false
-      }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'fenerbahce-ultimate-xi.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-      }).catch(err => {
+      try {
+        const canvas = await html2canvas(pitchElement, { 
+          backgroundColor: '#020617', 
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          logging: false
+        });
+
+        canvas.toBlob(async (blob) => {
+          const file = new File([blob], 'fenerbahce-ultimate-xi.png', { type: 'image/png' });
+          
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+              await navigator.share({
+                title: 'Fenerbahçe Ultimate XI',
+                text: 'Fenerbahçe tarihindeki en iyi 11\'imi kurdum! Sen de kadronu oluştur:',
+                files: [file],
+                url: window.location.href
+              });
+              return;
+            } catch (err) {
+              if (err.name !== 'AbortError') {
+                console.log("Paylaşım iptal edildi:", err);
+              }
+            }
+          }
+
+          const link = document.createElement('a');
+          link.download = 'fenerbahce-ultimate-xi.png';
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        }, 'image/png');
+
+      } catch (err) {
         console.error("Görsel oluşturulurken hata:", err);
         alert("Görsel indirilirken bir sorun oluştu.");
-      });
+      }
     }
   </script>
 
