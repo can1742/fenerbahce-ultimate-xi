@@ -37,37 +37,32 @@
     .font-athletic { font-family: 'Bebas Neue', sans-serif; }
     body { font-family: 'Nunito', sans-serif; }
 
+    /* Generated Card Boyutları ve Stil Uyumları */
     .scout-card {
       position: relative;
-      width: 170px;
-      height: 240px;
+      width: 150px;
+      height: 225px;
       flex-shrink: 0;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       border-radius: 0.85rem;
       overflow: visible;
-      background: linear-gradient(145deg, #0e1a38, #070c1b);
-      border: 2px solid rgba(253, 232, 2, 0.25);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
     }
     
     @media (min-width: 640px) {
       .scout-card {
-        width: 200px;
+        width: 180px;
         height: 270px;
       }
     }
 
     .scout-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(253, 232, 2, 0.8);
-      box-shadow: 0 15px 25px rgba(253, 232, 2, 0.25);
+      transform: translateY(-5px) scale(1.03);
     }
 
-    .scout-card.active-selected {
+    .scout-card.active-selected .card-image-wrapper {
       border-color: #FDE802 !important;
-      box-shadow: 0 0 25px rgba(253, 232, 2, 0.6) !important;
-      transform: scale(1.04);
+      box-shadow: 0 0 25px rgba(253, 232, 2, 0.7) !important;
     }
 
     .football-pitch {
@@ -222,7 +217,7 @@
   <!-- Scout Rehber Mesajı -->
   <div class="w-full max-w-[1600px] mx-auto flex flex-col gap-2 mb-4">
     <div id="stats-message" class="w-full text-center font-bold text-[#FDE802] bg-[#FDE802]/10 border border-[#FDE802]/20 py-2 rounded-xl text-xs sm:text-sm shadow-sm">
-      🔍 Scout Analizi: Oyuncuların OVR puanı, mevkisi ve lig maç sayısı açıkça gösterilmektedir.
+      🔍 Scout Analizi: Kart görselleri doğrudan üretilmiş orijinal retro kartlardır.
     </div>
   </div>
 
@@ -767,14 +762,6 @@
     let currentRoundData = null;
     let lastSeasonResult = null;
 
-    function getFlagImg(countryCode) {
-      if (!countryCode) return '';
-      const cleanCode = countryCode.trim().toLowerCase();
-      const mapping = { "tur": "tr", "bra": "br", "nld": "nl", "ned": "nl", "prt": "pt", "sen": "sn", "bih": "ba", "rus": "ru", "fra": "fr", "deu": "de", "esp": "es", "arg": "ar" };
-      const code = mapping[cleanCode] || (cleanCode.length === 3 ? cleanCode.slice(0, 2) : cleanCode);
-      return `<img src="https://flagcdn.com/w80/${code}.png" crossorigin="anonymous" alt="${countryCode}" class="w-full h-full object-cover" onerror="this.src='https://flagcdn.com/w80/un.png'">`;
-    }
-
     async function initApp() {
       openModeModal();
 
@@ -816,9 +803,9 @@
       renderRound(currentRoundData);
     }
 
-    // --- SCOUT MODU AÇIK KART RENDER ETME ---
+    // --- SCOUT MODU AÇIK KART RENDER ETME (GENERATED CARDS) ---
     function renderRound(round) {
-      document.getElementById("round-indicator").innerText = `Tur: ${round.round_number} /${round.total_rounds}`;
+      document.getElementById("round-indicator").innerText = `Tur: ${round.round_number} / ${round.total_rounds}`;
       document.getElementById("draft-prompt-title").innerText = `SCOUT: ${round.stage_name} SEÇİMİ (${round.stage_round}/${round.stage_total})`;
       
       const board = document.getElementById("board");
@@ -827,40 +814,11 @@
 
       round.options.forEach(player => {
         const cardContainer = document.createElement("div");
-        cardContainer.className = "scout-card flex flex-col justify-between p-2.5 relative";
-
-        let matchVal = '';
-        if (player.matches !== null && player.matches !== undefined && player.matches !== '') {
-          matchVal = Math.round(parseFloat(String(player.matches).replace(',', '.')));
-          if (isNaN(matchVal)) matchVal = '';
-        }
-
-        const ovrRating = player.overall_rating ? Math.round(player.overall_rating) : 75;
+        cardContainer.className = "scout-card flex flex-col items-center justify-center relative";
 
         cardContainer.innerHTML = `
-          <!-- Üst Bar: OVR, Mevki, Sezon, Bayrak -->
-          <div class="flex items-center justify-between z-10">
-            <div class="flex flex-col items-start leading-none">
-              <span class="text-[#FDE802] font-black font-athletic text-2xl sm:text-3xl drop-shadow">${ovrRating}</span>
-              <span class="text-gray-300 font-bold text-[10px] sm:text-xs">${player.position}</span>
-            </div>
-            <div class="flex flex-col items-end leading-none">
-              <span class="text-white font-bold text-[10px] sm:text-xs">${player.season}</span>
-              <span class="text-gray-400 text-[9px] sm:text-[10px]">${matchVal ? matchVal + ' Maç' : ''}</span>
-            </div>
-          </div>
-
-          <!-- Oyuncu Görseli -->
-          <div class="relative w-full h-32 sm:h-36 my-1 flex items-center justify-center overflow-hidden rounded-lg bg-black/20">
-             <img src="${player.image_path}" crossorigin="anonymous" alt="${player.name}" class="w-full h-full object-cover object-top" onerror="this.src='https://sqecxfgbdfdebyaocrce.supabase.co/storage/v1/object/public/Generated%20Cards/Gemini_Generated31.PNG'">
-             <div class="absolute bottom-1 right-1 w-6 h-6 rounded-full border border-white/50 overflow-hidden bg-gray-200 shadow">
-                ${getFlagImg(player.country_code)}
-             </div>
-          </div>
-
-          <!-- Oyuncu Adı -->
-          <div class="z-10 bg-black/60 backdrop-blur-sm p-1.5 rounded-md text-center border border-white/10">
-             <span class="text-[#FDE802] font-athletic text-base sm:text-lg tracking-wider block truncate">${player.name}</span>
+          <div class="card-image-wrapper w-full h-full rounded-xl overflow-hidden shadow-2xl border-2 border-white/20 hover:border-[#FDE802] transition-all bg-[#070c1b]">
+            <img src="${player.image_path}" crossorigin="anonymous" alt="${player.name}" class="w-full h-full object-contain select-none pointer-events-none" onerror="this.src='https://sqecxfgbdfdebyaocrce.supabase.co/storage/v1/object/public/Generated%20Cards/Gemini_Generated31.PNG'">
           </div>
         `;
 
@@ -868,14 +826,14 @@
           e.stopPropagation();
           playSound('click');
 
-          // Önceki seçili butonu kaldır
+          // Önceki seçili butonu ve vurguyu kaldır
           document.querySelectorAll('.scout-action-btn').forEach(btn => btn.remove());
           document.querySelectorAll('.scout-card').forEach(c => c.classList.remove('active-selected'));
 
           cardContainer.classList.add('active-selected');
           activeSelectedCardElement = cardContainer;
 
-          // 'inset-x-0 mx-auto w-max' ile tam kart altına ortalama
+          // Kartın altına ortalanarak yerleşen KADROYA EKLE butonu
           const actionBtn = document.createElement('button');
           actionBtn.className = "scout-action-btn absolute top-[103%] inset-x-0 mx-auto w-max bg-[#FDE802] text-[#0B132B] font-athletic text-sm sm:text-base px-5 py-2 rounded-xl shadow-2xl hover:scale-105 transition-all z-50 font-bold whitespace-nowrap animate-bounce cursor-pointer border-2 border-[#0B132B] flex items-center justify-center gap-2";
           actionBtn.innerHTML = `<span>KADROYA EKLE</span><span class="text-[#0B132B] font-black text-lg">➔</span>`;
@@ -949,7 +907,7 @@
             lastSeasonResult = evaluateSelectedTeam(engine.selectedCards);
             const sarcasticText = getSarcasticComment(lastSeasonResult.points);
 
-            document.getElementById("dynamic-score-display").innerText = `${lastSeasonResult.wins}W -${lastSeasonResult.draws}D - ${lastSeasonResult.losses}L (${lastSeasonResult.points} PUAN)`;
+            document.getElementById("dynamic-score-display").innerText = `${lastSeasonResult.wins}W - ${lastSeasonResult.draws}D - ${lastSeasonResult.losses}L (${lastSeasonResult.points} PUAN)`;
 
             saveScoreToSupabase(lastSeasonResult);
             triggerConfetti(lastSeasonResult.points);
@@ -1105,7 +1063,7 @@
             <img src="${player.image_path}" crossorigin="anonymous" alt="${player.name}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'">
             <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent p-1 text-center">
               <span class="text-[#FDE802] font-bold text-[8px] sm:text-[9px] block truncate">${player.name}</span>
-              <span class="text-white text-[7px] sm:text-[8px] block">${player.season} •${player.position}</span>
+              <span class="text-white text-[7px] sm:text-[8px] block">${player.season} • ${player.position}</span>
             </div>
           </div>
         `;
@@ -1122,14 +1080,14 @@
     // --- PAYLAŞIM VE İNDİRME SİSTEMİ ---
     function shareToWhatsApp() {
       if (!lastSeasonResult) return;
-      const text = `🟡🔵 SCOUT MODU SEZON KARNESİ 🏆\n\nStratejik Scout kadromla 34 maçlık maratonu ${lastSeasonResult.wins}G -${lastSeasonResult.draws}B - ${lastSeasonResult.losses}Y (${lastSeasonResult.points} Puan) ile tamamladım!\n\nSen de en iyi Scout kadrosunu kur:\n👉 https://cubuklu11.win/scout.html`;
+      const text = `🟡🔵 SCOUT MODU SEZON KARNESİ 🏆\n\nStratejik Scout kadromla 34 maçlık maratonu ${lastSeasonResult.wins}G - ${lastSeasonResult.draws}B - ${lastSeasonResult.losses}Y (${lastSeasonResult.points} Puan) ile tamamladım!\n\nSen de en iyi Scout kadrosunu kur:\n👉 https://cubuklu11.win/scout.html`;
       const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
       window.open(url, '_blank');
     }
 
     function shareToX() {
       if (!lastSeasonResult) return;
-      const text = `🟡🔵 SCOUT MODU SEZON KARNESİ 🏆\n\nStratejik Scout kadromla 34 maçlık maratonu ${lastSeasonResult.wins}G -${lastSeasonResult.draws}B - ${lastSeasonResult.losses}Y (${lastSeasonResult.points} Puan) ile tamamladım!\n\nSen de en iyi Scout kadrosunu kur:\n👉 https://cubuklu11.win/scout.html #Çubuklu11 #ScoutMode #Fenerbahçe`;
+      const text = `🟡🔵 SCOUT MODU SEZON KARNESİ 🏆\n\nStratejik Scout kadromla 34 maçlık maratonu ${lastSeasonResult.wins}G - ${lastSeasonResult.draws}B - ${lastSeasonResult.losses}Y (${lastSeasonResult.points} Puan) ile tamamladım!\n\nSen de en iyi Scout kadrosunu kur:\n👉 https://cubuklu11.win/scout.html #Çubuklu11 #ScoutMode #Fenerbahçe`;
       const url = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}`;
       window.open(url, '_blank');
     }
@@ -1186,4 +1144,23 @@
 
       if (type === 'privacy') {
         title.innerText = "GİZLİLİK POLİTİKASI";
-        content.innerHTML = `<p class="mb-2"><strong>cubuklu11.win</strong> olarak kullanıcılarımızın gizliliğine önem veriyoruz.</p>
+        content.innerHTML = `<p class="mb-2"><strong>cubuklu11.win</strong> olarak kullanıcılarımızın gizliliğine önem veriyoruz.</p><p>Sitemizde toplanan veriler yalnızca liderlik tablosu skorları ve anonim kullanım istatistikleriyle sınırlıdır.</p>`;
+      } else if (type === 'about') {
+        title.innerText = "HAKKIMIZDA";
+        content.innerHTML = `<p class="mb-2"><strong>Çubuklu 11</strong>, Fenerbahçe taraftarları için geliştirilmiş eğlenceli bir nostaljik ve scout kadro kurma simülasyonudur.</p>`;
+      } else if (type === 'contact') {
+        title.innerText = "İLETİŞİM";
+        content.innerHTML = `<p class="mb-2">Öneri ve geri bildirimleriniz için iletişim adresimiz:</p><p class="text-[#FDE802] font-bold">destek@cubuklu11.win</p>`;
+      }
+      modal.classList.remove('hidden');
+      modal.style.display = 'flex';
+    }
+
+    function closeInfoModal() {
+      const modal = document.getElementById('info-modal');
+      modal.classList.add('hidden');
+      modal.style.display = 'none';
+    }
+  </script>
+</body>
+</html>
