@@ -151,7 +151,7 @@
 </head>
 <body class="bg-[#020617] min-h-screen text-white flex flex-col justify-between p-4 sm:p-6 overflow-x-hidden">
 
-  <!-- 1. ADIM: Oyun Modu Seçim Modalı (Siteye İlk Girişte Açılır) -->
+  <!-- 1. ADIM: Oyun Modu Seçim Modalı -->
   <div id="mode-modal" class="fixed inset-0 bg-[#020617]/95 z-50 flex flex-col items-center justify-center p-6 backdrop-blur-md hidden">
     <div class="bg-white/5 border border-white/10 p-6 sm:p-8 rounded-2xl max-w-lg w-full text-center shadow-2xl relative">
       <h2 class="text-[#FDE802] font-athletic text-3xl sm:text-4xl mb-1 tracking-wide">🎮 OYUN MODUNU SEÇ</h2>
@@ -188,7 +188,7 @@
     </div>
   </div>
 
-  <!-- 2. ADIM: Kullanıcı Adı Belirleme Modalı (Mod Seçiminden Sonra Açılır) -->
+  <!-- 2. ADIM: Kullanıcı Adı Belirleme Modalı -->
   <div id="username-modal" class="fixed inset-0 bg-[#020617]/95 z-50 flex flex-col items-center justify-center p-6 backdrop-blur-md hidden">
     <div class="bg-white/5 border border-white/10 p-8 rounded-2xl max-w-md w-full text-center shadow-2xl">
       <h2 class="text-[#FDE802] font-athletic text-4xl mb-2 tracking-wide">TEKNİK DİREKTÖR ADIN</h2>
@@ -242,7 +242,7 @@
     </div>
   </div>
 
-  <!-- Üst Bar / Header (Sadece ÇUBUKLUDRAFT) -->
+  <!-- Üst Bar / Header -->
   <div class="w-full max-w-[1600px] mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-white/10 pb-4 mb-3 gap-3">
     <div>
       <h1 class="text-[#FDE802] font-black text-3xl sm:text-4xl tracking-widest uppercase font-athletic drop-shadow-md">
@@ -279,7 +279,7 @@
 
     <div class="w-full bg-white/5 border border-white/10 py-1.5 px-3 rounded-lg text-center text-gray-300 text-[11px] sm:text-xs flex items-center justify-center gap-2 flex-wrap">
       <span class="text-[#FDE802] font-bold">💡 Kart Bilgisi:</span>
-      <span>Kapalı kartların sol yüzeyinde sırasıyla <strong>Sezon</strong>, <strong>Mevki/Pozisyon</strong> ve <strong>Lig Maçı Sayısı</strong> yer alır.</span>
+      <span>Kart üzerinde sırasıyla <strong>Sezon</strong>, <strong>Mevki/Pozisyon</strong> ve <strong>Lig Maçı Sayısı</strong> yer alır.</span>
     </div>
   </div>
 
@@ -429,9 +429,11 @@
     let isMuted = false;
     let currentUsername = localStorage.getItem('cubuklu11_username') || null;
 
-    // --- MOD SEÇİMİ VE GA4 TAKİP MANTIĞI ---
+    // --- MOD SEÇİMİ VE KULLANICI ADI POPUP AKIŞI ---
     function openModeModal() {
-      document.getElementById('mode-modal').style.display = 'flex';
+      const modeModal = document.getElementById('mode-modal');
+      modeModal.classList.remove('hidden');
+      modeModal.style.display = 'flex';
     }
 
     function selectMode(modeKey) {
@@ -440,9 +442,13 @@
           mode_name: modeKey 
         });
       }
-      document.getElementById('mode-modal').style.display = 'none';
+      
+      const modeModal = document.getElementById('mode-modal');
+      modeModal.classList.add('hidden');
+      modeModal.style.display = 'none';
 
-      if (!currentUsername) {
+      const savedUser = localStorage.getItem('cubuklu11_username');
+      if (!savedUser) {
         openUsernameModal();
       }
     }
@@ -470,7 +476,9 @@
     }
 
     function openUsernameModal() {
-      document.getElementById('username-modal').style.display = 'flex';
+      const uModal = document.getElementById('username-modal');
+      uModal.classList.remove('hidden');
+      uModal.style.display = 'flex';
     }
 
     function saveUsername() {
@@ -480,16 +488,23 @@
         localStorage.setItem('cubuklu11_username', currentUsername);
       } else {
         currentUsername = "Anonim_Kanarya";
+        localStorage.setItem('cubuklu11_username', currentUsername);
       }
       updateUserDisplay();
-      document.getElementById('username-modal').style.display = 'none';
+
+      const uModal = document.getElementById('username-modal');
+      uModal.classList.add('hidden');
+      uModal.style.display = 'none';
     }
 
     function playAnonymous() {
       currentUsername = "Anonim_Kanarya";
       localStorage.setItem('cubuklu11_username', currentUsername);
       updateUserDisplay();
-      document.getElementById('username-modal').style.display = 'none';
+
+      const uModal = document.getElementById('username-modal');
+      uModal.classList.add('hidden');
+      uModal.style.display = 'none';
     }
 
     function updateUserDisplay() {
@@ -499,6 +514,7 @@
     async function openLeaderboard() {
       const modal = document.getElementById('leaderboard-modal');
       const list = document.getElementById('leaderboard-list');
+      modal.classList.remove('hidden');
       modal.style.display = 'flex';
       list.innerHTML = '<div class="text-center text-gray-400 py-4">Yükleniyor...</div>';
       
@@ -534,7 +550,9 @@
     }
 
     function closeLeaderboard() {
-      document.getElementById('leaderboard-modal').style.display = 'none';
+      const modal = document.getElementById('leaderboard-modal');
+      modal.classList.add('hidden');
+      modal.style.display = 'none';
     }
 
     async function saveScoreToSupabase(seasonResult) {
@@ -851,12 +869,16 @@
     async function initApp() {
       openModeModal();
 
-      document.getElementById('file-loader-container').style.display = 'flex';
+      const loader = document.getElementById('file-loader-container');
+      loader.classList.remove('hidden');
+      loader.style.display = 'flex';
 
       try {
         const { data, error } = await supabaseClient.from(SUPABASE_TABLE_NAME).select('*');
         if (error) throw error;
-        document.getElementById('file-loader-container').style.display = 'none';
+        
+        loader.classList.add('hidden');
+        loader.style.display = 'none';
         
         engine = new BrowserDraftEngine(data);
         currentRoundData = engine.startDraft();
@@ -871,6 +893,22 @@
     }
 
     window.addEventListener('DOMContentLoaded', initApp);
+
+    // --- SAYFA YENİLEMEDEN DRAFT'I SIFIRLAMA ---
+    function restartDraft() {
+      if (!engine) return;
+
+      currentRoundData = engine.startDraft();
+      lastSeasonResult = null;
+
+      document.getElementById("dynamic-score-display").innerText = "ÇUBUKLUDRAFT KADROSU";
+      document.getElementById("sub-title").innerText = "99-00 ve 25-26 sezonları arasındaki Fenerbahçe karması ile 34/34 yapabilecek misin?";
+
+      renderPitchView([]);
+      updateSquadBar([]);
+
+      renderRound(currentRoundData);
+    }
 
     function renderRound(round) {
       document.getElementById("round-indicator").innerText = `Tur: ${round.round_number} / ${round.total_rounds}`;
@@ -1067,7 +1105,7 @@
                       <button onclick="shareSquadImage()" class="flex-1 bg-white text-[#0B132B] font-athletic text-base sm:text-lg py-2.5 rounded-xl hover:bg-[#FDE802] transition-all shadow-lg flex items-center justify-center gap-1.5">
                         📷 KADROYU İNDİR
                       </button>
-                      <button onclick="location.reload()" class="flex-1 bg-[#FDE802] text-[#0B132B] font-athletic text-base sm:text-lg py-2.5 rounded-xl hover:bg-white transition-all shadow-lg">
+                      <button onclick="restartDraft()" class="flex-1 bg-[#FDE802] text-[#0B132B] font-athletic text-base sm:text-lg py-2.5 rounded-xl hover:bg-white transition-all shadow-lg">
                         🔄 YENİ DRAFT
                       </button>
                     </div>
@@ -1265,11 +1303,14 @@
         <p><strong>Web:</strong> https://cubuklu11.win</p>`;
       }
 
+      modal.classList.remove('hidden');
       modal.style.display = 'flex';
     }
 
     function closeInfoModal() {
-      document.getElementById('info-modal').style.display = 'none';
+      const modal = document.getElementById('info-modal');
+      modal.classList.add('hidden');
+      modal.style.display = 'none';
     }
   </script>
 
