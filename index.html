@@ -38,8 +38,9 @@
     body { font-family: 'Nunito', sans-serif; }
 
     .draft-card {
+      position: relative;
       width: 180px;
-      height: 240px;
+      height: 240px; /* 3:4 Oranı (180x240) */
       flex-shrink: 0;
       perspective: 1000px;
       cursor: pointer;
@@ -49,7 +50,7 @@
     @media (min-width: 640px) {
       .draft-card {
         width: 210px;
-        height: 280px;
+        height: 280px; /* 3:4 Oranı (210x280) */
       }
     }
 
@@ -984,12 +985,10 @@
             // Kart çevrildikten sonra tıklama dinleyicisini kaldır
             cardContainer.removeEventListener("click", handleFirstClick);
 
-            // Kartın üzerine "KADROYA EKLE 🟡🔵" butonunu ekle
+            // Kartın ÜZERİNE BİNMEYECEK, doğrudan ALTINA yerleşecek onay butonu
             setTimeout(() => {
-              const cardBack = cardContainer.querySelector('.draft-card-back');
-              
               const actionBtn = document.createElement('button');
-              actionBtn.className = "absolute bottom-3 left-1/2 -translate-x-1/2 bg-[#FDE802] text-[#0B132B] font-athletic text-sm px-3 py-1.5 rounded-lg shadow-lg hover:scale-105 transition-all z-30 font-bold whitespace-nowrap animate-bounce";
+              actionBtn.className = "absolute top-[104%] left-1/2 -translate-x-1/2 bg-[#FDE802] text-[#0B132B] font-athletic text-sm sm:text-base px-4 py-1.5 rounded-xl shadow-2xl hover:scale-105 transition-all z-50 font-bold whitespace-nowrap animate-bounce cursor-pointer border-2 border-[#0B132B]";
               actionBtn.innerHTML = "KADROYA EKLE 🟡🔵";
               
               actionBtn.onclick = (e) => {
@@ -998,7 +997,7 @@
                 animateCardFlyToPitch(cardContainer, player, round);
               };
 
-              cardBack.appendChild(actionBtn);
+              cardContainer.appendChild(actionBtn);
             }, 300);
 
           }, 600);
