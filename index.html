@@ -951,7 +951,7 @@
 
         const cardInner = cardContainer.querySelector('.draft-card-inner');
 
-        cardContainer.addEventListener("click", () => {
+        cardContainer.addEventListener("click", function handleFirstClick() {
           if (cardContainer.classList.contains("selected-animating")) return;
           
           playSound('click');
@@ -981,9 +981,25 @@
             cardInner.classList.add("is-flipped");
             playSound('drum');
 
+            // Kart çevrildikten sonra tıklama dinleyicisini kaldır
+            cardContainer.removeEventListener("click", handleFirstClick);
+
+            // Kartın üzerine "KADROYA EKLE 🟡🔵" butonunu ekle
             setTimeout(() => {
-              animateCardFlyToPitch(cardContainer, player, round);
-            }, 1000);
+              const cardBack = cardContainer.querySelector('.draft-card-back');
+              
+              const actionBtn = document.createElement('button');
+              actionBtn.className = "absolute bottom-3 left-1/2 -translate-x-1/2 bg-[#FDE802] text-[#0B132B] font-athletic text-sm px-3 py-1.5 rounded-lg shadow-lg hover:scale-105 transition-all z-30 font-bold whitespace-nowrap animate-bounce";
+              actionBtn.innerHTML = "KADROYA EKLE 🟡🔵";
+              
+              actionBtn.onclick = (e) => {
+                e.stopPropagation();
+                actionBtn.remove();
+                animateCardFlyToPitch(cardContainer, player, round);
+              };
+
+              cardBack.appendChild(actionBtn);
+            }, 300);
 
           }, 600);
         });
