@@ -986,20 +986,21 @@
             cardContainer.removeEventListener("click", handleFirstClick);
 
             // Sarı zemin üzerine lacivert font, lacivert ok işareti ve tam kart altına ortalanmış buton
-            setTimeout(() => {
-              const actionBtn = document.createElement('button');
-              actionBtn.className = "absolute top-[104%] left-1/2 -translate-x-1/2 bg-[#FDE802] text-[#0B132B] font-athletic text-sm sm:text-base px-5 py-2 rounded-xl shadow-2xl hover:scale-105 transition-all z-50 font-bold whitespace-nowrap animate-bounce cursor-pointer border-2 border-[#0B132B] flex items-center justify-center gap-2";
-              actionBtn.innerHTML = `<span>KADROYA EKLE</span><span class="text-[#0B132B] font-black text-lg">➔</span>`;
-              
-              actionBtn.onclick = (e) => {
-                e.stopPropagation();
-                actionBtn.remove();
-                animateCardFlyToPitch(cardContainer, player, round);
-              };
+setTimeout(() => {
+  const actionBtn = document.createElement('button');
+  // 'left-1/2 -translate-x-1/2' yerine 'inset-x-0 mx-auto w-max' kullanılarak animate-bounce çakışması çözüldü
+  actionBtn.className = "absolute top-[104%] inset-x-0 mx-auto w-max bg-[#FDE802] text-[#0B132B] font-athletic text-sm sm:text-base px-5 py-2 rounded-xl shadow-2xl hover:scale-105 transition-all z-50 font-bold whitespace-nowrap animate-bounce cursor-pointer border-2 border-[#0B132B] flex items-center justify-center gap-2";
+  
+  actionBtn.innerHTML = `<span>KADROYA EKLE</span><span class="text-[#0B132B] font-black text-lg">➔</span>`;
+  
+  actionBtn.onclick = (e) => {
+    e.stopPropagation();
+    actionBtn.remove();
+    animateCardFlyToPitch(cardContainer, player, round);
+  };
 
-              cardContainer.appendChild(actionBtn);
-            }, 300);
-
+  cardContainer.appendChild(actionBtn);
+}, 300);
           }, 600);
         });
 
