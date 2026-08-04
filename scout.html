@@ -37,11 +37,11 @@
     .font-athletic { font-family: 'Bebas Neue', sans-serif; }
     body { font-family: 'Nunito', sans-serif; }
 
-    /* Generated Card Boyutları ve Stil Uyumları */
+    /* Generated Card Boyutları (%15 Büyütüldü) */
     .scout-card {
       position: relative;
-      width: 150px;
-      height: 225px;
+      width: 172px;
+      height: 258px;
       flex-shrink: 0;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -51,18 +51,13 @@
     
     @media (min-width: 640px) {
       .scout-card {
-        width: 180px;
-        height: 270px;
+        width: 207px;
+        height: 310px;
       }
     }
 
     .scout-card:hover {
-      transform: translateY(-5px) scale(1.03);
-    }
-
-    .scout-card.active-selected .card-image-wrapper {
-      border-color: #FDE802 !important;
-      box-shadow: 0 0 25px rgba(253, 232, 2, 0.7) !important;
+      transform: translateY(-6px) scale(1.03);
     }
 
     .football-pitch {
@@ -217,7 +212,7 @@
   <!-- Scout Rehber Mesajı -->
   <div class="w-full max-w-[1600px] mx-auto flex flex-col gap-2 mb-4">
     <div id="stats-message" class="w-full text-center font-bold text-[#FDE802] bg-[#FDE802]/10 border border-[#FDE802]/20 py-2 rounded-xl text-xs sm:text-sm shadow-sm">
-      🔍 Scout Analizi: Kart görselleri doğrudan üretilmiş orijinal retro kartlardır.
+      🔍 Scout Analizi: İstediğin karta tıklayarak doğrudan kadrona ekleyebilirsin.
     </div>
   </div>
 
@@ -232,12 +227,12 @@
   </div>
 
   <!-- Ana Oyun Alanı -->
-  <div class="w-full max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start my-auto">
+  <div class="w-full max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start my-auto">
     
-    <!-- Sol Panel: Açık Scout Kartları -->
-    <div class="lg:col-span-5 flex flex-col justify-between items-center px-2 sm:px-4 min-h-[500px] lg:h-[600px]">
+    <!-- Sol Panel: Açık Scout Kartları (Araları Yaklaştırıldı & Çerçevesiz) -->
+    <div class="lg:col-span-5 flex flex-col justify-between items-center px-1 sm:px-2 min-h-[500px] lg:h-[600px]">
       <h3 id="draft-prompt-title" class="text-[#FDE802] font-athletic text-xl sm:text-2xl tracking-wider mb-2 text-center">SCOUT TURU SEÇİMİ</h3>
-      <div id="board" class="grid grid-cols-2 gap-4 sm:gap-6 w-full justify-items-center my-auto">
+      <div id="board" class="grid grid-cols-2 gap-2 sm:gap-3.5 w-full justify-items-center my-auto">
         <div class="text-center text-gray-400 col-span-2 py-20">Veriler yükleniyor...</div>
       </div>
       <div class="h-2"></div>
@@ -366,7 +361,6 @@
     let audioCtx = null;
     let isMuted = false;
     let currentUsername = localStorage.getItem('cubuklu11_scout_username') || null;
-    let activeSelectedCardElement = null;
 
     // --- MOD SEÇİMİ VE KULLANICI ADI POPUP AKIŞI ---
     function openModeModal() {
@@ -657,20 +651,28 @@
       }
 
       _initPool() {
-        const eligibleRows = this.rawPool.filter(row => String(row.Eligible || "").trim().toLowerCase() === "yes");
-        const filtered = eligibleRows.filter(row => String(row.Position || "").trim() !== "");
+        const getVal = (obj, prop) => {
+          if (!obj) return "";
+          const key = Object.keys(obj).find(k => k.toLowerCase() === prop.toLowerCase());
+          return key ? obj[key] : "";
+        };
+
+        const eligibleRows = this.rawPool.filter(row => String(getVal(row, "eligible") || "").trim().toLowerCase() === "yes");
+        const filtered = eligibleRows.filter(row => String(getVal(row, "position") || "").trim() !== "");
 
         this.cardPool = filtered.map(row => {
-          const name = String(row.Name || "").trim();
-          const season = String(row.Season || "").trim();
-          const position = String(row.Position || "").trim().toUpperCase();
-          let shirtNum = parseInt(row.Shirt_Number);
-          let matchesCount = row.league_apps || row.League_Apps || row.Matches || null;
+          const name = String(getVal(row, "name") || "").trim();
+          const season = String(getVal(row, "season") || "").trim();
+          const position = String(getVal(row, "position") || "").trim().toUpperCase();
+          let shirtNum = parseInt(getVal(row, "shirt_number"));
+          let matchesCount = getVal(row, "league_apps") || getVal(row, "matches") || null;
+          let playerId = getVal(row, "player_id");
+          let tmId = getVal(row, "transfermarkt_player_id");
 
-          const playerKey = row.Player_ID ? `id_${row.Player_ID}` : this._normalizeText(name);
+          const playerKey = playerId ? `id_${playerId}` : this._normalizeText(name);
           const cardId = `${playerKey}_${this._normalizeText(season)}_${this._normalizeText(position)}`;
-          const imgFilename = `${row.Transfermarkt_Player_ID}_${season}.png`;
-          const imagePath = `${SUPABASE_URL}/storage/v1/object/public/Generated\%20Cards/${imgFilename}`;
+          const imgFilename = `${tmId}_${season}.png`;
+          const imagePath = `${SUPABASE_URL}/storage/v1/object/public/Generated%20Cards/${imgFilename}`;
 
           return {
             card_id: cardId,
@@ -679,9 +681,9 @@
             season: season,
             position: position,
             shirt_number: !isNaN(shirtNum) ? shirtNum : null,
-            country_code: String(row.Country_Code || "").trim(),
+            country_code: String(getVal(row, "country_code") || "").trim(),
             image_path: imagePath,
-            overall_rating: parseFloat(row.Overall_Rating) || 75,
+            overall_rating: parseFloat(getVal(row, "overall_rating")) || 75,
             matches: matchesCount
           };
         });
@@ -770,7 +772,7 @@
       loader.style.display = 'flex';
 
       try {
-        const { data, error } = await supabaseClient.from(SUPABASE_TABLE_NAME).select('*');
+        const { data, error } = await supabaseClient.from(SUPABASE_TABLE_NAME).select('*').range(0, 3000);
         if (error) throw error;
         
         loader.classList.add('hidden');
@@ -803,48 +805,28 @@
       renderRound(currentRoundData);
     }
 
-    // --- SCOUT MODU AÇIK KART RENDER ETME (GENERATED CARDS) ---
+    // --- SCOUT MODU AÇIK KART RENDER ETME (Dış Çerçevesiz & Doğrudan Tıklama) ---
     function renderRound(round) {
       document.getElementById("round-indicator").innerText = `Tur: ${round.round_number} / ${round.total_rounds}`;
       document.getElementById("draft-prompt-title").innerText = `SCOUT: ${round.stage_name} SEÇİMİ (${round.stage_round}/${round.stage_total})`;
       
       const board = document.getElementById("board");
       board.innerHTML = "";
-      activeSelectedCardElement = null;
 
       round.options.forEach(player => {
         const cardContainer = document.createElement("div");
         cardContainer.className = "scout-card flex flex-col items-center justify-center relative";
 
         cardContainer.innerHTML = `
-          <div class="card-image-wrapper w-full h-full rounded-xl overflow-hidden shadow-2xl border-2 border-white/20 hover:border-[#FDE802] transition-all bg-[#070c1b]">
+          <div class="card-image-wrapper w-full h-full rounded-xl overflow-hidden shadow-2xl transition-all">
             <img src="${player.image_path}" crossorigin="anonymous" alt="${player.name}" class="w-full h-full object-contain select-none pointer-events-none" onerror="this.src='https://sqecxfgbdfdebyaocrce.supabase.co/storage/v1/object/public/Generated%20Cards/Gemini_Generated31.PNG'">
           </div>
         `;
 
+        // Tıklandığı an doğrudan kadroya uçur ve ekle
         cardContainer.addEventListener("click", function handleCardClick(e) {
           e.stopPropagation();
-          playSound('click');
-
-          // Önceki seçili butonu ve vurguyu kaldır
-          document.querySelectorAll('.scout-action-btn').forEach(btn => btn.remove());
-          document.querySelectorAll('.scout-card').forEach(c => c.classList.remove('active-selected'));
-
-          cardContainer.classList.add('active-selected');
-          activeSelectedCardElement = cardContainer;
-
-          // Kartın altına ortalanarak yerleşen KADROYA EKLE butonu
-          const actionBtn = document.createElement('button');
-          actionBtn.className = "scout-action-btn absolute top-[103%] inset-x-0 mx-auto w-max bg-[#FDE802] text-[#0B132B] font-athletic text-sm sm:text-base px-5 py-2 rounded-xl shadow-2xl hover:scale-105 transition-all z-50 font-bold whitespace-nowrap animate-bounce cursor-pointer border-2 border-[#0B132B] flex items-center justify-center gap-2";
-          actionBtn.innerHTML = `<span>KADROYA EKLE</span><span class="text-[#0B132B] font-black text-lg">➔</span>`;
-
-          actionBtn.onclick = (btnEvt) => {
-            btnEvt.stopPropagation();
-            actionBtn.remove();
-            animateCardFlyToPitch(cardContainer, player, round);
-          };
-
-          cardContainer.appendChild(actionBtn);
+          animateCardFlyToPitch(cardContainer, player, round);
         });
 
         board.appendChild(cardContainer);
