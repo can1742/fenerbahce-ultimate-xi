@@ -141,9 +141,9 @@
                 <button class="bg-[#090f20] hover:bg-[#131b35] border border-[#162038] text-slate-200 px-3 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer">
                     <span>👤</span> Anonim_Scout
                 </button>
-                <button onclick="openModalsMenu()" class="bg-[#090f20] hover:bg-[#131b35] border border-yellow-500/40 text-fb-yellow px-3 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer">
-                    <span>🎮</span> Modlar
-                </button>
+                <button onclick="openModeModal()" class="bg-[#090f20] hover:bg-[#131b35] border border-yellow-500/40 text-fb-yellow px-3 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer">
+    <span>🎮</span> Modlar
+</button>
                 <button onclick="openLeaderboard()" class="bg-[#090f20] hover:bg-[#131b35] border border-yellow-500/40 text-fb-yellow px-3 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer">
                     <span>🏆</span> Sıralama
                 </button>
@@ -664,6 +664,28 @@
             document.getElementById('leaderboard-modal').classList.add('hidden');
         }
 // Modal Açma / Kapatma
+        // --- MODAL AÇMA / KAPATMA FONKSİYONLARI ---
+function openModeModal() {
+    playSound('click');
+    const modeModal = document.getElementById('mode-modal');
+    if (modeModal) {
+        modeModal.classList.remove('hidden');
+        modeModal.style.display = 'flex';
+    }
+}
+
+function closeModeModal() {
+    playSound('click');
+    const modeModal = document.getElementById('mode-modal');
+    if (modeModal) {
+        modeModal.classList.add('hidden');
+        modeModal.style.display = 'none';
+    }
+}
+
+// Eski fonksiyon çağrıları kırılmasın diye yönlendirme eklendi
+function openModalsMenu() { openModeModal(); }
+function closeModalsMenu() { closeModeModal(); }
 // --- MOD SEÇİMİ VE YÖNLENDİRME AKIŞI ---
     function openModeModal() {
       const modeModal = document.getElementById('mode-modal');
