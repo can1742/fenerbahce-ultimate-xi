@@ -411,11 +411,11 @@
           <div class="pr-2">
             <div class="text-white group-hover:text-[#FDE802] font-bold text-base sm:text-lg transition-colors flex items-center gap-1.5">
               <span>👔 Teknik Direktör Modu</span>
-              <span class="text-xs font-normal text-amber-400 font-semibold">(Canlıda)</span>
+              <span class="text-xs font-normal text-amber-400 font-semibold"></span>
             </div>
             <div class="text-gray-400 text-xs mt-0.5 leading-relaxed">Bütçe kısıtlaması ve taktiksel görevlerle tam menajerlik deneyimi.</div>
           </div>
-          <span class="bg-gradient-to-r from-[#FDE802] to-amber-400 text-[#0B132B] text-[11px] font-black px-3 py-1.5 rounded-lg shrink-0 group-hover:scale-105 transition-transform">YENİ / OYNA</span>
+          <span class="bg-gradient-to-r from-[#FDE802] to-amber-400 text-[#0B132B] text-[11px] font-black px-3 py-1.5 rounded-lg shrink-0 group-hover:scale-105 transition-transform">OYNA</span>
         </div>
 
       </div>
@@ -664,43 +664,46 @@
             document.getElementById('leaderboard-modal').classList.add('hidden');
         }
 // Modal Açma / Kapatma
-function openModeModal() {
-  const modeModal = document.getElementById('mode-modal');
-  modeModal.classList.remove('hidden');
-  modeModal.style.display = 'flex';
-}
+// --- MOD SEÇİMİ VE YÖNLENDİRME AKIŞI ---
+    function openModeModal() {
+      const modeModal = document.getElementById('mode-modal');
+      modeModal.classList.remove('hidden');
+      modeModal.style.display = 'flex';
+    }
 
-function closeModeModal() {
-  const modeModal = document.getElementById('mode-modal');
-  modeModal.classList.add('hidden');
-  modeModal.style.display = 'none';
-}
+    function closeModeModal() {
+      const modeModal = document.getElementById('mode-modal');
+      modeModal.classList.add('hidden');
+      modeModal.style.display = 'none';
+    }
 
-// Mevcut sayfadaki mod seçimi (Blind Draft)
-function selectMode(modeKey) {
-  if (typeof gtag === 'function') {
-    gtag('event', 'select_mode', { 
-      mode_name: modeKey 
-    });
-  }
-  
-  closeModeModal();
+    // Mevcut sayfadaki mod seçimi (Blind Draft)
+    function selectMode(modeKey) {
+      if (typeof gtag === 'function') {
+        gtag('event', 'select_mode', { 
+          mode_name: modeKey 
+        });
+      }
+      
+      closeModeModal();
 
-  const savedUser = localStorage.getItem('cubuklu11_username');
-  if (!savedUser) {
-    openUsernameModal();
-  }
-}
+      const savedUser = localStorage.getItem('cubuklu11_username');
+      if (!savedUser) {
+        openUsernameModal();
+      }
+    }
 
-// Yeni sayfalara yönlendiren mod seçimi (Scout ve Manager Modları)
-function navigateToMode(modeKey, targetUrl) {
-  if (typeof gtag === 'function') {
-    gtag('event', 'select_mode', { 
-      mode_name: modeKey 
-    });
-  }
-  window.location.href = targetUrl;
-}
+    // Yeni sayfalara yönlendiren mod seçimi (Scout ve Manager Modları)
+    function navigateToMode(modeKey, targetUrl) {
+      if (typeof gtag === 'function') {
+        gtag('event', 'select_mode', { 
+          mode_name: modeKey 
+        });
+      }
+      window.location.href = targetUrl;
+    }
+
+    // --- KULLANICI ADI & LİDERLİK TABLOSU ---
         function parseNum(val) {
             if (val === null || val === undefined) return 0;
             if (typeof val === 'number') return isNaN(val) ? 0 : val;
