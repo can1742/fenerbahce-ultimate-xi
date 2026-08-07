@@ -98,28 +98,28 @@
 
       <div class="flex flex-col gap-3.5 text-left">
         
-        <!-- Mod 1: Blind Draft (Nostalji Modu - Mevcut Sayfa) -->
-        <div onclick="selectMode('blind_draft')" class="bg-[#FDE802]/15 border-2 border-[#FDE802] p-4 rounded-xl cursor-pointer hover:bg-[#FDE802]/25 hover:scale-[1.01] transition-all flex items-center justify-between group shadow-lg shadow-[#FDE802]/5">
-          <div class="pr-2">
-            <div class="text-[#FDE802] font-bold text-base sm:text-lg flex items-center gap-1.5">
-              <span>⭐ Blind Draft</span>
-              <span class="text-xs font-normal text-gray-300">(Nostalji Modu)</span>
-            </div>
-            <div class="text-gray-300 text-xs mt-0.5 leading-relaxed">Kart yüzleri kapalı! 99-00 ve 25-26 arası nostaljik Fenerbahçe karması.</div>
-          </div>
-          <span class="bg-[#FDE802] text-[#0B132B] text-[11px] font-black px-3 py-1.5 rounded-lg shrink-0 group-hover:scale-105 transition-transform">AKTİF MOD</span>
-        </div>
-
-        <!-- Mod 2: Scout Modu (scout.html) -->
-        <div onclick="navigateToMode('scout', 'scout.html')" class="bg-white/5 border border-white/20 p-4 rounded-xl cursor-pointer hover:bg-white/10 hover:border-[#FDE802]/60 hover:scale-[1.01] transition-all flex items-center justify-between group">
+        <!-- Mod 1: Blind Draft (index.html) -->
+        <div onclick="navigateToMode('blind_draft', 'index.html')" class="bg-white/5 border border-white/20 p-4 rounded-xl cursor-pointer hover:bg-white/10 hover:border-[#FDE802]/60 hover:scale-[1.01] transition-all flex items-center justify-between group">
           <div class="pr-2">
             <div class="text-white group-hover:text-[#FDE802] font-bold text-base sm:text-lg transition-colors flex items-center gap-1.5">
-              <span>🔍 Scout Modu</span>
-              <span class="text-xs font-normal text-gray-400">(Açık Kartlar)</span>
+              <span>⭐ Blind Draft</span>
+              <span class="text-xs font-normal text-gray-400">(Nostalji Modu)</span>
             </div>
-            <div class="text-gray-400 text-xs mt-0.5 leading-relaxed">Kart istatistiklerini ve OVR reytinglerini görerek en ideal kadroyu kur!</div>
+            <div class="text-gray-400 text-xs mt-0.5 leading-relaxed">Kart yüzleri kapalı! 99-00 ve 25-26 arası nostaljik Fenerbahçe karması.</div>
           </div>
           <span class="bg-gradient-to-r from-[#FDE802] to-amber-400 text-[#0B132B] text-[11px] font-black px-3 py-1.5 rounded-lg shrink-0 group-hover:scale-105 transition-transform">OYNA</span>
+        </div>
+
+        <!-- Mod 2: Scout Modu (Mevcut Sayfa) -->
+        <div onclick="selectMode('scout')" class="bg-[#FDE802]/15 border-2 border-[#FDE802] p-4 rounded-xl cursor-pointer hover:bg-[#FDE802]/25 hover:scale-[1.01] transition-all flex items-center justify-between group shadow-lg shadow-[#FDE802]/5">
+          <div class="pr-2">
+            <div class="text-[#FDE802] font-bold text-base sm:text-lg flex items-center gap-1.5">
+              <span>🔍 Scout Modu</span>
+              <span class="text-xs font-normal text-gray-300">(Açık Kartlar)</span>
+            </div>
+            <div class="text-gray-300 text-xs mt-0.5 leading-relaxed">Kart istatistiklerini ve OVR reytinglerini görerek en ideal kadroyu kur!</div>
+          </div>
+          <span class="bg-[#FDE802] text-[#0B132B] text-[11px] font-black px-3 py-1.5 rounded-lg shrink-0 group-hover:scale-105 transition-transform">AKTİF MOD</span>
         </div>
 
         <!-- Mod 3: Teknik Direktör Modu (manager.html) -->
@@ -127,7 +127,6 @@
           <div class="pr-2">
             <div class="text-white group-hover:text-[#FDE802] font-bold text-base sm:text-lg transition-colors flex items-center gap-1.5">
               <span>👔 Teknik Direktör Modu</span>
-              <span class="text-xs font-normal text-amber-400 font-semibold"></span>
             </div>
             <div class="text-gray-400 text-xs mt-0.5 leading-relaxed">Bütçe kısıtlaması ve taktiksel görevlerle tam menajerlik deneyimi.</div>
           </div>
@@ -377,69 +376,48 @@
     let isMuted = false;
     let currentUsername = localStorage.getItem('cubuklu11_scout_username') || null;
 
-    // --- MOD SEÇİMİ VE KULLANICI ADI POPUP AKIŞI ---
     // --- MODAL AÇMA / KAPATMA FONKSİYONLARI ---
-function openModeModal() {
-    playSound('click');
-    const modeModal = document.getElementById('mode-modal');
-    if (modeModal) {
+    function openModeModal() {
+      playSound('click');
+      const modeModal = document.getElementById('mode-modal');
+      if (modeModal) {
         modeModal.classList.remove('hidden');
         modeModal.style.display = 'flex';
-    }
-}
-
-function closeModeModal() {
-    playSound('click');
-    const modeModal = document.getElementById('mode-modal');
-    if (modeModal) {
-        modeModal.classList.add('hidden');
-        modeModal.style.display = 'none';
-    }
-}
-
-// Eski fonksiyon çağrıları kırılmasın diye yönlendirme eklendi
-function openModalsMenu() { openModeModal(); }
-function closeModalsMenu() { closeModeModal(); }
- // --- MOD SEÇİMİ VE YÖNLENDİRME AKIŞI ---
-    function openModeModal() {
-      const modeModal = document.getElementById('mode-modal');
-      modeModal.classList.remove('hidden');
-      modeModal.style.display = 'flex';
+      }
     }
 
     function closeModeModal() {
+      playSound('click');
       const modeModal = document.getElementById('mode-modal');
-      modeModal.classList.add('hidden');
-      modeModal.style.display = 'none';
+      if (modeModal) {
+        modeModal.classList.add('hidden');
+        modeModal.style.display = 'none';
+      }
     }
 
-    // Mevcut sayfadaki mod seçimi (Blind Draft)
+    function openModalsMenu() { openModeModal(); }
+    function closeModalsMenu() { closeModeModal(); }
+
+    // --- MOD SEÇİMİ VE YÖNLENDİRME AKIŞI ---
     function selectMode(modeKey) {
       if (typeof gtag === 'function') {
-        gtag('event', 'select_mode', { 
-          mode_name: modeKey 
-        });
+        gtag('event', 'select_mode', { mode_name: modeKey });
       }
       
       closeModeModal();
 
-      const savedUser = localStorage.getItem('cubuklu11_username');
+      const savedUser = localStorage.getItem('cubuklu11_scout_username');
       if (!savedUser) {
         openUsernameModal();
       }
     }
 
-    // Yeni sayfalara yönlendiren mod seçimi (Scout ve Manager Modları)
     function navigateToMode(modeKey, targetUrl) {
       if (typeof gtag === 'function') {
-        gtag('event', 'select_mode', { 
-          mode_name: modeKey 
-        });
+        gtag('event', 'select_mode', { mode_name: modeKey });
       }
       window.location.href = targetUrl;
     }
-
-    // --- KULLANICI ADI & LİDERLİK TABLOSU ---
 
     // --- KULLANICI ADI & LİDERLİK TABLOSU ---
     const BAD_WORDS = ["gs", "bjk", "ts", "fetö", "sik", "piç", "yarrak", "amk", "aq", "oc", "orospu"];
@@ -816,7 +794,7 @@ function closeModalsMenu() { closeModeModal(); }
     let lastSeasonResult = null;
 
     async function initApp() {
-      openModeModal();
+      // openModeModal() kaldırıldı, sayfa yüklendiğinde artık doğrudan oyuna başlıyor.
 
       const loader = document.getElementById('file-loader-container');
       loader.classList.remove('hidden');
