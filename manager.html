@@ -76,7 +76,7 @@
             }
         }
  
-        /* SAHA İÇİ KUTULARI (Öncekinden %5 daha küçük, 4:3 Oranlı) */
+        /* SAHA İÇİ KUTULARI */
         .pitch-slot-box {
             width: 3.15rem;
             height: 4.20rem;
@@ -136,14 +136,15 @@
                 </span>
             </div>
 
-            <!-- Kullanıcı Menü Butonları -->
+            <!-- Kullanıcı Menü Butonları & User ID Alanı -->
             <div class="flex items-center gap-2 text-xs font-bold flex-wrap justify-center">
-                <button class="bg-[#090f20] hover:bg-[#131b35] border border-[#162038] text-slate-200 px-3 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer">
-                    <span>👤</span> Anonim_Scout
+                <!-- User ID Gösterge ve Düzenleme Butonu -->
+                <button onclick="promptUserId()" class="bg-[#090f20] hover:bg-[#131b35] border border-fb-yellow/40 text-fb-yellow px-3 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer" title="User ID Değiştir">
+                    <span>🆔</span> <span id="header-user-id-display">ID: Yükleniyor...</span>
                 </button>
                 <button onclick="openModeModal()" class="bg-[#090f20] hover:bg-[#131b35] border border-yellow-500/40 text-fb-yellow px-3 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer">
-    <span>🎮</span> Modlar
-</button>
+                    <span>🎮</span> Modlar
+                </button>
                 <button onclick="openLeaderboard()" class="bg-[#090f20] hover:bg-[#131b35] border border-yellow-500/40 text-fb-yellow px-3 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer">
                     <span>🏆</span> Sıralama
                 </button>
@@ -218,11 +219,6 @@
                     <span class="shrink-0 text-[10px] font-bold bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg border border-slate-700 group-hover:bg-fb-yellow group-hover:text-slate-950">ÇOK YAKINDA</span>
                 </div>
             </button>
-
-            <div class="text-center py-2 bg-[#040711] border border-[#162038] rounded-xl">
-                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3518417094251021" data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-            </div>
         </div>
 
         <!-- EKRAN 2: OYUNCU SEÇİM ALANI & SAĞDA ÇİM SAHA -->
@@ -249,7 +245,12 @@
                 </div>
 
                 <!-- OYUNCU KARTLARI LİSTESİ -->
-                <div id="player-cards-container" class="flex-1 overflow-y-auto space-y-2 pr-1 no-scrollbar"></div><div class="mt-3 pt-3 border-t border-[#162038] flex justify-between items-center"><button id="player-prev-page" onclick="changePlayerPage(-1)" class="px-3 py-1.5 rounded bg-[#040711] text-xs disabled:opacity-30">← ÖNCEKİ</button><span id="player-page-info" class="text-[10px] font-mono text-slate-400"></span><button id="player-next-page" onclick="changePlayerPage(1)" class="px-3 py-1.5 rounded bg-[#040711] text-xs disabled:opacity-30">SONRAKİ →</button></div>
+                <div id="player-cards-container" class="flex-1 overflow-y-auto space-y-2 pr-1 no-scrollbar"></div>
+                <div class="mt-3 pt-3 border-t border-[#162038] flex justify-between items-center">
+                    <button id="player-prev-page" onclick="changePlayerPage(-1)" class="px-3 py-1.5 rounded bg-[#040711] text-xs disabled:opacity-30">← ÖNCEKİ</button>
+                    <span id="player-page-info" class="text-[10px] font-mono text-slate-400"></span>
+                    <button id="player-next-page" onclick="changePlayerPage(1)" class="px-3 py-1.5 rounded bg-[#040711] text-xs disabled:opacity-30">SONRAKİ →</button>
+                </div>
             </div>
 
             <!-- SAĞ PANEL: Çim Saha -->
@@ -311,7 +312,7 @@
             </div>
         </div>
 
-        <!-- EKRAN 3: 2026-27 SEZON KARNESİ -->
+        <!-- EKRAN 4: SEZON KARNESİ -->
         <div id="screen-result" class="hidden max-w-5xl mx-auto w-full space-y-5">
             <div class="bg-[#090f20] border border-[#162038] rounded-2xl p-5 md:p-8 space-y-6 text-center shadow-2xl">
                 <span class="text-xs font-mono text-emerald-400 tracking-widest">2026-27 SEZONU TAMAMLANDI</span>
@@ -336,7 +337,6 @@
                         <strong id="res-global-score" class="block font-bebas text-3xl text-fb-yellow">0</strong>
                     </div>
                 </div>
-
             </div>
 
             <div class="bg-[#090f20] border border-[#162038] rounded-2xl p-4 md:p-6 shadow-2xl text-left">
@@ -344,11 +344,6 @@
                     <div>
                         <h3 class="font-bebas text-2xl text-fb-yellow">FİNAL PUAN DURUMU</h3>
                         <p class="text-[10px] text-slate-400">34 haftalık tam lig simülasyonu tamamlandı.</p>
-                    </div>
-                    <div class="flex gap-2 text-[10px] font-bold">
-                        <span class="px-2 py-1 rounded bg-emerald-500/15 text-emerald-400">G</span>
-                        <span class="px-2 py-1 rounded bg-amber-500/15 text-amber-300">B</span>
-                        <span class="px-2 py-1 rounded bg-red-500/15 text-red-400">M</span>
                     </div>
                 </div>
                 <div class="overflow-x-auto rounded-xl border border-[#162038]">
@@ -362,65 +357,60 @@
         </div>
     </main>
 
-    <!-- OYUNCU DETAY PENCERESİ (2.5 saniye otomatik kapanır) -->
+    <!-- OYUNCU DETAY PENCERESİ -->
     <div id="detail-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="w-full max-w-sm space-y-4 text-center">
             <div id="modal-card-content" class="flex flex-col items-center justify-center min-h-[380px]"></div>
         </div>
     </div>
 
-    <!-- OYUN MODLARI SEÇİM MODALI -->
-   <!-- Oyun Modu Seçim Modalı -->
-  <div id="mode-modal" class="fixed inset-0 bg-[#020617]/95 z-50 flex flex-col items-center justify-center p-6 backdrop-blur-md hidden">
-    <div class="bg-white/5 border border-white/10 p-6 sm:p-8 rounded-2xl max-w-lg w-full text-center shadow-2xl relative">
-      
-      <!-- Kapatma Butonu -->
-      <button onclick="closeModeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white font-bold text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-all">&times;</button>
-      
-      <h2 class="text-[#FDE802] font-athletic text-3xl sm:text-4xl mb-1 tracking-wide">🎮 OYUN MODUNU SEÇ</h2>
-      <p class="text-gray-300 text-xs sm:text-sm mb-6">Oynamak istediğin konsepti seç ve kadronu kurmaya başla!</p>
+    <!-- OYUN MODLARI SEÇİM MODALI (Menajer Modu Aktif) -->
+    <div id="mode-modal" class="fixed inset-0 bg-[#020617]/95 z-50 flex flex-col items-center justify-center p-6 backdrop-blur-md hidden">
+        <div class="bg-white/5 border border-white/10 p-6 sm:p-8 rounded-2xl max-w-lg w-full text-center shadow-2xl relative">
+            <button onclick="closeModeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white font-bold text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-all">&times;</button>
+            
+            <h2 class="text-[#FDE802] font-athletic text-3xl sm:text-4xl mb-1 tracking-wide">🎮 OYUN MODUNU SEÇ</h2>
+            <p class="text-gray-300 text-xs sm:text-sm mb-6">Oynamak istediğin konsepti seç ve kadronu kurmaya başla!</p>
 
-      <div class="flex flex-col gap-3.5 text-left">
-        
-        <!-- Mod 1: Blind Draft (Nostalji Modu - Mevcut Sayfa) -->
-        <div onclick="selectMode('blind_draft')" class="bg-[#FDE802]/15 border-2 border-[#FDE802] p-4 rounded-xl cursor-pointer hover:bg-[#FDE802]/25 hover:scale-[1.01] transition-all flex items-center justify-between group shadow-lg shadow-[#FDE802]/5">
-          <div class="pr-2">
-            <div class="text-[#FDE802] font-bold text-base sm:text-lg flex items-center gap-1.5">
-              <span>⭐ Blind Draft</span>
-              <span class="text-xs font-normal text-gray-300">(Nostalji Modu)</span>
+            <div class="flex flex-col gap-3.5 text-left">
+                <!-- Mod 1: Blind Draft -->
+                <div onclick="navigateToMode('blind_draft', 'index.html')" class="bg-white/5 border border-white/20 p-4 rounded-xl cursor-pointer hover:bg-white/10 hover:border-[#FDE802]/60 hover:scale-[1.01] transition-all flex items-center justify-between group">
+                    <div class="pr-2">
+                        <div class="text-white group-hover:text-[#FDE802] font-bold text-base sm:text-lg transition-colors flex items-center gap-1.5">
+                            <span>⭐ Blind Draft</span>
+                            <span class="text-xs font-normal text-gray-400">(Nostalji Modu)</span>
+                        </div>
+                        <div class="text-gray-400 text-xs mt-0.5 leading-relaxed">Kart yüzleri kapalı! 99-00 ve 25-26 arası nostaljik Fenerbahçe karması.</div>
+                    </div>
+                    <span class="bg-gradient-to-r from-[#FDE802] to-amber-400 text-[#0B132B] text-[11px] font-black px-3 py-1.5 rounded-lg shrink-0 group-hover:scale-105 transition-transform">OYNA</span>
+                </div>
+
+                <!-- Mod 2: Scout Modu -->
+                <div onclick="navigateToMode('scout', 'scout.html')" class="bg-white/5 border border-white/20 p-4 rounded-xl cursor-pointer hover:bg-white/10 hover:border-[#FDE802]/60 hover:scale-[1.01] transition-all flex items-center justify-between group">
+                    <div class="pr-2">
+                        <div class="text-white group-hover:text-[#FDE802] font-bold text-base sm:text-lg transition-colors flex items-center gap-1.5">
+                            <span>🔍 Scout Modu</span>
+                            <span class="text-xs font-normal text-gray-400">(Açık Kartlar)</span>
+                        </div>
+                        <div class="text-gray-400 text-xs mt-0.5 leading-relaxed">Kart istatistiklerini ve OVR reytinglerini görerek en ideal kadroyu kur!</div>
+                    </div>
+                    <span class="bg-gradient-to-r from-[#FDE802] to-amber-400 text-[#0B132B] text-[11px] font-black px-3 py-1.5 rounded-lg shrink-0 group-hover:scale-105 transition-transform">OYNA</span>
+                </div>
+
+                <!-- Mod 3: Teknik Direktör Modu (Mevcut Sayfa - Aktif) -->
+                <div class="bg-[#FDE802]/15 border-2 border-[#FDE802] p-4 rounded-xl cursor-default flex items-center justify-between shadow-lg shadow-[#FDE802]/5">
+                    <div class="pr-2">
+                        <div class="text-[#FDE802] font-bold text-base sm:text-lg flex items-center gap-1.5">
+                            <span>👔 Teknik Direktör Modu</span>
+                        </div>
+                        <div class="text-gray-300 text-xs mt-0.5 leading-relaxed">Bütçe kısıtlaması ve taktiksel görevlerle tam menajerlik deneyimi.</div>
+                    </div>
+                    <span class="bg-[#FDE802] text-[#0B132B] text-[11px] font-black px-3 py-1.5 rounded-lg shrink-0">AKTİF MOD</span>
+                </div>
             </div>
-            <div class="text-gray-300 text-xs mt-0.5 leading-relaxed">Kart yüzleri kapalı! 99-00 ve 25-26 arası nostaljik Fenerbahçe karması.</div>
-          </div>
-          <span class="bg-[#FDE802] text-[#0B132B] text-[11px] font-black px-3 py-1.5 rounded-lg shrink-0 group-hover:scale-105 transition-transform">AKTİF MOD</span>
         </div>
-
-        <!-- Mod 2: Scout Modu (scout.html) -->
-        <div onclick="navigateToMode('scout', 'scout.html')" class="bg-white/5 border border-white/20 p-4 rounded-xl cursor-pointer hover:bg-white/10 hover:border-[#FDE802]/60 hover:scale-[1.01] transition-all flex items-center justify-between group">
-          <div class="pr-2">
-            <div class="text-white group-hover:text-[#FDE802] font-bold text-base sm:text-lg transition-colors flex items-center gap-1.5">
-              <span>🔍 Scout Modu</span>
-              <span class="text-xs font-normal text-gray-400">(Açık Kartlar)</span>
-            </div>
-            <div class="text-gray-400 text-xs mt-0.5 leading-relaxed">Kart istatistiklerini ve OVR reytinglerini görerek en ideal kadroyu kur!</div>
-          </div>
-          <span class="bg-gradient-to-r from-[#FDE802] to-amber-400 text-[#0B132B] text-[11px] font-black px-3 py-1.5 rounded-lg shrink-0 group-hover:scale-105 transition-transform">OYNA</span>
-        </div>
-
-        <!-- Mod 3: Teknik Direktör Modu (manager.html) -->
-        <div onclick="navigateToMode('manager', 'manager.html')" class="bg-white/5 border border-white/20 p-4 rounded-xl cursor-pointer hover:bg-white/10 hover:border-[#FDE802]/60 hover:scale-[1.01] transition-all flex items-center justify-between group">
-          <div class="pr-2">
-            <div class="text-white group-hover:text-[#FDE802] font-bold text-base sm:text-lg transition-colors flex items-center gap-1.5">
-              <span>👔 Teknik Direktör Modu</span>
-              <span class="text-xs font-normal text-amber-400 font-semibold"></span>
-            </div>
-            <div class="text-gray-400 text-xs mt-0.5 leading-relaxed">Bütçe kısıtlaması ve taktiksel görevlerle tam menajerlik deneyimi.</div>
-          </div>
-          <span class="bg-gradient-to-r from-[#FDE802] to-amber-400 text-[#0B132B] text-[11px] font-black px-3 py-1.5 rounded-lg shrink-0 group-hover:scale-105 transition-transform">OYNA</span>
-        </div>
-
-      </div>
     </div>
-  </div>
+
     <!-- NOSTALJİ SEZONLARI TALEP MODALI -->
     <div id="nostalgia-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-[#090f20] border border-yellow-500/40 rounded-2xl p-6 max-w-md w-full space-y-4">
@@ -550,8 +540,8 @@
         };
 
         let modalTimer = null;
-
         let audioCtx = null;
+
         function playSound(type) {
             if (!gameState.soundEnabled) return;
             try {
@@ -596,22 +586,65 @@
             playSound('click');
         }
 
-        function openModalsMenu() {
-            playSound('click');
-            document.getElementById('mods-modal').classList.remove('hidden');
+        // --- USER ID YÖNETİMİ ---
+        function getOrCreateManagerUserId() {
+            const key = 'cubuklu11_manager_user_id'; 
+            let id = localStorage.getItem(key);
+            if (!id) {
+                id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `manager-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+                localStorage.setItem(key, id);
+            }
+            return id;
         }
-        function closeModalsMenu() {
+
+        function promptUserId() {
             playSound('click');
-            document.getElementById('mods-modal').classList.add('hidden');
+            const currentId = getOrCreateManagerUserId();
+            const newId = prompt("Kullanıcı (User) ID değeriniz:", currentId);
+            if (newId !== null && newId.trim() !== '') {
+                localStorage.setItem('cubuklu11_manager_user_id', newId.trim());
+                updateUserIdDisplay();
+            }
         }
+
+        function updateUserIdDisplay() {
+            const id = getOrCreateManagerUserId();
+            const disp = document.getElementById('header-user-id-display');
+            if (disp) {
+                disp.innerText = `ID: ${id.slice(0, 6)}...`;
+            }
+        }
+
+        // Modal Açma / Kapatma
+        function openModeModal() {
+            playSound('click');
+            const modeModal = document.getElementById('mode-modal');
+            if (modeModal) {
+                modeModal.classList.remove('hidden');
+                modeModal.style.display = 'flex';
+            }
+        }
+
+        function closeModeModal() {
+            playSound('click');
+            const modeModal = document.getElementById('mode-modal');
+            if (modeModal) {
+                modeModal.classList.add('hidden');
+                modeModal.style.display = 'none';
+            }
+        }
+
+        function navigateToMode(modeKey, targetUrl) {
+            if (typeof gtag === 'function') {
+                gtag('event', 'select_mode', { mode_name: modeKey });
+            }
+            window.location.href = targetUrl;
+        }
+
         function openNostalgiaModal(placement = 'manager_setup') {
             playSound('click');
             if (typeof gtag === 'function') {
-                gtag('event', 'click_fake_door', {
-                    mode_name: 'nostalgia_seasons',
-                    source_mode: 'manager',
-                    placement: placement
-                });
+                gtag('event', 'click_fake_door', { mode_name: 'nostalgia_seasons', source_mode: 'manager', placement: placement });
             }
             document.getElementById('nostalgia-thanks').classList.add('hidden');
             document.getElementById('nostalgia-modal').classList.remove('hidden');
@@ -621,14 +654,12 @@
         }
         function requestNostalgiaSeason(season) {
             if (typeof gtag === 'function') {
-                gtag('event', 'select_nostalgia_season', {
-                    requested_season: season,
-                    source_mode: 'manager'
-                });
+                gtag('event', 'select_nostalgia_season', { requested_season: season, source_mode: 'manager' });
             }
             document.getElementById('nostalgia-thanks').classList.remove('hidden');
             setTimeout(closeNostalgiaModal, 1200);
         }
+
         async function openLeaderboard() {
             playSound('click');
             const modal = document.getElementById('leaderboard-modal');
@@ -663,69 +694,7 @@
             playSound('click');
             document.getElementById('leaderboard-modal').classList.add('hidden');
         }
-// Modal Açma / Kapatma
-        // --- MODAL AÇMA / KAPATMA FONKSİYONLARI ---
-function openModeModal() {
-    playSound('click');
-    const modeModal = document.getElementById('mode-modal');
-    if (modeModal) {
-        modeModal.classList.remove('hidden');
-        modeModal.style.display = 'flex';
-    }
-}
 
-function closeModeModal() {
-    playSound('click');
-    const modeModal = document.getElementById('mode-modal');
-    if (modeModal) {
-        modeModal.classList.add('hidden');
-        modeModal.style.display = 'none';
-    }
-}
-
-// Eski fonksiyon çağrıları kırılmasın diye yönlendirme eklendi
-function openModalsMenu() { openModeModal(); }
-function closeModalsMenu() { closeModeModal(); }
-// --- MOD SEÇİMİ VE YÖNLENDİRME AKIŞI ---
-    function openModeModal() {
-      const modeModal = document.getElementById('mode-modal');
-      modeModal.classList.remove('hidden');
-      modeModal.style.display = 'flex';
-    }
-
-    function closeModeModal() {
-      const modeModal = document.getElementById('mode-modal');
-      modeModal.classList.add('hidden');
-      modeModal.style.display = 'none';
-    }
-
-    // Mevcut sayfadaki mod seçimi (Blind Draft)
-    function selectMode(modeKey) {
-      if (typeof gtag === 'function') {
-        gtag('event', 'select_mode', { 
-          mode_name: modeKey 
-        });
-      }
-      
-      closeModeModal();
-
-      const savedUser = localStorage.getItem('cubuklu11_username');
-      if (!savedUser) {
-        openUsernameModal();
-      }
-    }
-
-    // Yeni sayfalara yönlendiren mod seçimi (Scout ve Manager Modları)
-    function navigateToMode(modeKey, targetUrl) {
-      if (typeof gtag === 'function') {
-        gtag('event', 'select_mode', { 
-          mode_name: modeKey 
-        });
-      }
-      window.location.href = targetUrl;
-    }
-
-    // --- KULLANICI ADI & LİDERLİK TABLOSU ---
         function parseNum(val) {
             if (val === null || val === undefined) return 0;
             if (typeof val === 'number') return isNaN(val) ? 0 : val;
@@ -786,15 +755,15 @@ function closeModalsMenu() { closeModeModal(); }
         }
 
         function getFlagImg(countryCode) {
-          if (!countryCode) return '';
-          const cleanCode = countryCode.trim().toLowerCase();
-          const mapping = { 
-            "tur": "tr", "bra": "br", "nld": "nl", "ned": "nl", 
-            "prt": "pt", "sen": "sn", "bih": "ba", "rus": "ru", 
-            "fra": "fr", "deu": "de", "esp": "es", "arg": "ar" 
-          };
-          const code = mapping[cleanCode] || (cleanCode.length === 3 ? cleanCode.slice(0, 2) : cleanCode);
-          return `<img src="https://flagcdn.com/w80/${code}.png" crossorigin="anonymous" alt="${countryCode}" class="w-full h-full object-cover" onerror="this.src='https://flagcdn.com/w80/un.png'">`;
+            if (!countryCode) return '';
+            const cleanCode = countryCode.trim().toLowerCase();
+            const mapping = { 
+                "tur": "tr", "bra": "br", "nld": "nl", "ned": "nl", 
+                "prt": "pt", "sen": "sn", "bih": "ba", "rus": "ru", 
+                "fra": "fr", "deu": "de", "esp": "es", "arg": "ar" 
+            };
+            const code = mapping[cleanCode] || (cleanCode.length === 3 ? cleanCode.slice(0, 2) : cleanCode);
+            return `<img src="https://flagcdn.com/w80/${code}.png" crossorigin="anonymous" alt="${countryCode}" class="w-full h-full object-cover" onerror="this.src='https://flagcdn.com/w80/un.png'">`;
         }
 
         async function loadPlayersFromSupabase() {
@@ -820,6 +789,7 @@ function closeModalsMenu() { closeModeModal(); }
         document.addEventListener("DOMContentLoaded", () => {
             gameState.season = ACTIVE_SEASON.id;
             loadPlayersFromSupabase();
+            updateUserIdDisplay();
         });
 
         function startSquadBuilding() {
@@ -863,7 +833,8 @@ function closeModalsMenu() { closeModeModal(); }
                 const playerName = player.Name || player.name || '';
                 return `
                     <div onclick="activateSlot(${item.idx})" 
-                         class="pitch-slot-box relative rounded-xl overflow-visible flex flex-col justify-end p-1 cursor-pointer transition ${isActive ? 'active-slot' : 'filled-slot'}"><button onclick="removePlayerFromSlot(event,${item.idx})" title="Oyuncuyu kaldır" class="absolute -top-2 -right-2 z-30 w-5 h-5 rounded-full bg-red-600 text-white text-[10px] font-bold">✕</button>
+                         class="pitch-slot-box relative rounded-xl overflow-visible flex flex-col justify-end p-1 cursor-pointer transition ${isActive ? 'active-slot' : 'filled-slot'}">
+                        <button onclick="removePlayerFromSlot(event, ${item.idx})" title="Oyuncuyu kaldır" class="absolute -top-2 -right-2 z-30 w-5 h-5 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center cursor-pointer">✕</button>
                         <div class="absolute inset-0 z-0">
                             <img src="${cardImg}" crossorigin="anonymous" alt="${playerName}" class="w-full h-full object-cover" onerror="this.src='https://sqecxfgbdfdebyaocrce.supabase.co/storage/v1/object/public/Generated%20Cards/Empty%20Field.png'">
                         </div>
@@ -892,7 +863,8 @@ function closeModalsMenu() { closeModeModal(); }
 
         function activateSlot(idx) {
             playSound('click');
-            gameState.activeSlotIndex = idx; gameState.playerPage = 1;
+            gameState.activeSlotIndex = idx; 
+            gameState.playerPage = 1;
             const positions = FORMATIONS[gameState.formation] || FORMATIONS['4-3-3 Dengeli'];
             const currentPos = positions[idx];
 
@@ -931,21 +903,40 @@ function closeModalsMenu() { closeModeModal(); }
             renderPlayerCards(positions[gameState.activeSlotIndex]);
         }
 
-        function handlePlayerSearch(v){ gameState.playerSearch=String(v||'').trim().toLocaleLowerCase('tr-TR'); gameState.playerPage=1; const ps=FORMATIONS[gameState.formation]||[]; renderPlayerCards(ps[gameState.activeSlotIndex]); }
-        function changePlayerPage(d){ gameState.playerPage+=d; const ps=FORMATIONS[gameState.formation]||[]; renderPlayerCards(ps[gameState.activeSlotIndex]); document.getElementById('player-cards-container').scrollTop=0; }
-        function updatePlayerPagination(pages,total){ document.getElementById('player-page-info').innerText=`${gameState.playerPage} / ${pages} • ${total} oyuncu`; document.getElementById('player-prev-page').disabled=gameState.playerPage<=1; document.getElementById('player-next-page').disabled=gameState.playerPage>=pages; }
+        function handlePlayerSearch(v){ 
+            gameState.playerSearch = String(v || '').trim().toLocaleLowerCase('tr-TR'); 
+            gameState.playerPage = 1; 
+            const ps = FORMATIONS[gameState.formation] || []; 
+            renderPlayerCards(ps[gameState.activeSlotIndex]); 
+        }
+
+        function changePlayerPage(d){ 
+            gameState.playerPage += d; 
+            const ps = FORMATIONS[gameState.formation] || []; 
+            renderPlayerCards(ps[gameState.activeSlotIndex]); 
+            document.getElementById('player-cards-container').scrollTop = 0; 
+        }
+
+        function updatePlayerPagination(pages, total){ 
+            document.getElementById('player-page-info').innerText = `${gameState.playerPage} / ${pages} • ${total} oyuncu`; 
+            document.getElementById('player-prev-page').disabled = gameState.playerPage <= 1; 
+            document.getElementById('player-next-page').disabled = gameState.playerPage >= pages; 
+        }
+
         function renderPlayerCards(targetPos) {
             const container = document.getElementById('player-cards-container');
             
             let filtered = masterPlayers.filter(p => {
                 const playerPos = (p.Position || p.position || '').trim().toUpperCase();
                 const playerId = getPlayerIdentity(p);
+                const playerName = (p.Name || p.name || '').toLowerCase();
                 
                 const isEligible = isPlayerEligible(p);
                 const matchesPos = playerPos === targetPos.trim().toUpperCase();
                 const notAlreadySelected = !gameState.selectedPlayerIds.has(playerId);
+                const matchesSearch = !gameState.playerSearch || playerName.includes(gameState.playerSearch);
 
-                return isEligible && matchesPos && notAlreadySelected;
+                return isEligible && matchesPos && notAlreadySelected && matchesSearch;
             });
 
             filtered.sort((a, b) => {
@@ -970,23 +961,27 @@ function closeModalsMenu() { closeModeModal(); }
                 if (valA < valB) return gameState.sortOrder === 'asc' ? -1 : 1;
                 if (valA > valB) return gameState.sortOrder === 'asc' ? 1 : -1;
 
-                // İkincil kriter (Tie-breaker): Reyting veya değer sıralamasında eşitlik varsa gol sayısına göre sırala
                 if (gameState.sortField !== 'goals') {
                     let goalsA = getPlayerGoals(a);
                     let goalsB = getPlayerGoals(b);
                     if (goalsA !== goalsB) {
-                        return goalsB - goalsA; // Çok gol atan üstte
+                        return goalsB - goalsA; 
                     }
                 }
-
                 return 0;
             });
 
             if(filtered.length === 0) {
-                container.innerHTML = `<div class="text-center py-12 text-slate-500 text-xs font-mono">Arama ve pozisyon koşullarına uygun oyuncu bulunamadı.</div>`; updatePlayerPagination(1,0); return;
+                container.innerHTML = `<div class="text-center py-12 text-slate-500 text-xs font-mono">Arama ve pozisyon koşullarına uygun oyuncu bulunamadı.</div>`; 
+                updatePlayerPagination(1, 0); 
+                return;
             }
 
-            const totalPages=Math.max(1,Math.ceil(filtered.length/gameState.playersPerPage)); gameState.playerPage=Math.min(Math.max(1,gameState.playerPage),totalPages); const pagePlayers=filtered.slice((gameState.playerPage-1)*gameState.playersPerPage,gameState.playerPage*gameState.playersPerPage); updatePlayerPagination(totalPages,filtered.length);
+            const totalPages = Math.max(1, Math.ceil(filtered.length / gameState.playersPerPage)); 
+            gameState.playerPage = Math.min(Math.max(1, gameState.playerPage), totalPages); 
+            const pagePlayers = filtered.slice((gameState.playerPage - 1) * gameState.playersPerPage, gameState.playerPage * gameState.playersPerPage); 
+            updatePlayerPagination(totalPages, filtered.length);
+
             container.innerHTML = pagePlayers.map(player => {
                 const globalIndex = masterPlayers.indexOf(player);
                 const pName = player.Name || player.name || 'Bilinmiyor';
@@ -1003,13 +998,11 @@ function closeModalsMenu() { closeModeModal(); }
                 return `
                     <div onclick="selectPlayer(${globalIndex})" 
                          class="bg-[#040711] border border-[#162038] hover:border-fb-yellow/80 px-3 py-2.5 rounded-xl cursor-pointer transition flex items-center justify-between text-xs font-mono shadow group">
-                        
                         <div class="flex items-center gap-2 truncate pr-2">
                             <div class="w-6 h-4 shrink-0 overflow-hidden rounded">${flagElement}</div>
                             <span class="font-bold text-white group-hover:text-fb-yellow transition truncate">${pName}</span>
                             <span class="text-slate-400 text-[10px] shrink-0">(${pSeason})</span>
                         </div>
-
                         <div class="flex items-center gap-3 shrink-0">
                             <span class="text-slate-300">M:${pApps} G:${pGoals} A:${pAssists}</span>
                             <span class="text-fb-yellow font-bold">Reyt:${pRating}</span>
@@ -1020,7 +1013,27 @@ function closeModalsMenu() { closeModeModal(); }
             }).join('');
         }
 
-        function removePlayerFromSlot(event,idx){ event.stopPropagation(); const p=gameState.squad[idx]; if(!p)return; gameState.budget+=getPlayerValue(p); gameState.selectedPlayerIds.delete(getPlayerIdentity(p)); delete gameState.squad[idx]; gameState.activeSlotIndex=idx; gameState.playerPage=1; playSound('click'); updateUI(); }
+        // --- DÜZELTİLEN FONKSİYON: Oyuncu Kaldırıldığında Listenin Güncellenmesi ---
+        function removePlayerFromSlot(event, idx) {
+            event.stopPropagation(); 
+            const p = gameState.squad[idx]; 
+            if (!p) return; 
+            
+            gameState.budget += getPlayerValue(p); 
+            gameState.selectedPlayerIds.delete(getPlayerIdentity(p)); 
+            delete gameState.squad[idx]; 
+            
+            gameState.activeSlotIndex = idx; 
+            gameState.playerPage = 1; 
+            playSound('click'); 
+            
+            updateUI(); 
+
+            // Kaldırılan oyuncudan sonra sol paneldeki oyuncu listesini güncel pozisyona göre tekrar render et
+            const positions = FORMATIONS[gameState.formation] || FORMATIONS['4-3-3 Hücum'];
+            renderPlayerCards(positions[gameState.activeSlotIndex]);
+        }
+
         function selectPlayer(index) {
             playSound('select');
             const player = masterPlayers[index];
@@ -1029,14 +1042,17 @@ function closeModalsMenu() { closeModeModal(); }
             const currentSelected = gameState.squad[slotIdx];
             const playerVal = getPlayerValue(player);
             const availableBudget = gameState.budget + (currentSelected ? getPlayerValue(currentSelected) : 0);
+            
             if (availableBudget < playerVal) {
                 alert(`Yetersiz Bütçe! Bu oyuncu için ${(playerVal - availableBudget).toFixed(1)}M€ daha gerekiyor.`);
                 return;
             }
             if (currentSelected) gameState.selectedPlayerIds.delete(getPlayerIdentity(currentSelected));
+            
             gameState.budget = availableBudget - playerVal;
             gameState.squad[slotIdx] = player;
             gameState.selectedPlayerIds.add(getPlayerIdentity(player));
+            
             updateUI();
             showPlayerModal(player);
         }
@@ -1120,10 +1136,6 @@ function closeModalsMenu() { closeModeModal(); }
             const keys=squadArr.map(p=>`${getPlayerIdentity(p)}:${p.Season||p.season||''}`).sort();
             return hashString(`${keys.join('|')}|${gameState.formation}|${ACTIVE_SEASON.id}`);
         }
-        function getOrCreateManagerUserId() {
-            const key='cubuklu11_manager_user_id'; let id=localStorage.getItem(key);
-            if(!id){id=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():`manager-${Date.now()}-${Math.random().toString(16).slice(2)}`;localStorage.setItem(key,id);} return id;
-        }
         function controlledRecordVariation(base,rng){
             if(base.wins===34)return{...base}; const nonWins=34-base.wins; const roll=rng(); const delta=roll<.25?-1:(roll>.75?1:0);
             const draws=Math.max(0,Math.min(nonWins,base.draws+delta)); return{...base,draws,losses:nonWins-draws,points:base.wins*3+draws};
@@ -1188,22 +1200,53 @@ function closeModalsMenu() { closeModeModal(); }
         }
         function advanceWeek(){const s=window.managerLeagueState;if(!s)return;if(s.currentWeek>=34){finishLeagueSeason();return;}renderWeek(s.currentWeek+1);window.scrollTo({top:0,behavior:'smooth'});}
         function fastForwardSeason(){if(!window.managerLeagueState)return;renderWeek(34);finishLeagueSeason();}
+        
         async function saveManagerResult(finalRow,result,avgRating){
-            const username=localStorage.getItem('cubuklu11_manager_username')||'Anonim_Manager';
-            try{const{error}=await supabaseClient.from('leaderboard').insert([{user_id:getOrCreateManagerUserId(),username,mode:'manager',season:ACTIVE_SEASON.id,formation:gameState.formation,wins:finalRow.wins,draws:finalRow.draws,losses:finalRow.losses,points:finalRow.points,rating:Number(avgRating.toFixed(2)),created_at:new Date().toISOString()}]);if(error)throw error;}catch(e){console.error('Manager skoru kaydedilemedi:',e);}
-            if(typeof gtag==='function')gtag('event','manager_simulation_complete',{season:ACTIVE_SEASON.id,formation:gameState.formation,points:finalRow.points,rating:Number(avgRating.toFixed(2)),league_position:result.position});
+            const userId = getOrCreateManagerUserId();
+            const username = localStorage.getItem('cubuklu11_manager_username') || 'Anonim_Manager';
+            try {
+                await supabaseClient.from('leaderboard').insert([{
+                    user_id: userId,
+                    username: username,
+                    points: finalRow.points,
+                    rating: avgRating,
+                    formation: gameState.formation,
+                    mode: 'manager'
+                }]);
+            } catch(e) { console.error(e); }
         }
-        function playLicensedChampionshipAudio(){const a=document.getElementById('championship-audio');if(!a||!a.getAttribute('src'))return;a.currentTime=0;a.play().catch(()=>{});setTimeout(()=>{a.pause();a.currentTime=0},5000);}
-        function finishLeagueSeason(){
-            const state=window.managerLeagueState;if(!state||state.saved)return;const table=createEmptyTable();state.season.matches.forEach(m=>applyMatch(table,m));const rows=sortedStandings(table);const finalRow=rows.find(r=>r.team==='Fenerbahçe');const position=rows.findIndex(r=>r.team==='Fenerbahçe')+1;
-            document.getElementById('screen-weekly').classList.add('hidden');document.getElementById('screen-result').classList.remove('hidden');document.getElementById('res-points').innerText=finalRow.points+' Puan';document.getElementById('res-wdl').innerText=`${finalRow.wins}G - ${finalRow.draws}B - ${finalRow.losses}M`;document.getElementById('res-team-rating').innerText=state.avgRating.toFixed(2);document.getElementById('res-season-label').innerText=position===1?'ŞAMPİYON':`${position}. SIRA`;if(position===1)playLicensedChampionshipAudio();
-            const spent=MANAGER_BUDGET-gameState.budget;const s100=Math.min(100,((finalRow.points/102)*90)+((1-(spent/100))*10)).toFixed(1);document.getElementById('res-global-score').innerText=s100;document.getElementById('final-standings').innerHTML=renderStandingsRows(rows,true);
-            state.saved=true;saveManagerResult(finalRow,{position},state.avgRating);window.scrollTo({top:0,behavior:'smooth'});
-        }
+
         function finishSquadAndSimulate(){
-            playSound('select');const positions=FORMATIONS[gameState.formation]||[];const squadArr=positions.map((_,i)=>gameState.squad[i]).filter(Boolean);if(squadArr.length!==positions.length)return;
-            const avgRating=squadArr.reduce((sum,p)=>sum+getPlayerRating(p),0)/squadArr.length;window.managerLeagueState={season:buildLeagueSeason(squadArr,avgRating),squadArr,avgRating,currentWeek:1,saved:false};document.getElementById('screen-builder').classList.add('hidden');document.getElementById('screen-weekly').classList.remove('hidden');renderWeek(1);window.scrollTo({top:0,behavior:'smooth'});
+            const squadArr=Object.values(gameState.squad);
+            const positions=FORMATIONS[gameState.formation]||FORMATIONS['4-3-3 Hücum'];
+            if(squadArr.length<positions.length){alert('Lütfen tüm pozisyonları doldurun.');return;}
+            playSound('select');
+            const avgRating=squadArr.reduce((a,b)=>a+getPlayerRating(b),0)/squadArr.length;
+            const seasonData=buildLeagueSeason(squadArr,avgRating);
+            window.managerLeagueState={season:seasonData,currentWeek:1,squadArr,avgRating};
+            document.getElementById('screen-builder').classList.add('hidden');
+            document.getElementById('screen-weekly').classList.remove('hidden');
+            renderWeek(1);
+        }
+
+        function finishLeagueSeason(){
+            const state=window.managerLeagueState; if(!state)return;
+            const table=createEmptyTable(); state.season.matches.forEach(m=>applyMatch(table,m));
+            const standings=sortedStandings(table); const finalRow=standings.find(r=>r.team==='Fenerbahçe')||{points:0,wins:0,draws:0,losses:0,gd:0};
+            const grade=gradeManagerTeam(state.avgRating);
+            
+            document.getElementById('res-season-label').innerText=`${grade.label} (${gameState.formation})`;
+            document.getElementById('res-points').innerText=`${finalRow.points} P`;
+            document.getElementById('res-wdl').innerText=`${finalRow.wins}G - ${finalRow.draws}B - ${finalRow.losses}M`;
+            document.getElementById('res-team-rating').innerText=state.avgRating.toFixed(2);
+            document.getElementById('res-global-score').innerText=Math.round(finalRow.points*1.2+state.avgRating*3);
+            document.getElementById('final-standings').innerHTML=renderStandingsRows(standings,true);
+
+            saveManagerResult(finalRow,grade,state.avgRating);
+
+            document.getElementById('screen-weekly').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
         }
     </script>
-<audio id="championship-audio" preload="auto"></audio></body>
+</body>
 </html>
