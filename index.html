@@ -444,45 +444,28 @@
     let isMuted = false;
     let currentUsername = localStorage.getItem('cubuklu11_username') || null;
 
-    // --- MOD SEÇİMİ VE KULLANICI ADI POPUP AKIŞI ---
-// Modal Açma / Kapatma
-function openModeModal() {
-  const modeModal = document.getElementById('mode-modal');
-  modeModal.classList.remove('hidden');
-  modeModal.style.display = 'flex';
-}
+// --- MOD SEÇİMİ VE YÖNLENDİRME AKIŞI ---
+    function openModeModal() {
+      const modeModal = document.getElementById('mode-modal');
+      modeModal.classList.remove('hidden');
+      modeModal.style.display = 'flex';
+    }
 
-function closeModeModal() {
-  const modeModal = document.getElementById('mode-modal');
-  modeModal.classList.add('hidden');
-  modeModal.style.display = 'none';
-}
+    function closeModeModal() {
+      const modeModal = document.getElementById('mode-modal');
+      modeModal.classList.add('hidden');
+      modeModal.style.display = 'none';
+    }
 
-// Mevcut sayfadaki mod seçimi (Blind Draft)
-function selectMode(modeKey) {
-  if (typeof gtag === 'function') {
-    gtag('event', 'select_mode', { 
-      mode_name: modeKey 
-    });
-  }
-  
-  closeModeModal();
-
-  const savedUser = localStorage.getItem('cubuklu11_username');
-  if (!savedUser) {
-    openUsernameModal();
-  }
-}
-
-// Yeni sayfalara yönlendiren mod seçimi (Scout ve Manager Modları)
-function navigateToMode(modeKey, targetUrl) {
-  if (typeof gtag === 'function') {
-    gtag('event', 'select_mode', { 
-      mode_name: modeKey 
-    });
-  }
-  window.location.href = targetUrl;
-}
+    // Mevcut sayfadaki mod seçimi (Blind Draft)
+    function selectMode(modeKey) {
+      if (typeof gtag === 'function') {
+        gtag('event', 'select_mode', { 
+          mode_name: modeKey 
+        });
+      }
+      
+      closeModeModal();
 
       const savedUser = localStorage.getItem('cubuklu11_username');
       if (!savedUser) {
@@ -490,15 +473,17 @@ function navigateToMode(modeKey, targetUrl) {
       }
     }
 
-    function trackAndShowUpcoming(modeKey) {
+    // Yeni sayfalara yönlendiren mod seçimi (Scout ve Manager Modları)
+    function navigateToMode(modeKey, targetUrl) {
       if (typeof gtag === 'function') {
-        gtag('event', 'click_fake_door', { 
+        gtag('event', 'select_mode', { 
           mode_name: modeKey 
         });
       }
-      alert("Bu mod şu an geliştirilme aşamasında! İlginiz GA4 üzerinden kaydedildi, çok yakında yayında olacak.");
+      window.location.href = targetUrl;
     }
 
+    // --- KULLANICI ADI & LİDERLİK TABLOSU ---
     // --- KULLANICI ADI & LİDERLİK TABLOSU ---
     const BAD_WORDS = ["gs", "bjk", "ts", "fetö", "sik", "piç", "yarrak", "amk", "aq", "oc", "orospu"];
 
