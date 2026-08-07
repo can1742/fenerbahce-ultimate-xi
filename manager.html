@@ -356,7 +356,7 @@
                 </div>
             </div>
 
-            <button onclick="location.reload()" class="w-full py-4 bg-fb-yellow text-slate-950 font-bebas text-2xl rounded-xl hover:bg-yellow-400 transition">
+            <button onclick="location.reload()" class="w-full py-4 bg-fb-yellow text-slate-950 font-bebas text-2xl rounded-xl hover:bg-yellow-400 transition cursor-pointer">
                 TEKRAR OYNA
             </button>
         </div>
@@ -372,7 +372,7 @@
     <!-- OYUN MODLARI SEÇİM MODALI -->
     <div id="mode-modal" class="fixed inset-0 bg-[#020617]/95 z-50 flex flex-col items-center justify-center p-6 backdrop-blur-md hidden">
         <div class="bg-white/5 border border-white/10 p-6 sm:p-8 rounded-2xl max-w-lg w-full text-center shadow-2xl relative">
-            <button onclick="closeModeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white font-bold text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-all">&times;</button>
+            <button onclick="closeModeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white font-bold text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-all cursor-pointer">&times;</button>
             
             <h2 class="text-[#FDE802] font-athletic text-3xl sm:text-4xl mb-1 tracking-wide">🎮 OYUN MODUNU SEÇ</h2>
             <p class="text-gray-300 text-xs sm:text-sm mb-6">Oynamak istediğin konsepti seç ve kadronu kurmaya başla!</p>
@@ -421,7 +421,7 @@
                     <h3 class="font-bebas text-2xl text-fb-yellow">🕰️ NOSTALJİ SEZONLARI</h3>
                     <p class="text-slate-400 text-xs mt-1">İlk olarak hangi tarihî sezonu oynamak isterdin?</p>
                 </div>
-                <button onclick="closeNostalgiaModal()" class="text-slate-400 hover:text-white font-bold text-lg">✕</button>
+                <button onclick="closeNostalgiaModal()" class="text-slate-400 hover:text-white font-bold text-lg cursor-pointer">✕</button>
             </div>
             <div class="grid grid-cols-2 gap-2">
                 <button onclick="requestNostalgiaSeason('1999-00')" class="nostalgia-choice">1999-00</button>
@@ -1163,57 +1163,81 @@
             document.getElementById('weekly-title').innerText=`${week}. HAFTA`;document.getElementById('weekly-progress').innerText=`2026-27 SÜPER LİG • ${week}/34`;
             document.getElementById('weekly-results').innerHTML=weekly.map(m=>`<div class="flex items-center gap-2 rounded-xl px-3 py-2.5 border ${m.home==='Fenerbahçe'||m.away==='Fenerbahçe'?'border-yellow-500/50 bg-yellow-500/10':'border-[#162038] bg-[#040711]'}"><span class="flex-1 text-right text-xs font-bold">${m.home}</span><strong class="font-bebas text-xl text-white px-2">${m.homeGoals} - ${m.awayGoals}</strong><span class="flex-1 text-left text-xs font-bold">${m.away}</span></div>`).join('');
             document.getElementById('weekly-standings').innerHTML=renderStandingsRows(sortedStandings(table),false); state.currentWeek=week;
-            const btn=document.getElementById('btn-next-week');btn.innerText=week===34?'SEZONU BİTİR ➜':'SONRAKİ HAFTA ➜';
         }
-        function advanceWeek(){const s=window.managerLeagueState;if(!s)return;if(s.currentWeek>=34){finishLeagueSeason();return;}renderWeek(s.currentWeek+1);window.scrollTo({top:0,behavior:'smooth'});}
-        function fastForwardSeason(){if(!window.managerLeagueState)return;renderWeek(34);finishLeagueSeason();}
-        async function saveManagerResult(finalRow,result,avgRating){
-            const username=getManagerUsername();
-            try{
-                const{error}=await supabaseClient.from('leaderboard').insert([{
-                    user_id:getOrCreateManagerUserId(),
-                    username:username,
-                    points:finalRow.points,
-                    formation:gameState.formation,
-                    mode:'manager',
-                    team_rating:avgRating
-                }]);
-                if(error)console.error('Kayıt hatası:',error);
-            }catch(e){console.error('Leaderboard kayıt hatası:',e);}
-        }
-        function finishSquadAndSimulate(){
-            const squadArr=Object.values(gameState.squad);
-            const positions=FORMATIONS[gameState.formation]||FORMATIONS['4-3-3 Hücum'];
-            if(squadArr.length!==positions.length)return;
+
+        async function finishSquadAndSimulate() {
             playSound('select');
-            const avgRating=squadArr.reduce((a,b)=>a+getPlayerRating(b),0)/squadArr.length;
-            TEAM_DATA_2026_27['Fenerbahçe'].rating=avgRating;
-            TEAM_RATINGS_2026_27['Fenerbahçe']=avgRating;
-            const season=buildLeagueSeason(squadArr,avgRating);
-            window.managerLeagueState={season,currentWeek:1};
+            const squadArr = Object.values(gameState.squad);
+            if(squadArr.length < 11) {
+                alert('Lütfen tüm pozisyonları doldurun.');
+                return;
+            }
+            const teamRating = squadArr.reduce((a,b)=>a+getPlayerRating(b),0)/squadArr.length;
+            const seasonResult = buildLeagueSeason(squadArr, teamRating);
+
+            window.managerLeagueState = {
+                season: seasonResult,
+                currentWeek: 1
+            };
+
             document.getElementById('screen-builder').classList.add('hidden');
             document.getElementById('screen-weekly').classList.remove('hidden');
             renderWeek(1);
-            window.scrollTo({top:0,behavior:'smooth'});
         }
-        async function finishLeagueSeason(){
-            const state=window.managerLeagueState; if(!state)return;
-            const table=createEmptyTable(); state.season.matches.forEach(m=>applyMatch(table,m));
-            const sorted=sortedStandings(table);
-            const fenerRow=sorted.find(r=>r.team==='Fenerbahçe')||{points:0,wins:0,draws:0,losses:0,gf:0,ga:0,gd:0};
-            const avgRating=state.season.teamRating; const grade=gradeManagerTeam(avgRating);
-            
-            document.getElementById('res-points').innerText=`${fenerRow.points} P`;
-            document.getElementById('res-wdl').innerText=`${fenerRow.wins}G - ${fenerRow.draws}B - ${fenerRow.losses}M`;
-            document.getElementById('res-team-rating').innerText=avgRating.toFixed(2);
-            document.getElementById('res-season-label').innerText=grade.label;
-            document.getElementById('res-global-score').innerText=Math.round(fenerRow.points*1.2+avgRating*0.8);
-            document.getElementById('final-standings').innerHTML=renderStandingsRows(sorted,true);
-            
-            await saveManagerResult(fenerRow,grade,avgRating);
+
+        function advanceWeek() {
+            playSound('click');
+            const state = window.managerLeagueState;
+            if (state.currentWeek < 34) {
+                renderWeek(state.currentWeek + 1);
+            } else {
+                finishSeasonSimulation();
+            }
+        }
+
+        function fastForwardSeason() {
+            playSound('click');
+            const state = window.managerLeagueState;
+            state.currentWeek = 34;
+            finishSeasonSimulation();
+        }
+
+        function finishSeasonSimulation() {
+            const state = window.managerLeagueState;
+            const table = createEmptyTable();
+            state.season.matches.forEach(m => applyMatch(table, m));
+            const sorted = sortedStandings(table);
+
+            const fenerRecord = state.season.fenerRecord;
+            document.getElementById('res-season-label').innerText = fenerRecord.label;
+            document.getElementById('res-points').innerText = `${fenerRecord.points} P`;
+            document.getElementById('res-wdl').innerText = `${fenerRecord.wins}G - ${fenerRecord.draws}B - ${fenerRecord.losses}M`;
+            document.getElementById('res-team-rating').innerText = fenerRecord.finalRating.toFixed(2);
+            document.getElementById('res-global-score').innerText = fenerRecord.points;
+
+            document.getElementById('final-standings').innerHTML = renderStandingsRows(sorted, true);
+
             document.getElementById('screen-weekly').classList.add('hidden');
             document.getElementById('screen-result').classList.remove('hidden');
-            window.scrollTo({top:0,behavior:'smooth'});
+
+            saveLeaderboardScore(fenerRecord);
+        }
+
+        async function saveLeaderboardScore(record) {
+            try {
+                const userId = getOrCreateManagerUserId();
+                const username = getManagerUsername();
+                await supabaseClient.from('leaderboard').upsert({
+                    user_id: userId,
+                    username: username,
+                    mode: 'manager',
+                    points: record.points,
+                    formation: gameState.formation,
+                    created_at: new Date().toISOString()
+                }, { onConflict: 'user_id,mode' });
+            } catch (e) {
+                console.error("Skor kaydedilemedi:", e);
+            }
         }
     </script>
 </body>
