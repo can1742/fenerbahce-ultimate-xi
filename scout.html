@@ -86,39 +86,54 @@
 </head>
 <body class="bg-[#020617] min-h-screen text-white flex flex-col justify-between p-4 sm:p-6 overflow-x-hidden">
 
-  <!-- 1. ADIM: Oyun Modu Seçim Modalı -->
+ <!-- Oyun Modu Seçim Modalı -->
   <div id="mode-modal" class="fixed inset-0 bg-[#020617]/95 z-50 flex flex-col items-center justify-center p-6 backdrop-blur-md hidden">
     <div class="bg-white/5 border border-white/10 p-6 sm:p-8 rounded-2xl max-w-lg w-full text-center shadow-2xl relative">
+      
+      <!-- Kapatma Butonu -->
+      <button onclick="closeModeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white font-bold text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-all">&times;</button>
+      
       <h2 class="text-[#FDE802] font-athletic text-3xl sm:text-4xl mb-1 tracking-wide">🎮 OYUN MODUNU SEÇ</h2>
-      <p class="text-gray-300 text-xs sm:text-sm mb-6">Oynamak istediğin konsepti seç ve maratona başla!</p>
+      <p class="text-gray-300 text-xs sm:text-sm mb-6">Oynamak istediğin konsepti seç ve kadronu kurmaya başla!</p>
 
-      <div class="flex flex-col gap-3 text-left">
-        <!-- Nostalji Modu -->
-        <div onclick="window.location.href='index.html'" class="bg-white/5 border border-white/10 p-4 rounded-xl cursor-pointer hover:bg-white/10 transition-all flex items-center justify-between">
-          <div>
-            <div class="text-white font-bold text-base sm:text-lg">⭐ Blind Draft (Nostalji Modu)</div>
-            <div class="text-gray-400 text-xs">Kart yüzleri kapalı! Nostaljik Fenerbahçe sürpriz karması.</div>
+      <div class="flex flex-col gap-3.5 text-left">
+        
+        <!-- Mod 1: Blind Draft (Nostalji Modu - Mevcut Sayfa) -->
+        <div onclick="selectMode('blind_draft')" class="bg-[#FDE802]/15 border-2 border-[#FDE802] p-4 rounded-xl cursor-pointer hover:bg-[#FDE802]/25 hover:scale-[1.01] transition-all flex items-center justify-between group shadow-lg shadow-[#FDE802]/5">
+          <div class="pr-2">
+            <div class="text-[#FDE802] font-bold text-base sm:text-lg flex items-center gap-1.5">
+              <span>⭐ Blind Draft</span>
+              <span class="text-xs font-normal text-gray-300">(Nostalji Modu)</span>
+            </div>
+            <div class="text-gray-300 text-xs mt-0.5 leading-relaxed">Kart yüzleri kapalı! 99-00 ve 25-26 arası nostaljik Fenerbahçe karması.</div>
           </div>
-          <span class="bg-white/10 text-gray-300 text-xs font-bold px-2.5 py-1 rounded-md">DEĞİŞTİR</span>
+          <span class="bg-[#FDE802] text-[#0B132B] text-[11px] font-black px-3 py-1.5 rounded-lg shrink-0 group-hover:scale-105 transition-transform">AKTİF MOD</span>
         </div>
 
-        <!-- Aktif Mod: Scout Modu -->
-        <div onclick="selectMode('scout_mode')" class="bg-[#FDE802]/10 border-2 border-[#FDE802] p-4 rounded-xl cursor-pointer hover:bg-[#FDE802]/20 transition-all flex items-center justify-between">
-          <div>
-            <div class="text-[#FDE802] font-bold text-base sm:text-lg">🔍 Scout Modu (Açık Kartlar)</div>
-            <div class="text-gray-300 text-xs">Kart istatistiklerini ve OVR reytinglerini görerek en ideal kadroyu kurma yarışı.</div>
+        <!-- Mod 2: Scout Modu (scout.html) -->
+        <div onclick="navigateToMode('scout', 'scout.html')" class="bg-white/5 border border-white/20 p-4 rounded-xl cursor-pointer hover:bg-white/10 hover:border-[#FDE802]/60 hover:scale-[1.01] transition-all flex items-center justify-between group">
+          <div class="pr-2">
+            <div class="text-white group-hover:text-[#FDE802] font-bold text-base sm:text-lg transition-colors flex items-center gap-1.5">
+              <span>🔍 Scout Modu</span>
+              <span class="text-xs font-normal text-gray-400">(Açık Kartlar)</span>
+            </div>
+            <div class="text-gray-400 text-xs mt-0.5 leading-relaxed">Kart istatistiklerini ve OVR reytinglerini görerek en ideal kadroyu kur!</div>
           </div>
-          <span class="bg-[#FDE802] text-[#0B132B] text-xs font-black px-2.5 py-1 rounded-md">AKTİF MOD</span>
+          <span class="bg-gradient-to-r from-[#FDE802] to-amber-400 text-[#0B132B] text-[11px] font-black px-3 py-1.5 rounded-lg shrink-0 group-hover:scale-105 transition-transform">OYNA</span>
         </div>
 
-        <!-- Fake Door: Menajer Modu -->
-        <div onclick="trackAndShowUpcoming('manager_mode')" class="bg-white/5 border border-white/10 p-4 rounded-xl cursor-pointer hover:bg-white/10 transition-all flex items-center justify-between opacity-80">
-          <div>
-            <div class="text-white font-bold text-base sm:text-lg">👔 Teknik Direktör Modu</div>
-            <div class="text-gray-400 text-xs">Bütçe kısıtlaması ve taktiksel görevlerle tam menajerlik deneyimi.</div>
+        <!-- Mod 3: Teknik Direktör Modu (manager.html) -->
+        <div onclick="navigateToMode('manager', 'manager.html')" class="bg-white/5 border border-white/20 p-4 rounded-xl cursor-pointer hover:bg-white/10 hover:border-[#FDE802]/60 hover:scale-[1.01] transition-all flex items-center justify-between group">
+          <div class="pr-2">
+            <div class="text-white group-hover:text-[#FDE802] font-bold text-base sm:text-lg transition-colors flex items-center gap-1.5">
+              <span>👔 Teknik Direktör Modu</span>
+              <span class="text-xs font-normal text-amber-400 font-semibold">(Canlıda)</span>
+            </div>
+            <div class="text-gray-400 text-xs mt-0.5 leading-relaxed">Bütçe kısıtlaması ve taktiksel görevlerle tam menajerlik deneyimi.</div>
           </div>
-          <span class="bg-white/10 text-gray-400 text-[10px] font-bold px-2 py-1 rounded-md">ÇOK YAKINDA</span>
+          <span class="bg-gradient-to-r from-[#FDE802] to-amber-400 text-[#0B132B] text-[11px] font-black px-3 py-1.5 rounded-lg shrink-0 group-hover:scale-105 transition-transform">YENİ / OYNA</span>
         </div>
+
       </div>
     </div>
   </div>
@@ -363,20 +378,44 @@
     let currentUsername = localStorage.getItem('cubuklu11_scout_username') || null;
 
     // --- MOD SEÇİMİ VE KULLANICI ADI POPUP AKIŞI ---
-    function openModeModal() {
-      const modeModal = document.getElementById('mode-modal');
-      modeModal.classList.remove('hidden');
-      modeModal.style.display = 'flex';
-    }
+    / Modal Açma / Kapatma
+function openModeModal() {
+  const modeModal = document.getElementById('mode-modal');
+  modeModal.classList.remove('hidden');
+  modeModal.style.display = 'flex';
+}
 
-    function selectMode(modeKey) {
-      if (typeof gtag === 'function') {
-        gtag('event', 'select_mode', { mode_name: modeKey });
-      }
-      const modeModal = document.getElementById('mode-modal');
-      modeModal.classList.add('hidden');
-      modeModal.style.display = 'none';
+function closeModeModal() {
+  const modeModal = document.getElementById('mode-modal');
+  modeModal.classList.add('hidden');
+  modeModal.style.display = 'none';
+}
 
+// Mevcut sayfadaki mod seçimi (Blind Draft)
+function selectMode(modeKey) {
+  if (typeof gtag === 'function') {
+    gtag('event', 'select_mode', { 
+      mode_name: modeKey 
+    });
+  }
+  
+  closeModeModal();
+
+  const savedUser = localStorage.getItem('cubuklu11_username');
+  if (!savedUser) {
+    openUsernameModal();
+  }
+}
+
+// Yeni sayfalara yönlendiren mod seçimi (Scout ve Manager Modları)
+function navigateToMode(modeKey, targetUrl) {
+  if (typeof gtag === 'function') {
+    gtag('event', 'select_mode', { 
+      mode_name: modeKey 
+    });
+  }
+  window.location.href = targetUrl;
+}
       const savedUser = localStorage.getItem('cubuklu11_scout_username');
       if (!savedUser) {
         openUsernameModal();
