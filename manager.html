@@ -138,6 +138,10 @@
 
             <!-- Kullanıcı Menü Butonları & User ID Alanı -->
             <div class="flex items-center gap-2 text-xs font-bold flex-wrap justify-center">
+                <!-- Menajer Adı Gösterge ve Düzenleme Butonu -->
+                <button onclick="openManagerNameModal()" class="bg-[#090f20] hover:bg-[#131b35] border border-fb-yellow/40 text-fb-yellow px-3 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer" title="Menajer Adını Değiştir">
+                    <span>👔</span> <span id="header-manager-name-display">Menajer: ...</span>
+                </button>
                 <!-- User ID Gösterge ve Düzenleme Butonu -->
                 <button onclick="promptUserId()" class="bg-[#090f20] hover:bg-[#131b35] border border-fb-yellow/40 text-fb-yellow px-3 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer" title="User ID Değiştir">
                     <span>🆔</span> <span id="header-user-id-display">ID: Yükleniyor...</span>
@@ -364,6 +368,24 @@
         </div>
     </div>
 
+    <!-- MENAJER ADI GİRİŞ MODALI (YENİ - SİTEYE UYUMLU DİZAYN) -->
+    <div id="manager-name-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-[#090f20] border-2 border-yellow-500/50 rounded-2xl p-6 sm:p-8 max-w-md w-full space-y-5 shadow-2xl relative">
+            <button onclick="closeManagerNameModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white font-bold text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-all">✕</button>
+            <div class="text-center space-y-2">
+                <span class="inline-flex bg-fb-yellow text-slate-950 font-bebas text-xs px-2.5 py-0.5 rounded tracking-wider font-bold">ÇUBUKLU11 MENAJERİ</span>
+                <h3 class="font-bebas text-3xl sm:text-4xl text-fb-yellow tracking-wide">MENAJER ADIN</h3>
+                <p class="text-xs text-slate-300">Liderlik tablosunda görünecek menajer adını veya takma adını gir.</p>
+            </div>
+            <div>
+                <input id="manager-name-input" type="text" placeholder="Örn: Jose Mourinho" maxlength="25" class="w-full bg-[#040711] border border-yellow-500/40 focus:border-fb-yellow rounded-xl py-3 px-4 text-sm font-bold text-white outline-none">
+            </div>
+            <button onclick="saveManagerNameAndStart()" class="w-full py-3.5 bg-fb-yellow hover:bg-yellow-400 text-slate-950 font-bebas text-xl rounded-xl transition shadow-lg tracking-wider cursor-pointer">
+                KAYDET VE MENAJER MODUNA BAŞLA ➔
+            </button>
+        </div>
+    </div>
+
     <!-- OYUN MODLARI SEÇİM MODALI (Menajer Modu Aktif) -->
     <div id="mode-modal" class="fixed inset-0 bg-[#020617]/95 z-50 flex flex-col items-center justify-center p-6 backdrop-blur-md hidden">
         <div class="bg-white/5 border border-white/10 p-6 sm:p-8 rounded-2xl max-w-lg w-full text-center shadow-2xl relative">
@@ -586,6 +608,62 @@
             playSound('click');
         }
 
+        // --- MENAJER ADI YÖNETİMİ ---
+        function getOrCreateManagerName() {
+            const key = 'cubuklu11_manager_username';
+            let name = localStorage.getItem(key);
+            if (!name) {
+                name = "Teknik Direktör";
+                localStorage.setItem(key, name);
+            }
+            return name;
+        }
+
+        function openManagerNameModal() {
+            playSound('click');
+            const modal = document.getElementById('manager-name-modal');
+            const input = document.getElementById('manager-name-input');
+            if (modal && input) {
+                input.value = getOrCreateManagerName();
+                modal.classList.remove('hidden');
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeManagerNameModal() {
+            playSound('click');
+            const modal = document.getElementById('manager-name-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+            }
+        }
+
+        function saveManagerNameAndStart() {
+            const input = document.getElementById('manager-name-input');
+            const name = input ? input.value.trim() : '';
+            if (!name) {
+                alert('Lütfen geçerli bir menajer adı girin!');
+                return;
+            }
+            localStorage.setItem('cubuklu11_manager_username', name);
+            updateManagerNameDisplay();
+            closeManagerNameModal();
+            
+            // Eğer kurulum ekranındayken tıklandıysa kadro kurulumunu başlat
+            if (document.getElementById('screen-setup') && !document.getElementById('screen-setup').classList.contains('hidden')) {
+                proceedWithSquadBuilding();
+            }
+        }
+
+        function updateManagerNameDisplay() {
+            const name = getOrCreateManagerName();
+            const disp = document.getElementById('header-manager-name-display');
+            if (disp) {
+                disp.innerText = name.length > 12 ? name.slice(0, 12) + '...' : name;
+            }
+        }
+
         // --- USER ID YÖNETİMİ ---
         function getOrCreateManagerUserId() {
             const key = 'cubuklu11_manager_user_id'; 
@@ -790,10 +868,16 @@
             gameState.season = ACTIVE_SEASON.id;
             loadPlayersFromSupabase();
             updateUserIdDisplay();
+            updateManagerNameDisplay();
         });
 
         function startSquadBuilding() {
             playSound('select');
+            // Menajer adı daha önce hiç girilmediyse veya değiştirilmek isteniyorsa modal aç, aksi takdirde doğrudan başlat veya modal göster
+            openManagerNameModal();
+        }
+
+        function proceedWithSquadBuilding() {
             gameState.season = ACTIVE_SEASON.id;
             gameState.formation = document.getElementById('formation-select').value;
             gameState.squad = {};
@@ -1013,7 +1097,6 @@
             }).join('');
         }
 
-        // --- DÜZELTİLEN FONKSİYON: Oyuncu Kaldırıldığında Listenin Güncellenmesi ---
         function removePlayerFromSlot(event, idx) {
             event.stopPropagation(); 
             const p = gameState.squad[idx]; 
@@ -1029,7 +1112,6 @@
             
             updateUI(); 
 
-            // Kaldırılan oyuncudan sonra sol paneldeki oyuncu listesini güncel pozisyona göre tekrar render et
             const positions = FORMATIONS[gameState.formation] || FORMATIONS['4-3-3 Hücum'];
             renderPlayerCards(positions[gameState.activeSlotIndex]);
         }
@@ -1203,7 +1285,7 @@
         
         async function saveManagerResult(finalRow,result,avgRating){
             const userId = getOrCreateManagerUserId();
-            const username = localStorage.getItem('cubuklu11_manager_username') || 'Anonim_Manager';
+            const username = getOrCreateManagerName();
             try {
                 await supabaseClient.from('leaderboard').insert([{
                     user_id: userId,
@@ -1233,19 +1315,19 @@
             const state=window.managerLeagueState; if(!state)return;
             const table=createEmptyTable(); state.season.matches.forEach(m=>applyMatch(table,m));
             const standings=sortedStandings(table); const finalRow=standings.find(r=>r.team==='Fenerbahçe')||{points:0,wins:0,draws:0,losses:0,gd:0};
-            const grade=gradeManagerTeam(state.avgRating);
+            const result=gradeManagerTeam(state.avgRating); const globalScore=Math.round((finalRow.points/102)*50+(state.avgRating/90)*50);
             
-            document.getElementById('res-season-label').innerText=`${grade.label} (${gameState.formation})`;
-            document.getElementById('res-points').innerText=`${finalRow.points} P`;
-            document.getElementById('res-wdl').innerText=`${finalRow.wins}G - ${finalRow.draws}B - ${finalRow.losses}M`;
-            document.getElementById('res-team-rating').innerText=state.avgRating.toFixed(2);
-            document.getElementById('res-global-score').innerText=Math.round(finalRow.points*1.2+state.avgRating*3);
-            document.getElementById('final-standings').innerHTML=renderStandingsRows(standings,true);
-
-            saveManagerResult(finalRow,grade,state.avgRating);
-
             document.getElementById('screen-weekly').classList.add('hidden');
             document.getElementById('screen-result').classList.remove('hidden');
+            
+            document.getElementById('res-season-label').innerText = `${result.label} (${result.wins}G - ${result.draws}B - ${result.losses}M)`;
+            document.getElementById('res-points').innerText = `${finalRow.points} P`;
+            document.getElementById('res-wdl').innerText = `${finalRow.wins}G - ${finalRow.draws}B - ${finalRow.losses}M`;
+            document.getElementById('res-team-rating').innerText = state.avgRating.toFixed(2);
+            document.getElementById('res-global-score').innerText = globalScore;
+            document.getElementById('final-standings').innerHTML = renderStandingsRows(standings, true);
+            
+            saveManagerResult(finalRow, result, state.avgRating);
         }
     </script>
 </body>
