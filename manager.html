@@ -3,377 +3,1134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fenerbahçe Manager Mode - 90s Retro Edition</title>
+    <title>ÇUBUKLU11 - MENAJER MODU</title>
+
+    <!-- Google Analytics 4 (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RKL59XDM08"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-RKL59XDM08');
+        gtag('event', 'manager_page_view', { season: '2026-27' });
+    </script>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3518417094251021" crossorigin="anonymous"></script>
+
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Bebas Neue & Nunito -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
     <style>
-        /* Kamera Flaş Patlaması Animasyonu */
-        @keyframes cameraFlash {
-            0% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.3);
-            }
-            30% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1.3);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(1.8);
-            }
+        html {
+            font-size: 120%;
         }
 
-        .flash-burst {
-            position: absolute;
-            border-radius: 50%;
-            pointer-events: none;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.3) 40%, rgba(255, 255, 255, 0) 70%);
-            animation: cameraFlash 0.18s ease-out forwards;
+        :root {
+            --fb-yellow: #ffed00;
+            --fb-yellow-hover: #e6d500;
+            --fb-dark-navy: #040711;
+            --fb-card-bg: #090f20;
+            --fb-border-navy: #162038;
         }
 
-        /* SVG Keskin Piksel Çizimi */
-        .pixel-crisp {
-            shape-rendering: crispEdges;
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--fb-dark-navy);
+            color: #ffffff;
+        }
+
+        .font-bebas {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .text-fb-yellow { color: var(--fb-yellow); }
+        .bg-fb-yellow { background-color: var(--fb-yellow); }
+        .border-fb-yellow { border-color: var(--fb-yellow); }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Saha Görseli Stili */
+        .football-pitch {
+            background-image: url('https://sqecxfgbdfdebyaocrce.supabase.co/storage/v1/object/public/Generated%20Cards/Empty%20Field.png');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            height: 580px;
+        }
+
+        @media (min-width: 768px) {
+            .football-pitch {
+                height: 660px;
+            }
+        }
+ 
+        /* SAHA İÇİ KUTULARI (Öncekinden %5 daha küçük, 4:3 Oranlı) */
+        .pitch-slot-box {
+            width: 3.15rem;
+            height: 4.20rem;
+            background: rgba(4, 7, 17, 0.85);
+            border: 2px dashed rgba(255, 237, 0, 0.6);
+            backdrop-filter: blur(4px);
+            transition: all 0.2s ease-in-out;
+        }
+        @media (min-width: 768px) {
+            .pitch-slot-box {
+                width: 3.60rem;
+                height: 4.80rem;
+            }
+        }
+        .pitch-slot-box:hover {
+            border-color: var(--fb-yellow);
+            background: rgba(9, 15, 32, 0.95);
+            transform: scale(1.04);
+        }
+        .pitch-slot-box.active-slot {
+            border: 2.5px solid var(--fb-yellow);
+            box-shadow: 0 0 18px rgba(255, 237, 0, 0.5);
+            background: rgba(13, 21, 44, 0.95);
+        }
+        .pitch-slot-box.filled-slot {
+            border: 2px solid #22c55e;
+            background: rgba(10, 40, 20, 0.92);
+        }
+
+        .nostalgia-choice {
+            background: #040711;
+            border: 1px solid #162038;
+            color: #e2e8f0;
+            padding: 0.7rem;
+            border-radius: 0.75rem;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.08em;
+            transition: all 0.2s ease;
+        }
+        .nostalgia-choice:hover { border-color: var(--fb-yellow); color: var(--fb-yellow); }
+        .retro-sticker-card {
+            background: linear-gradient(145deg, #090f20 0%, #131b35 100%);
+            border: 3px solid var(--fb-yellow);
+            box-shadow: 0 8px 20px rgba(255, 237, 0, 0.15);
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col justify-between">
+<body class="min-h-screen flex flex-col justify-between select-none">
 
-    <!-- ÜST BİLGİ BARI (Oyun Arayüzü) -->
-    <header class="bg-[#0a1c56] border-b-4 border-yellow-400 p-4 shadow-lg">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-black text-yellow-400 tracking-wider">MANAGER MODE <span class="text-xs text-white font-normal bg-blue-900 px-2 py-1 rounded">2026/27</span></h1>
-                <p class="text-xs text-gray-300">Bütçe: <span id="ui-budget" class="text-green-400 font-bold">100.0M€</span></p>
+    <!-- ÜST BAŞLIK & NAVİGASYON -->
+    <header class="w-full bg-[#080d1e] border-b border-[#162038] px-4 py-3">
+        <div class="max-w-[1600px] mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
+            <div class="flex items-center gap-3">
+                <h1 class="font-bebas text-3xl text-fb-yellow tracking-wider cursor-pointer" onclick="location.reload()">ÇUBUKLU11</h1>
+                <span class="bg-fb-yellow text-slate-950 font-bebas text-sm px-2.5 py-0.5 rounded font-bold tracking-wide">
+                    MENAJER MODU
+                </span>
             </div>
-            <div class="text-right">
-                <span class="text-sm font-semibold text-gray-300">Hafta: <span id="ui-week" class="text-yellow-400">1</span> / 38</span>
-                <button id="btn-next-week" onclick="renderWeek()" class="ml-4 bg-yellow-400 hover:bg-yellow-300 text-[#0a1c56] font-bold px-4 py-2 rounded shadow transition-all active:scale-95">
-                    Haftayı Oyna ▶
+
+            <!-- Kullanıcı Menü Butonları -->
+            <div class="flex items-center gap-2 text-xs font-bold flex-wrap justify-center">
+                <button class="bg-[#090f20] hover:bg-[#131b35] border border-[#162038] text-slate-200 px-3 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer">
+                    <span>👤</span> Anonim_Scout
                 </button>
+                <button onclick="openModalsMenu()" class="bg-[#090f20] hover:bg-[#131b35] border border-yellow-500/40 text-fb-yellow px-3 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer">
+                    <span>🎮</span> Modlar
+                </button>
+                <button onclick="openLeaderboard()" class="bg-[#090f20] hover:bg-[#131b35] border border-yellow-500/40 text-fb-yellow px-3 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer">
+                    <span>🏆</span> Sıralama
+                </button>
+                <button onclick="toggleSound()" id="sound-toggle-btn" class="bg-[#090f20] hover:bg-[#131b35] border border-[#162038] text-slate-200 px-3 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer">
+                    <span id="sound-icon">🔊</span> <span id="sound-text">Ses</span>
+                </button>
+                <div id="header-budget-badge" class="hidden bg-fb-yellow text-slate-950 font-bebas text-base px-3 py-1.5 rounded-xl">
+                    BÜTÇE: <span id="hdr-budget">100.0M€</span>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- ANA İÇERİK (Saha & Puan Durumu Özeti) -->
-    <main class="max-w-6xl mx-auto w-full p-4 grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow">
-        <!-- Saha & Kadro Özeti -->
-        <div class="md:col-span-2 bg-gray-800 p-6 rounded-xl border border-gray-700 flex flex-col justify-between">
-            <h2 class="text-lg font-bold text-yellow-400 mb-4 border-b border-gray-700 pb-2">4-3-3 Taktik Diziliş</h2>
-            <div id="squad-display" class="grid grid-cols-3 gap-3 text-center my-auto">
-                <!-- JavaScript ile Kadro Basılacak -->
+    <!-- SARI NEON BİLGİ ŞERİDİ -->
+    <div class="max-w-[1600px] w-full mx-auto px-4 mt-3">
+        <div class="bg-[#0a1124] border border-yellow-500/40 rounded-xl px-4 py-2.5 flex items-center gap-2 text-xs text-yellow-300">
+            <span>🔍</span>
+            <span id="info-banner-text" class="font-semibold">Menajer Analizi: €100M bütçeyle tüm dönemlerden oyuncu seç; aynı oyuncunun yalnızca bir sezon kartı kullanılabilir.</span>
+        </div>
+    </div>
+
+    <!-- ANA İÇERİK -->
+    <main class="max-w-[1600px] w-full mx-auto p-4 flex-1 flex flex-col justify-center">
+
+        <!-- EKRAN 1: 2026-27 SEZONU VE DİZİLİŞ SEÇİMİ -->
+        <div id="screen-setup" class="w-full max-w-2xl mx-auto space-y-6">
+            <div class="bg-[#090f20] border border-[#162038] rounded-2xl p-6 md:p-8 space-y-6 shadow-2xl">
+                <div class="text-center space-y-2">
+                    <span class="inline-flex bg-fb-yellow text-slate-950 font-bebas text-sm px-3 py-1 rounded-lg tracking-wider">2026-27 SÜPER LİG</span>
+                    <h2 class="font-bebas text-4xl text-fb-yellow">MENAJER CHALLENGE</h2>
+                    <p class="text-xs text-slate-400">18 takım • 34 maç • Maksimum 102 puan</p>
+                    <p class="text-sm text-slate-300 max-w-lg mx-auto">€100M bütçeyle farklı dönemlerden efsane kadronu kur ve 2026-27 sezonunda kusursuzluğun peşine düş.</p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 text-center">
+                    <div class="bg-[#040711] border border-[#162038] rounded-xl p-3"><div class="font-bebas text-2xl text-fb-yellow">18</div><div class="text-[10px] text-slate-400">TAKIM</div></div>
+                    <div class="bg-[#040711] border border-[#162038] rounded-xl p-3"><div class="font-bebas text-2xl text-fb-yellow">34</div><div class="text-[10px] text-slate-400">MAÇ</div></div>
+                    <div class="bg-[#040711] border border-[#162038] rounded-xl p-3"><div class="font-bebas text-2xl text-fb-yellow">102</div><div class="text-[10px] text-slate-400">MAKS. PUAN</div></div>
+                </div>
+
+                <div>
+                    <label class="block font-bebas text-xl text-fb-yellow mb-1.5">DİZİLİŞİNİ SEÇ</label>
+                    <select id="formation-select" onchange="gameState.formation = this.value" class="w-full bg-[#040711] border border-yellow-500/40 rounded-xl p-3.5 text-sm font-bold text-yellow-300 focus:outline-none focus:border-fb-yellow">
+                        <option value="4-4-2">4-4-2</option>
+                        <option value="4-1-2-1-2">4-1-2-1-2</option>
+                        <option value="4-4-1-1">4-4-1-1</option>
+                        <option value="4-5-1">4-5-1</option>
+                        <option value="4-1-4-1">4-1-4-1</option>
+                        <option value="4-3-3 Dengeli">4-3-3 Dengeli</option>
+                        <option value="4-3-3 Defansif">4-3-3 Defansif</option>
+                        <option value="4-3-3 Hücum" selected>4-3-3 Hücum</option>
+                        <option value="4-2-3-1">4-2-3-1</option>
+                        <option value="4-3-2-1">4-3-2-1</option>
+                        <option value="4-2-4">4-2-4</option>
+                        <option value="3-5-2">3-5-2</option>
+                        <option value="3-4-3">3-4-3</option>
+                        <option value="3-4-2-1">3-4-2-1</option>
+                    </select>
+                </div>
+
+                <button onclick="startSquadBuilding()" class="w-full py-4 bg-fb-yellow hover:bg-yellow-400 text-slate-950 font-bebas text-2xl rounded-xl transition shadow-lg tracking-wider cursor-pointer">
+                    KADRO KURULUMUNA GEÇ ➔
+                </button>
             </div>
-            <p class="text-xs text-gray-400 text-center mt-4">Kadro değeri ve taktiksel uyum simülasyon sonucunu doğrudan etkiler.</p>
+
+            <button onclick="openNostalgiaModal('manager_setup')" class="w-full text-left bg-[#090f20] border border-yellow-500/25 hover:border-fb-yellow rounded-2xl p-5 transition group">
+                <div class="flex items-center justify-between gap-4">
+                    <div>
+                        <div class="font-bebas text-2xl text-fb-yellow">🕰️ NOSTALJİ SEZONLARI</div>
+                        <p class="text-xs text-slate-400 mt-1">Efsane sezonların gerçek rakipleri, lig yapısı ve fikstürleriyle yeniden mücadele et.</p>
+                    </div>
+                    <span class="shrink-0 text-[10px] font-bold bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg border border-slate-700 group-hover:bg-fb-yellow group-hover:text-slate-950">ÇOK YAKINDA</span>
+                </div>
+            </button>
+
+            <div class="text-center py-2 bg-[#040711] border border-[#162038] rounded-xl">
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3518417094251021" data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            </div>
         </div>
 
-        <!-- Puan Durumu -->
-        <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
-            <h2 class="text-lg font-bold text-yellow-400 mb-4 border-b border-gray-700 pb-2">Canlı Puan Durumu</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left">
-                    <thead class="text-xs text-gray-400 uppercase bg-gray-700/50">
-                        <tr>
-                            <th class="py-2 px-1">#</th>
-                            <th class="py-2 px-2">Takım</th>
-                            <th class="py-2 px-1 text-center">O</th>
-                            <th class="py-2 px-1 text-center">P</th>
-                        </tr>
-                    </thead>
-                    <tbody id="standings-body">
-                        <!-- Puan Durumu Satırları -->
-                    </tbody>
-                </table>
+        <!-- EKRAN 2: OYUNCU SEÇİM ALANI & SAĞDA ÇİM SAHA -->
+        <div id="screen-builder" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- SOL PANEL: Oyuncu Seçim Alanı -->
+            <div class="lg:col-span-5 bg-[#090f20] border border-[#162038] rounded-2xl p-4 flex flex-col h-[760px]">
+                <div class="mb-3 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <h3 id="current-pos-title" class="font-bebas text-2xl text-fb-yellow">GK POZİSYONU SEÇİMİ</h3>
+                        <span id="pos-counter-badge" class="text-xs font-mono bg-[#040711] text-fb-yellow px-2 py-0.5 rounded border border-yellow-500/30">1 / 11</span>
+                    </div>
+                    
+                    <div class="relative"><input id="player-search" type="search" placeholder="Oyuncu adı ara..." oninput="handlePlayerSearch(this.value)" class="w-full bg-[#040711] border border-[#162038] focus:border-fb-yellow rounded-xl py-2.5 px-3 text-xs text-white outline-none"></div>
+                    <!-- SIRALAMA BUTONLARI -->
+                    <div class="flex items-center gap-1.5 text-xs font-mono pt-1 flex-wrap">
+                        <span class="text-slate-400">Sırala:</span>
+                        <button onclick="sortPlayers('ovr')" id="sort-btn-ovr" class="px-2.5 py-1 bg-fb-yellow text-slate-950 font-bold rounded transition cursor-pointer">Reyting ↓</button>
+                        <button onclick="sortPlayers('name')" id="sort-btn-name" class="px-2 py-1 bg-[#040711] text-slate-300 rounded border border-[#162038] hover:border-fb-yellow transition cursor-pointer">İsim</button>
+                        <button onclick="sortPlayers('season')" id="sort-btn-season" class="px-2 py-1 bg-[#040711] text-slate-300 rounded border border-[#162038] hover:border-fb-yellow transition cursor-pointer">Sezon</button>
+                        <button onclick="sortPlayers('value')" id="sort-btn-value" class="px-2 py-1 bg-[#040711] text-slate-300 rounded border border-[#162038] hover:border-fb-yellow transition cursor-pointer">Değer</button>
+                        <button onclick="sortPlayers('goals')" id="sort-btn-goals" class="px-2 py-1 bg-[#040711] text-slate-300 rounded border border-[#162038] hover:border-fb-yellow transition cursor-pointer">Gol</button>
+                    </div>
+                </div>
+
+                <!-- OYUNCU KARTLARI LİSTESİ -->
+                <div id="player-cards-container" class="flex-1 overflow-y-auto space-y-2 pr-1 no-scrollbar"></div><div class="mt-3 pt-3 border-t border-[#162038] flex justify-between items-center"><button id="player-prev-page" onclick="changePlayerPage(-1)" class="px-3 py-1.5 rounded bg-[#040711] text-xs disabled:opacity-30">← ÖNCEKİ</button><span id="player-page-info" class="text-[10px] font-mono text-slate-400"></span><button id="player-next-page" onclick="changePlayerPage(1)" class="px-3 py-1.5 rounded bg-[#040711] text-xs disabled:opacity-30">SONRAKİ →</button></div>
             </div>
+
+            <!-- SAĞ PANEL: Çim Saha -->
+            <div class="lg:col-span-7 bg-[#090f20] border border-[#162038] rounded-2xl p-4 flex flex-col justify-between h-[760px] relative overflow-hidden">
+                <div class="flex justify-between items-center z-10 mb-2">
+                    <div></div>
+                    <div class="flex items-center gap-3 font-mono text-xs bg-[#040711] px-3 py-1.5 rounded-lg border border-[#162038]">
+                        <span>SEZON: <strong id="disp-season" class="text-fb-yellow">2026-27</strong></span>
+                        <span>DİZİLİŞ: <strong id="disp-formation" class="text-fb-yellow">4-3-3 Dengeli</strong></span>
+                        <span>REY: <strong id="disp-ovr" class="text-emerald-400">0.0</strong></span>
+                    </div>
+                </div>
+
+                <!-- Saha Görseli -->
+                <div id="pitch-background-element" class="flex-1 football-pitch rounded-xl relative p-3 flex flex-col justify-between overflow-hidden">
+                    <div class="absolute inset-0 border border-white/20 rounded-xl pointer-events-none"></div>
+                    <div class="absolute top-1/2 left-0 right-0 border-t border-white/20 pointer-events-none"></div>
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-36 h-36 border border-white/20 rounded-full pointer-events-none"></div>
+                    
+                    <div id="pitch-slots-container" class="relative w-full h-full flex flex-col justify-between py-1 z-10"></div>
+                </div>
+
+                <div class="mt-3">
+                    <button id="btn-start-sim" onclick="finishSquadAndSimulate()" disabled class="w-full py-3.5 bg-slate-800 text-slate-500 font-bebas text-2xl rounded-xl transition cursor-not-allowed">
+                        2026-27 SEZONUNU SİMÜLE ET ⚽
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- EKRAN 3: HAFTALIK LİG SİMÜLASYONU -->
+        <div id="screen-weekly" class="hidden max-w-6xl mx-auto w-full space-y-4">
+            <div class="bg-[#090f20] border border-[#162038] rounded-2xl p-5 shadow-2xl">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                    <div>
+                        <span id="weekly-progress" class="text-[10px] font-mono text-emerald-400 tracking-widest">2026-27 SÜPER LİG</span>
+                        <h2 id="weekly-title" class="font-bebas text-4xl text-fb-yellow">1. HAFTA</h2>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="btn-next-week" onclick="advanceWeek()" class="px-4 py-2 bg-fb-yellow text-slate-950 font-bebas text-lg rounded-xl hover:bg-yellow-400">SONRAKİ HAFTA ➜</button>
+                        <button onclick="fastForwardSeason()" class="px-4 py-2 bg-slate-800 text-slate-200 font-bebas text-lg rounded-xl hover:bg-slate-700">HIZLI TAMAMLA</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="font-bebas text-xl text-fb-yellow mb-2">HAFTANIN SONUÇLARI</h3>
+                        <div id="weekly-results" class="space-y-2"></div>
+                    </div>
+                    <div>
+                        <h3 class="font-bebas text-xl text-fb-yellow mb-2">PUAN DURUMU</h3>
+                        <div class="overflow-x-auto rounded-xl border border-[#162038]">
+                            <table class="w-full text-[10px] md:text-xs">
+                                <thead class="bg-[#040711] text-slate-400"><tr><th class="p-2 text-left">#</th><th class="p-2 text-left">Takım</th><th>O</th><th>G</th><th>B</th><th>M</th><th>AV</th><th>P</th></tr></thead>
+                                <tbody id="weekly-standings"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EKRAN 3: 2026-27 SEZON KARNESİ -->
+        <div id="screen-result" class="hidden max-w-5xl mx-auto w-full space-y-5">
+            <div class="bg-[#090f20] border border-[#162038] rounded-2xl p-5 md:p-8 space-y-6 text-center shadow-2xl">
+                <span class="text-xs font-mono text-emerald-400 tracking-widest">2026-27 SEZONU TAMAMLANDI</span>
+                <h2 class="font-bebas text-4xl text-fb-yellow">ŞAMPİYONLUK KARNESİ</h2>
+                <p id="res-season-label" class="text-sm font-bold text-slate-300">Sezon sonucu</p>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-left">
+                    <div class="retro-sticker-card p-4 rounded-xl">
+                        <span class="text-[10px] text-slate-400 font-mono">TOPLAM PUAN</span>
+                        <strong id="res-points" class="block font-bebas text-3xl text-fb-yellow">0 P</strong>
+                    </div>
+                    <div class="retro-sticker-card p-4 rounded-xl">
+                        <span class="text-[10px] text-slate-400 font-mono">G / B / M</span>
+                        <strong id="res-wdl" class="block font-mono text-emerald-400 text-lg mt-1">0G - 0B - 0M</strong>
+                    </div>
+                    <div class="retro-sticker-card p-4 rounded-xl">
+                        <span class="text-[10px] text-slate-400 font-mono">TAKIM REYTİNGİ</span>
+                        <strong id="res-team-rating" class="block font-bebas text-3xl text-white">0.00</strong>
+                    </div>
+                    <div class="retro-sticker-card p-4 rounded-xl">
+                        <span class="text-[10px] text-slate-400 font-mono">S100 SKORU</span>
+                        <strong id="res-global-score" class="block font-bebas text-3xl text-fb-yellow">0</strong>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="bg-[#090f20] border border-[#162038] rounded-2xl p-4 md:p-6 shadow-2xl text-left">
+                <div class="flex items-center justify-between gap-3 mb-4">
+                    <div>
+                        <h3 class="font-bebas text-2xl text-fb-yellow">FİNAL PUAN DURUMU</h3>
+                        <p class="text-[10px] text-slate-400">34 haftalık tam lig simülasyonu tamamlandı.</p>
+                    </div>
+                    <div class="flex gap-2 text-[10px] font-bold">
+                        <span class="px-2 py-1 rounded bg-emerald-500/15 text-emerald-400">G</span>
+                        <span class="px-2 py-1 rounded bg-amber-500/15 text-amber-300">B</span>
+                        <span class="px-2 py-1 rounded bg-red-500/15 text-red-400">M</span>
+                    </div>
+                </div>
+                <div class="overflow-x-auto rounded-xl border border-[#162038]">
+                    <table class="w-full text-[10px] md:text-xs"><thead class="bg-[#040711] text-slate-400"><tr><th class="p-2 text-left">#</th><th class="p-2 text-left">Takım</th><th>O</th><th>G</th><th>B</th><th>M</th><th>AG</th><th>YG</th><th>AV</th><th>P</th></tr></thead><tbody id="final-standings"></tbody></table>
+                </div>
+            </div>
+
+            <button onclick="location.reload()" class="w-full py-4 bg-fb-yellow text-slate-950 font-bebas text-2xl rounded-xl hover:bg-yellow-400 transition">
+                TEKRAR OYNA
+            </button>
         </div>
     </main>
 
-    <!-- KUTLAMA MODALI (ŞAMPİYONLUK EKRANI) -->
-    <div id="championship-modal" class="hidden fixed inset-0 z-50 bg-black/95 flex flex-col items-center justify-center p-4 overflow-hidden">
-        
-        <!-- İçerik Konteyneri -->
-        <div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 mb-6 z-10">
-            
-            <!-- SOL: 90'lar Retro Gazete Sayfası -->
-            <div class="bg-[#f4ebd0] p-6 border-[10px] border-double border-gray-900 shadow-2xl rotate-[-1deg] transform transition-transform hover:rotate-0 text-gray-900">
-                <div class="border-b-4 border-black pb-2 mb-4 text-center">
-                    <h2 class="text-3xl md:text-4xl font-black font-serif uppercase text-[#0a1c56] tracking-tight">ŞAMPİYON FENERBAHÇE!</h2>
-                    <p class="text-xs font-bold text-gray-800 uppercase tracking-widest mt-1">Özel Baskı - 100M€'luk Mucize Sonuçlandı</p>
-                </div>
-                
-                <!-- SVG Piksel Art Kupa (#01 Çıkartma) -->
-                <div class="relative w-36 h-44 flex items-center justify-center mb-4 mx-auto bg-gradient-to-tr from-amber-100 via-white to-amber-200 border-4 border-dashed border-gray-500 p-2 transform rotate-2 hover:rotate-0 transition-transform duration-300 shadow-md">
-                    <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/70 to-transparent opacity-80 pointer-events-none"></div>
-                    
-                    <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-md pixel-crisp">
-                        <rect x="4" y="13" width="8" height="2" fill="#0a1c56" />
-                        <rect x="6" y="11" width="4" height="2" fill="#facc15" />
-                        <rect x="7" y="10" width="2" height="1" fill="#ca8a04" />
-                        <rect x="7" y="9" width="2" height="1" fill="#0a1c56" />
-                        <rect x="4" y="3" width="8" height="6" fill="#facc15" />
-                        <rect x="4" y="3" width="2" height="6" fill="#ca8a04" />
-                        <rect x="10" y="3" width="2" height="6" fill="#ca8a04" />
-                        <rect x="4" y="2" width="8" height="1" fill="#0a1c56" />
-                        <rect x="2" y="3" width="2" height="1" fill="#facc15" />
-                        <rect x="2" y="4" width="1" height="3" fill="#facc15" />
-                        <rect x="2" y="7" width="2" height="1" fill="#facc15" />
-                        <rect x="3" y="4" width="1" height="3" fill="#ca8a04" />
-                        <rect x="12" y="3" width="2" height="1" fill="#facc15" />
-                        <rect x="13" y="4" width="1" height="3" fill="#facc15" />
-                        <rect x="12" y="7" width="2" height="1" fill="#facc15" />
-                        <rect x="12" y="4" width="1" height="3" fill="#ca8a04" />
-                    </svg>
-
-                    <div class="absolute bottom-1 right-1 bg-black text-white text-[9px] font-mono px-1 rounded">#01</div>
-                </div>
-
-                <p class="text-justify font-serif text-sm leading-relaxed border-t border-gray-400 pt-3">
-                    Tarihi bir sezon geride kaldı. 100M€ bütçe kısıtına rağmen kurulan bu efsanevi 4-3-3 kadrosu, rakiplerini geride bırakarak mutlu sona ulaştı. Kadıköy'de sabahın ilk ışıklarına kadar sürecek kutlamalar başladı!
-                </p>
-            </div>
-
-            <!-- SAĞ: Modern X (Twitter) Gerçekçi Paylaşımları -->
-            <div class="bg-[#15202b] rounded-xl p-5 shadow-2xl flex flex-col gap-4 max-h-[420px] overflow-y-auto border border-gray-800" id="tweet-container">
-                <!-- Dinamik Tweetler JavaScript ile Buraya Dolacak -->
-            </div>
+    <!-- OYUNCU DETAY PENCERESİ (2.5 saniye otomatik kapanır) -->
+    <div id="detail-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="w-full max-w-sm space-y-4 text-center">
+            <div id="modal-card-content" class="flex flex-col items-center justify-center min-h-[380px]"></div>
         </div>
-
-        <!-- YENİ SEZON BAŞLAT BUTONU (Arcade Stil) -->
-        <button onclick="resetGame()" class="z-10 group relative px-8 py-3 font-mono font-bold text-xl uppercase tracking-widest text-yellow-300 bg-transparent border-4 border-yellow-300 hover:bg-yellow-300 hover:text-[#0a1c56] transition-colors duration-200 shadow-lg">
-            <span class="animate-pulse">▶ YENİ SEZON BAŞLAT</span>
-        </button>
     </div>
 
-    <!-- JAVASCRIPT OYUN MANTIĞI -->
+    <!-- OYUN MODLARI SEÇİM MODALI -->
+    <div id="mods-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-[#090f20] border border-yellow-500/40 rounded-2xl p-6 max-w-md w-full space-y-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h3 class="font-bebas text-2xl text-fb-yellow text-center md:text-left">🎮 OYUN MODUNU SEÇ</h3>
+                    <p class="text-slate-400 text-xs mt-0.5">Oynamak istediğin konsepti seç ve maratona başla!</p>
+                </div>
+                <button onclick="closeModalsMenu()" class="text-slate-400 hover:text-white font-bold text-lg cursor-pointer">✕</button>
+            </div>
+            <div class="space-y-3 text-sm pt-2">
+                <!-- Blind Draft Modu -->
+                <a href="https://cubuklu11.win/index.html" class="block p-3.5 bg-[#040711] border border-yellow-500/40 rounded-xl hover:border-fb-yellow transition group">
+                    <div class="flex justify-between items-center">
+                        <div class="font-bold text-fb-yellow font-bebas text-lg">⭐ Blind Draft (Nostalji Modu)</div>
+                        <span class="text-[10px] font-mono bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700 group-hover:bg-fb-yellow group-hover:text-slate-950 transition font-bold">DEĞİŞTİR</span>
+                    </div>
+                    <div class="text-slate-400 text-xs mt-1">Kart yüzleri kapalı! Nostaljik Fenerbahçe sürpriz karması.</div>
+                </a>
+
+                <!-- Scout Modu -->
+                <a href="https://cubuklu11.win/scout.html" class="block p-3.5 bg-[#040711] border border-yellow-500/40 rounded-xl hover:border-fb-yellow transition group">
+                    <div class="flex justify-between items-center">
+                        <div class="font-bold text-fb-yellow font-bebas text-lg">🔍 Scout Modu (Açık Kartlar)</div>
+                        <span class="text-[10px] font-mono bg-fb-yellow text-slate-950 px-2 py-1 rounded font-bold">AKTİF MOD</span>
+                    </div>
+                    <div class="text-slate-400 text-xs mt-1">Kart istatistiklerini ve OVR reytinglerini görerek en ideal kadroyu kurma yarışı.</div>
+                </a>
+
+                <!-- Teknik Direktör Modu -->
+                <div class="p-3.5 bg-[#040711] border border-yellow-500/40 rounded-xl opacity-90">
+                    <div class="flex justify-between items-center">
+                        <div class="font-bold text-fb-yellow font-bebas text-lg">👔 Teknik Direktör Modu</div>
+                        <span class="text-[10px] font-mono bg-slate-800 text-slate-400 px-2 py-1 rounded border border-slate-700 font-bold">AKTİF MOD</span>
+                    </div>
+                    <div class="text-slate-400 text-xs mt-1">Bütçe kısıtlaması ve taktiksel görevlerle tam menajerlik deneyimi.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOSTALJİ SEZONLARI TALEP MODALI -->
+    <div id="nostalgia-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-[#090f20] border border-yellow-500/40 rounded-2xl p-6 max-w-md w-full space-y-4">
+            <div class="flex justify-between items-start gap-3">
+                <div>
+                    <h3 class="font-bebas text-2xl text-fb-yellow">🕰️ NOSTALJİ SEZONLARI</h3>
+                    <p class="text-slate-400 text-xs mt-1">İlk olarak hangi tarihî sezonu oynamak isterdin?</p>
+                </div>
+                <button onclick="closeNostalgiaModal()" class="text-slate-400 hover:text-white font-bold text-lg">✕</button>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="requestNostalgiaSeason('1999-00')" class="nostalgia-choice">1999-00</button>
+                <button onclick="requestNostalgiaSeason('2003-04')" class="nostalgia-choice">2003-04</button>
+                <button onclick="requestNostalgiaSeason('2007-08')" class="nostalgia-choice">2007-08</button>
+                <button onclick="requestNostalgiaSeason('2010-11')" class="nostalgia-choice">2010-11</button>
+                <button onclick="requestNostalgiaSeason('2013-14')" class="nostalgia-choice">2013-14</button>
+                <button onclick="requestNostalgiaSeason('other')" class="nostalgia-choice">DİĞER</button>
+            </div>
+            <p id="nostalgia-thanks" class="hidden text-center text-emerald-400 text-xs font-bold">Talebin kaydedildi. Teşekkürler!</p>
+        </div>
+    </div>
+
+    <!-- SIRALAMA MODALI -->
+    <div id="leaderboard-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-[#090f20] border border-yellow-500/40 rounded-2xl p-6 max-w-md w-full space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bebas text-2xl text-fb-yellow">SKOR TABLOSU</h3>
+                <button onclick="closeLeaderboard()" class="text-slate-400 hover:text-white font-bold text-lg cursor-pointer">✕</button>
+            </div>
+            <div id="leaderboard-content" class="space-y-2 text-xs font-mono max-h-60 overflow-y-auto no-scrollbar">
+                <div class="flex justify-between p-2 bg-[#040711] rounded border border-[#162038]">
+                    <span>1. Anonim_Scout</span>
+                    <span class="text-fb-yellow font-bold">94.2 S100</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
     <script>
-        // Oyun Durumu (State)
-        let state = {
-            budget: 100.0,
-            squad: [
-                { name: 'Livakovic', pos: 'GK', val: 12.0 },
-                { name: 'Osayi', pos: 'RB', val: 8.5 },
-                { name: 'Becao', pos: 'CB', val: 10.0 },
-                { name: 'Djiku', pos: 'CB', val: 9.0 },
-                { name: 'Oosterwolde', pos: 'LB', val: 11.0 },
-                { name: 'Fred', pos: 'CM', val: 15.0 },
-                { name: 'Szymanski', pos: 'CAM', val: 18.0 },
-                { name: 'İSMAİL YÜKSEK', pos: 'CDM', val: 10.0 },
-                { name: 'Tadić', pos: 'LW', val: 8.0 },
-                { name: 'Džeko', pos: 'ST', val: 6.0 },
-                { name: 'İRFAN CAN', pos: 'RW', val: 10.0 }
-            ],
-            season: {
-                currentWeek: 1,
-                standings: [
-                    { teamId: 'FENERBAHÇE', name: 'Fenerbahçe', played: 0, points: 0 },
-                    { teamId: 'GALATASARAY', name: 'Galatasaray', played: 0, points: 0 },
-                    { teamId: 'BEŞİKTAŞ', name: 'Beşiktaş', played: 0, points: 0 },
-                    { teamId: 'TRABZONSPOR', name: 'Trabzonspor', played: 0, points: 0 }
-                ]
-            }
+        const SUPABASE_URL = 'https://sqecxfgbdfdebyaocrce.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNxZWN4ZmdiZGZkZWJ5YW9jcmNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2MjAzMTMsImV4cCI6MjEwMTE5NjMxM30.pWIjfCsQn1mwrIt9aDNLDn6usotI_Uf6iYSgkjwHQX8';
+        const SUPABASE_TABLE_NAME = 'master_database';
+
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const ACTIVE_SEASON = {
+            id: "2026-27",
+            name: "2026-27 Süper Lig",
+            teamCount: 18,
+            matchCount: 34,
+            maxPoints: 102
+        };
+        const MANAGER_BUDGET = 100.0;
+        const TEAM_DATA_2026_27 = {"Galatasaray":{"rating":82,"played":34,"wins":24,"draws":5,"losses":5,"goalsFor":77,"goalsAgainst":30,"goalDifference":47,"points":77},"Fenerbahçe":{"rating":null,"played":34,"wins":21,"draws":11,"losses":2,"goalsFor":77,"goalsAgainst":37,"goalDifference":40,"points":74},"Trabzonspor":{"rating":79,"played":34,"wins":20,"draws":9,"losses":5,"goalsFor":61,"goalsAgainst":39,"goalDifference":22,"points":69},"Beşiktaş":{"rating":77,"played":34,"wins":17,"draws":9,"losses":8,"goalsFor":59,"goalsAgainst":40,"goalDifference":19,"points":60},"İstanbul Başakşehir FK":{"rating":73,"played":34,"wins":16,"draws":9,"losses":9,"goalsFor":58,"goalsAgainst":35,"goalDifference":23,"points":57},"Göztepe":{"rating":71,"played":34,"wins":14,"draws":13,"losses":7,"goalsFor":42,"goalsAgainst":32,"goalDifference":10,"points":55},"Samsunspor":{"rating":71,"played":34,"wins":13,"draws":12,"losses":9,"goalsFor":46,"goalsAgainst":45,"goalDifference":1,"points":51},"Rizespor":{"rating":69,"played":34,"wins":10,"draws":11,"losses":13,"goalsFor":46,"goalsAgainst":52,"goalDifference":-6,"points":41},"Konyaspor":{"rating":69,"played":34,"wins":10,"draws":10,"losses":14,"goalsFor":43,"goalsAgainst":50,"goalDifference":-7,"points":40},"Kocaelispor":{"rating":68,"played":34,"wins":9,"draws":10,"losses":15,"goalsFor":26,"goalsAgainst":38,"goalDifference":-12,"points":37},"Alanyaspor":{"rating":67,"played":34,"wins":7,"draws":16,"losses":11,"goalsFor":41,"goalsAgainst":41,"goalDifference":0,"points":37},"Gaziantep FK":{"rating":67,"played":34,"wins":9,"draws":10,"losses":15,"goalsFor":43,"goalsAgainst":58,"goalDifference":-15,"points":37},"Kasımpaşa":{"rating":67,"played":34,"wins":8,"draws":11,"losses":15,"goalsFor":33,"goalsAgainst":49,"goalDifference":-16,"points":35},"Gençlerbirliği":{"rating":67,"played":34,"wins":9,"draws":7,"losses":18,"goalsFor":36,"goalsAgainst":47,"goalDifference":-11,"points":34},"Eyüpspor":{"rating":66,"played":34,"wins":8,"draws":9,"losses":17,"goalsFor":33,"goalsAgainst":48,"goalDifference":-15,"points":33},"Çorum FK":{"rating":68,"played":null,"wins":null,"draws":null,"losses":null,"goalsFor":null,"goalsAgainst":null,"goalDifference":null,"points":null},"Amed Sportif Faaliyetler":{"rating":67,"played":null,"wins":null,"draws":null,"losses":null,"goalsFor":null,"goalsAgainst":null,"goalDifference":null,"points":null},"Erzurumspor FK":{"rating":67,"played":null,"wins":null,"draws":null,"losses":null,"goalsFor":null,"goalsAgainst":null,"goalDifference":null,"points":null}};
+        const TEAM_RATINGS_2026_27 = Object.fromEntries(Object.entries(TEAM_DATA_2026_27).map(([team,data]) => [team,data.rating]));
+        const FULL_FIXTURE_2026_27 = [{"week":1,"home":"Galatasaray","away":"Çorum FK"},{"week":1,"home":"Konyaspor","away":"Rizespor"},{"week":1,"home":"Gaziantep FK","away":"Alanyaspor"},{"week":1,"home":"Gençlerbirliği","away":"Fenerbahçe"},{"week":1,"home":"Kasımpaşa","away":"Trabzonspor"},{"week":1,"home":"Beşiktaş","away":"Eyüpspor"},{"week":1,"home":"Amed Sportif Faaliyetler","away":"Erzurumspor FK"},{"week":1,"home":"İstanbul Başakşehir FK","away":"Kocaelispor"},{"week":1,"home":"Samsunspor","away":"Göztepe"},{"week":2,"home":"Erzurumspor FK","away":"Galatasaray"},{"week":2,"home":"Rizespor","away":"Samsunspor"},{"week":2,"home":"Fenerbahçe","away":"Konyaspor"},{"week":2,"home":"Çorum FK","away":"Kasımpaşa"},{"week":2,"home":"Eyüpspor","away":"Gaziantep FK"},{"week":2,"home":"Trabzonspor","away":"İstanbul Başakşehir FK"},{"week":2,"home":"Alanyaspor","away":"Beşiktaş"},{"week":2,"home":"Göztepe","away":"Gençlerbirliği"},{"week":2,"home":"Kocaelispor","away":"Amed Sportif Faaliyetler"},{"week":3,"home":"Gençlerbirliği","away":"Erzurumspor FK"},{"week":3,"home":"Gaziantep FK","away":"Rizespor"},{"week":3,"home":"Galatasaray","away":"Göztepe"},{"week":3,"home":"Konyaspor","away":"Kocaelispor"},{"week":3,"home":"Eyüpspor","away":"Alanyaspor"},{"week":3,"home":"İstanbul Başakşehir FK","away":"Kasımpaşa"},{"week":3,"home":"Samsunspor","away":"Fenerbahçe"},{"week":3,"home":"Amed Sportif Faaliyetler","away":"Trabzonspor"},{"week":3,"home":"Beşiktaş","away":"Çorum FK"},{"week":4,"home":"Çorum FK","away":"Eyüpspor"},{"week":4,"home":"Trabzonspor","away":"Gençlerbirliği"},{"week":4,"home":"İstanbul Başakşehir FK","away":"Galatasaray"},{"week":4,"home":"Erzurumspor FK","away":"Konyaspor"},{"week":4,"home":"Kocaelispor","away":"Samsunspor"},{"week":4,"home":"Fenerbahçe","away":"Beşiktaş"},{"week":4,"home":"Kasımpaşa","away":"Amed Sportif Faaliyetler"},{"week":4,"home":"Göztepe","away":"Gaziantep FK"},{"week":4,"home":"Rizespor","away":"Alanyaspor"},{"week":5,"home":"Galatasaray","away":"Kocaelispor"},{"week":5,"home":"Gençlerbirliği","away":"Kasımpaşa"},{"week":5,"home":"Alanyaspor","away":"Göztepe"},{"week":5,"home":"Eyüpspor","away":"Rizespor"},{"week":5,"home":"Amed Sportif Faaliyetler","away":"İstanbul Başakşehir FK"},{"week":5,"home":"Samsunspor","away":"Çorum FK"},{"week":5,"home":"Beşiktaş","away":"Erzurumspor FK"},{"week":5,"home":"Gaziantep FK","away":"Fenerbahçe"},{"week":5,"home":"Konyaspor","away":"Trabzonspor"},{"week":6,"home":"Erzurumspor FK","away":"Samsunspor"},{"week":6,"home":"Amed Sportif Faaliyetler","away":"Beşiktaş"},{"week":6,"home":"Kasımpaşa","away":"Konyaspor"},{"week":6,"home":"Trabzonspor","away":"Galatasaray"},{"week":6,"home":"Fenerbahçe","away":"Eyüpspor"},{"week":6,"home":"İstanbul Başakşehir FK","away":"Gençlerbirliği"},{"week":6,"home":"Göztepe","away":"Rizespor"},{"week":6,"home":"Kocaelispor","away":"Gaziantep FK"},{"week":6,"home":"Çorum FK","away":"Alanyaspor"},{"week":7,"home":"Beşiktaş","away":"Kocaelispor"},{"week":7,"home":"Gençlerbirliği","away":"Amed Sportif Faaliyetler"},{"week":7,"home":"Eyüpspor","away":"Göztepe"},{"week":7,"home":"Galatasaray","away":"Kasımpaşa"},{"week":7,"home":"Konyaspor","away":"İstanbul Başakşehir FK"},{"week":7,"home":"Alanyaspor","away":"Erzurumspor FK"},{"week":7,"home":"Gaziantep FK","away":"Çorum FK"},{"week":7,"home":"Rizespor","away":"Fenerbahçe"},{"week":7,"home":"Samsunspor","away":"Trabzonspor"},{"week":8,"home":"Kasımpaşa","away":"Samsunspor"},{"week":8,"home":"Trabzonspor","away":"Beşiktaş"},{"week":8,"home":"Erzurumspor FK","away":"Eyüpspor"},{"week":8,"home":"Gençlerbirliği","away":"Galatasaray"},{"week":8,"home":"Amed Sportif Faaliyetler","away":"Konyaspor"},{"week":8,"home":"Çorum FK","away":"Rizespor"},{"week":8,"home":"Kocaelispor","away":"Göztepe"},{"week":8,"home":"Fenerbahçe","away":"Alanyaspor"},{"week":8,"home":"İstanbul Başakşehir FK","away":"Gaziantep FK"},{"week":9,"home":"Samsunspor","away":"Amed Sportif Faaliyetler"},{"week":9,"home":"Eyüpspor","away":"Kasımpaşa"},{"week":9,"home":"Beşiktaş","away":"İstanbul Başakşehir FK"},{"week":9,"home":"Gaziantep FK","away":"Erzurumspor FK"},{"week":9,"home":"Göztepe","away":"Çorum FK"},{"week":9,"home":"Konyaspor","away":"Gençlerbirliği"},{"week":9,"home":"Galatasaray","away":"Fenerbahçe"},{"week":9,"home":"Rizespor","away":"Trabzonspor"},{"week":9,"home":"Alanyaspor","away":"Kocaelispor"},{"week":10,"home":"Gençlerbirliği","away":"Alanyaspor"},{"week":10,"home":"İstanbul Başakşehir FK","away":"Samsunspor"},{"week":10,"home":"Kasımpaşa","away":"Beşiktaş"},{"week":10,"home":"Amed Sportif Faaliyetler","away":"Eyüpspor"},{"week":10,"home":"Konyaspor","away":"Galatasaray"},{"week":10,"home":"Erzurumspor FK","away":"Çorum FK"},{"week":10,"home":"Kocaelispor","away":"Rizespor"},{"week":10,"home":"Trabzonspor","away":"Gaziantep FK"},{"week":10,"home":"Fenerbahçe","away":"Göztepe"},{"week":11,"home":"Galatasaray","away":"Amed Sportif Faaliyetler"},{"week":11,"home":"Gaziantep FK","away":"Kasımpaşa"},{"week":11,"home":"Göztepe","away":"İstanbul Başakşehir FK"},{"week":11,"home":"Rizespor","away":"Erzurumspor FK"},{"week":11,"home":"Beşiktaş","away":"Gençlerbirliği"},{"week":11,"home":"Samsunspor","away":"Konyaspor"},{"week":11,"home":"Çorum FK","away":"Fenerbahçe"},{"week":11,"home":"Alanyaspor","away":"Trabzonspor"},{"week":11,"home":"Eyüpspor","away":"Kocaelispor"},{"week":12,"home":"Galatasaray","away":"Samsunspor"},{"week":12,"home":"Kocaelispor","away":"Fenerbahçe"},{"week":12,"home":"Konyaspor","away":"Beşiktaş"},{"week":12,"home":"Trabzonspor","away":"Eyüpspor"},{"week":12,"home":"İstanbul Başakşehir FK","away":"Çorum FK"},{"week":12,"home":"Amed Sportif Faaliyetler","away":"Rizespor"},{"week":12,"home":"Erzurumspor FK","away":"Göztepe"},{"week":12,"home":"Kasımpaşa","away":"Alanyaspor"},{"week":12,"home":"Gençlerbirliği","away":"Gaziantep FK"},{"week":13,"home":"Gaziantep FK","away":"Amed Sportif Faaliyetler"},{"week":13,"home":"Rizespor","away":"Kasımpaşa"},{"week":13,"home":"Eyüpspor","away":"İstanbul Başakşehir FK"},{"week":13,"home":"Fenerbahçe","away":"Erzurumspor FK"},{"week":13,"home":"Samsunspor","away":"Gençlerbirliği"},{"week":13,"home":"Alanyaspor","away":"Konyaspor"},{"week":13,"home":"Beşiktaş","away":"Galatasaray"},{"week":13,"home":"Göztepe","away":"Trabzonspor"},{"week":13,"home":"Çorum FK","away":"Kocaelispor"},{"week":14,"home":"Erzurumspor FK","away":"Kocaelispor"},{"week":14,"home":"Beşiktaş","away":"Samsunspor"},{"week":14,"home":"İstanbul Başakşehir FK","away":"Fenerbahçe"},{"week":14,"home":"Gençlerbirliği","away":"Eyüpspor"},{"week":14,"home":"Trabzonspor","away":"Çorum FK"},{"week":14,"home":"Konyaspor","away":"Gaziantep FK"},{"week":14,"home":"Galatasaray","away":"Rizespor"},{"week":14,"home":"Amed Sportif Faaliyetler","away":"Alanyaspor"},{"week":14,"home":"Kasımpaşa","away":"Göztepe"},{"week":15,"home":"Erzurumspor FK","away":"Kasımpaşa"},{"week":15,"home":"Çorum FK","away":"Amed Sportif Faaliyetler"},{"week":15,"home":"Rizespor","away":"İstanbul Başakşehir FK"},{"week":15,"home":"Kocaelispor","away":"Gençlerbirliği"},{"week":15,"home":"Göztepe","away":"Konyaspor"},{"week":15,"home":"Eyüpspor","away":"Galatasaray"},{"week":15,"home":"Gaziantep FK","away":"Beşiktaş"},{"week":15,"home":"Fenerbahçe","away":"Trabzonspor"},{"week":15,"home":"Alanyaspor","away":"Samsunspor"},{"week":16,"home":"Kasımpaşa","away":"Fenerbahçe"},{"week":16,"home":"Konyaspor","away":"Eyüpspor"},{"week":16,"home":"Samsunspor","away":"Gaziantep FK"},{"week":16,"home":"Gençlerbirliği","away":"Çorum FK"},{"week":16,"home":"İstanbul Başakşehir FK","away":"Erzurumspor FK"},{"week":16,"home":"Beşiktaş","away":"Rizespor"},{"week":16,"home":"Amed Sportif Faaliyetler","away":"Göztepe"},{"week":16,"home":"Galatasaray","away":"Alanyaspor"},{"week":16,"home":"Trabzonspor","away":"Kocaelispor"},{"week":17,"home":"Fenerbahçe","away":"Amed Sportif Faaliyetler"},{"week":17,"home":"Kocaelispor","away":"Kasımpaşa"},{"week":17,"home":"Alanyaspor","away":"İstanbul Başakşehir FK"},{"week":17,"home":"Rizespor","away":"Gençlerbirliği"},{"week":17,"home":"Gaziantep FK","away":"Galatasaray"},{"week":17,"home":"Çorum FK","away":"Konyaspor"},{"week":17,"home":"Göztepe","away":"Beşiktaş"},{"week":17,"home":"Erzurumspor FK","away":"Trabzonspor"},{"week":17,"home":"Eyüpspor","away":"Samsunspor"},{"week":18,"home":"Göztepe","away":"Samsunspor"},{"week":18,"home":"Eyüpspor","away":"Beşiktaş"},{"week":18,"home":"Fenerbahçe","away":"Gençlerbirliği"},{"week":18,"home":"Çorum FK","away":"Galatasaray"},{"week":18,"home":"Rizespor","away":"Konyaspor"},{"week":18,"home":"Kocaelispor","away":"İstanbul Başakşehir FK"},{"week":18,"home":"Trabzonspor","away":"Kasımpaşa"},{"week":18,"home":"Alanyaspor","away":"Gaziantep FK"},{"week":18,"home":"Erzurumspor FK","away":"Amed Sportif Faaliyetler"},{"week":19,"home":"Gençlerbirliği","away":"Göztepe"},{"week":19,"home":"Beşiktaş","away":"Alanyaspor"},{"week":19,"home":"Samsunspor","away":"Rizespor"},{"week":19,"home":"Galatasaray","away":"Erzurumspor FK"},{"week":19,"home":"Kasımpaşa","away":"Çorum FK"},{"week":19,"home":"Gaziantep FK","away":"Eyüpspor"},{"week":19,"home":"Konyaspor","away":"Fenerbahçe"},{"week":19,"home":"İstanbul Başakşehir FK","away":"Trabzonspor"},{"week":19,"home":"Amed Sportif Faaliyetler","away":"Kocaelispor"},{"week":20,"home":"Fenerbahçe","away":"Samsunspor"},{"week":20,"home":"Çorum FK","away":"Beşiktaş"},{"week":20,"home":"Alanyaspor","away":"Eyüpspor"},{"week":20,"home":"Erzurumspor FK","away":"Gençlerbirliği"},{"week":20,"home":"Kocaelispor","away":"Konyaspor"},{"week":20,"home":"Göztepe","away":"Galatasaray"},{"week":20,"home":"Kasımpaşa","away":"İstanbul Başakşehir FK"},{"week":20,"home":"Rizespor","away":"Gaziantep FK"},{"week":20,"home":"Trabzonspor","away":"Amed Sportif Faaliyetler"},{"week":21,"home":"Gaziantep FK","away":"Göztepe"},{"week":21,"home":"Amed Sportif Faaliyetler","away":"Kasımpaşa"},{"week":21,"home":"Galatasaray","away":"İstanbul Başakşehir FK"},{"week":21,"home":"Alanyaspor","away":"Rizespor"},{"week":21,"home":"Eyüpspor","away":"Çorum FK"},{"week":21,"home":"Konyaspor","away":"Erzurumspor FK"},{"week":21,"home":"Beşiktaş","away":"Fenerbahçe"},{"week":21,"home":"Gençlerbirliği","away":"Trabzonspor"},{"week":21,"home":"Samsunspor","away":"Kocaelispor"},{"week":22,"home":"Çorum FK","away":"Samsunspor"},{"week":22,"home":"Trabzonspor","away":"Konyaspor"},{"week":22,"home":"Erzurumspor FK","away":"Beşiktaş"},{"week":22,"home":"Kasımpaşa","away":"Gençlerbirliği"},{"week":22,"home":"Kocaelispor","away":"Galatasaray"},{"week":22,"home":"Rizespor","away":"Eyüpspor"},{"week":22,"home":"Fenerbahçe","away":"Gaziantep FK"},{"week":22,"home":"Göztepe","away":"Alanyaspor"},{"week":22,"home":"İstanbul Başakşehir FK","away":"Amed Sportif Faaliyetler"},{"week":23,"home":"Beşiktaş","away":"Amed Sportif Faaliyetler"},{"week":23,"home":"Konyaspor","away":"Kasımpaşa"},{"week":23,"home":"Rizespor","away":"Göztepe"},{"week":23,"home":"Gençlerbirliği","away":"İstanbul Başakşehir FK"},{"week":23,"home":"Samsunspor","away":"Erzurumspor FK"},{"week":23,"home":"Alanyaspor","away":"Çorum FK"},{"week":23,"home":"Eyüpspor","away":"Fenerbahçe"},{"week":23,"home":"Galatasaray","away":"Trabzonspor"},{"week":23,"home":"Gaziantep FK","away":"Kocaelispor"},{"week":24,"home":"Erzurumspor FK","away":"Alanyaspor"},{"week":24,"home":"Trabzonspor","away":"Samsunspor"},{"week":24,"home":"Kocaelispor","away":"Beşiktaş"},{"week":24,"home":"Göztepe","away":"Eyüpspor"},{"week":24,"home":"Amed Sportif Faaliyetler","away":"Gençlerbirliği"},{"week":24,"home":"Kasımpaşa","away":"Galatasaray"},{"week":24,"home":"İstanbul Başakşehir FK","away":"Konyaspor"},{"week":24,"home":"Fenerbahçe","away":"Rizespor"},{"week":24,"home":"Çorum FK","away":"Gaziantep FK"},{"week":25,"home":"Konyaspor","away":"Amed Sportif Faaliyetler"},{"week":25,"home":"Samsunspor","away":"Kasımpaşa"},{"week":25,"home":"Eyüpspor","away":"Erzurumspor FK"},{"week":25,"home":"Rizespor","away":"Çorum FK"},{"week":25,"home":"Gaziantep FK","away":"İstanbul Başakşehir FK"},{"week":25,"home":"Galatasaray","away":"Gençlerbirliği"},{"week":25,"home":"Beşiktaş","away":"Trabzonspor"},{"week":25,"home":"Alanyaspor","away":"Fenerbahçe"},{"week":25,"home":"Göztepe","away":"Kocaelispor"},{"week":26,"home":"İstanbul Başakşehir FK","away":"Beşiktaş"},{"week":26,"home":"Amed Sportif Faaliyetler","away":"Samsunspor"},{"week":26,"home":"Kasımpaşa","away":"Eyüpspor"},{"week":26,"home":"Fenerbahçe","away":"Galatasaray"},{"week":26,"home":"Gençlerbirliği","away":"Konyaspor"},{"week":26,"home":"Trabzonspor","away":"Rizespor"},{"week":26,"home":"Çorum FK","away":"Göztepe"},{"week":26,"home":"Kocaelispor","away":"Alanyaspor"},{"week":26,"home":"Erzurumspor FK","away":"Gaziantep FK"},{"week":27,"home":"Eyüpspor","away":"Amed Sportif Faaliyetler"},{"week":27,"home":"Beşiktaş","away":"Kasımpaşa"},{"week":27,"home":"Çorum FK","away":"Erzurumspor FK"},{"week":27,"home":"Samsunspor","away":"İstanbul Başakşehir FK"},{"week":27,"home":"Galatasaray","away":"Konyaspor"},{"week":27,"home":"Alanyaspor","away":"Gençlerbirliği"},{"week":27,"home":"Gaziantep FK","away":"Trabzonspor"},{"week":27,"home":"Göztepe","away":"Fenerbahçe"},{"week":27,"home":"Rizespor","away":"Kocaelispor"},{"week":28,"home":"Konyaspor","away":"Samsunspor"},{"week":28,"home":"Gençlerbirliği","away":"Beşiktaş"},{"week":28,"home":"Kocaelispor","away":"Eyüpspor"},{"week":28,"home":"Fenerbahçe","away":"Çorum FK"},{"week":28,"home":"Amed Sportif Faaliyetler","away":"Galatasaray"},{"week":28,"home":"Erzurumspor FK","away":"Rizespor"},{"week":28,"home":"İstanbul Başakşehir FK","away":"Göztepe"},{"week":28,"home":"Trabzonspor","away":"Alanyaspor"},{"week":28,"home":"Kasımpaşa","away":"Gaziantep FK"},{"week":29,"home":"Rizespor","away":"Amed Sportif Faaliyetler"},{"week":29,"home":"Alanyaspor","away":"Kasımpaşa"},{"week":29,"home":"Çorum FK","away":"İstanbul Başakşehir FK"},{"week":29,"home":"Göztepe","away":"Erzurumspor FK"},{"week":29,"home":"Samsunspor","away":"Galatasaray"},{"week":29,"home":"Beşiktaş","away":"Konyaspor"},{"week":29,"home":"Gaziantep FK","away":"Gençlerbirliği"},{"week":29,"home":"Eyüpspor","away":"Trabzonspor"},{"week":29,"home":"Fenerbahçe","away":"Kocaelispor"},{"week":30,"home":"Gençlerbirliği","away":"Samsunspor"},{"week":30,"home":"Galatasaray","away":"Beşiktaş"},{"week":30,"home":"Erzurumspor FK","away":"Fenerbahçe"},{"week":30,"home":"İstanbul Başakşehir FK","away":"Eyüpspor"},{"week":30,"home":"Kocaelispor","away":"Çorum FK"},{"week":30,"home":"Kasımpaşa","away":"Rizespor"},{"week":30,"home":"Konyaspor","away":"Alanyaspor"},{"week":30,"home":"Trabzonspor","away":"Göztepe"},{"week":30,"home":"Amed Sportif Faaliyetler","away":"Gaziantep FK"},{"week":31,"home":"Alanyaspor","away":"Amed Sportif Faaliyetler"},{"week":31,"home":"Göztepe","away":"Kasımpaşa"},{"week":31,"home":"Fenerbahçe","away":"İstanbul Başakşehir FK"},{"week":31,"home":"Kocaelispor","away":"Erzurumspor FK"},{"week":31,"home":"Eyüpspor","away":"Gençlerbirliği"},{"week":31,"home":"Gaziantep FK","away":"Konyaspor"},{"week":31,"home":"Rizespor","away":"Galatasaray"},{"week":31,"home":"Samsunspor","away":"Beşiktaş"},{"week":31,"home":"Çorum FK","away":"Trabzonspor"},{"week":32,"home":"Trabzonspor","away":"Fenerbahçe"},{"week":32,"home":"Galatasaray","away":"Eyüpspor"},{"week":32,"home":"Kasımpaşa","away":"Erzurumspor FK"},{"week":32,"home":"Amed Sportif Faaliyetler","away":"Çorum FK"},{"week":32,"home":"İstanbul Başakşehir FK","away":"Rizespor"},{"week":32,"home":"Beşiktaş","away":"Gaziantep FK"},{"week":32,"home":"Samsunspor","away":"Alanyaspor"},{"week":32,"home":"Konyaspor","away":"Göztepe"},{"week":32,"home":"Gençlerbirliği","away":"Kocaelispor"},{"week":33,"home":"Göztepe","away":"Amed Sportif Faaliyetler"},{"week":33,"home":"Fenerbahçe","away":"Kasımpaşa"},{"week":33,"home":"Erzurumspor FK","away":"İstanbul Başakşehir FK"},{"week":33,"home":"Çorum FK","away":"Gençlerbirliği"},{"week":33,"home":"Alanyaspor","away":"Galatasaray"},{"week":33,"home":"Eyüpspor","away":"Konyaspor"},{"week":33,"home":"Rizespor","away":"Beşiktaş"},{"week":33,"home":"Kocaelispor","away":"Trabzonspor"},{"week":33,"home":"Gaziantep FK","away":"Samsunspor"},{"week":34,"home":"Amed Sportif Faaliyetler","away":"Fenerbahçe"},{"week":34,"home":"Samsunspor","away":"Eyüpspor"},{"week":34,"home":"Galatasaray","away":"Gaziantep FK"},{"week":34,"home":"Gençlerbirliği","away":"Rizespor"},{"week":34,"home":"Konyaspor","away":"Çorum FK"},{"week":34,"home":"Trabzonspor","away":"Erzurumspor FK"},{"week":34,"home":"Beşiktaş","away":"Göztepe"},{"week":34,"home":"Kasımpaşa","away":"Kocaelispor"},{"week":34,"home":"İstanbul Başakşehir FK","away":"Alanyaspor"}];
+        const LEAGUE_TEAMS_2026_27 = [...new Set(FULL_FIXTURE_2026_27.flatMap(match => [match.home, match.away]))];
+        const SEASON_GRADE_TABLE = [
+            [87.0, 34, 0, 0, "Kusursuz Sezon"],
+            [85.5, 33, 1, 0, "Neredeyse Kusursuz"],
+            [84.0, 32, 1, 1, "Efsanevi Sezon"],
+            [82.5, 31, 1, 2, "Tarihi Sezon"],
+            [81.0, 30, 2, 2, "Şampiyonluk Seviyesi"],
+            [80.0, 28, 3, 3, "Şampiyonluk Sezonu"],
+            [79.0, 27, 3, 4, "Çok Güçlü Sezon"],
+            [78.0, 25, 5, 4, "Güçlü Sezon"],
+            [77.0, 24, 5, 5, "Başarılı Sezon"],
+            [76.0, 22, 6, 6, "İyi Sezon"],
+            [75.0, 21, 6, 7, "Rekabetçi Sezon"],
+            [74.0, 19, 7, 8, "Orta Üst Sezon"],
+            [73.0, 18, 7, 9, "Dengeli Sezon"],
+            [72.0, 16, 8, 10, "Dalgalı Sezon"],
+            [71.0, 15, 8, 11, "Zorlu Sezon"],
+            [70.0, 13, 9, 12, "Zayıf Sezon"],
+            [69.0, 12, 9, 13, "Çok Zayıf Sezon"],
+            [68.0, 11, 7, 16, "Başarısız Sezon"],
+            [67.0, 9, 8, 17, "Kötü Sezon"],
+            [66.0, 8, 8, 18, "Çok Kötü Sezon"],
+            [-Infinity, 6, 8, 20, "Felaket Sezon"]
+        ];
+        const FORMATIONS = {
+            '4-4-2': 'GK-LB-CB-CB-RB-LM-CM-CM-RM-ST-ST'.split('-'),
+            '4-1-2-1-2': 'GK-LB-CB-CB-RB-DM-CM-CM-AM-ST-ST'.split('-'),
+            '4-4-1-1': 'GK-LB-CB-CB-RB-LM-CM-CM-RM-CF-ST'.split('-'),
+            '4-5-1': 'GK-LB-CB-CB-RB-LM-CM-CM-AM-RM-ST'.split('-'),
+            '4-1-4-1': 'GK-LB-CB-CB-RB-DM-LM-CM-CM-RM-ST'.split('-'),
+            '4-3-3 Dengeli': 'GK-LB-CB-CB-RB-CM-CM-CM-LW-ST-RW'.split('-'),
+            '4-3-3 Defansif': 'GK-LB-CB-CB-RB-DM-CM-CM-LW-ST-RW'.split('-'),
+            '4-3-3 Hücum': 'GK-LB-CB-CB-RB-CM-AM-CM-LW-ST-RW'.split('-'),
+            '4-2-3-1': 'GK-LB-CB-CB-RB-DM-DM-LW-AM-RW-ST'.split('-'),
+            '4-3-2-1': 'GK-LB-CB-CB-RB-CM-CM-CM-AM-AM-ST'.split('-'),
+            '4-2-4': 'GK-LB-CB-CB-RB-CM-CM-LW-ST-ST-RW'.split('-'),
+            '3-5-2': 'GK-CB-CB-CB-LM-CM-AM-CM-RM-ST-ST'.split('-'),
+            '3-4-3': 'GK-CB-CB-CB-LM-CM-CM-RM-LW-ST-RW'.split('-'),
+            '3-4-2-1': 'GK-CB-CB-CB-LM-CM-CM-RM-AM-AM-ST'.split('-')
+        };
+        const FORMATION_LAYOUTS = {
+            '4-4-2': [[50,90],[12,70],[37,73],[63,73],[88,70],[15,45],[40,48],[60,48],[85,45],[35,17],[65,17]],
+            '4-1-2-1-2': [[50,90],[12,70],[37,73],[63,73],[88,70],[50,57],[30,44],[70,44],[50,31],[35,15],[65,15]],
+            '4-4-1-1': [[50,90],[12,70],[37,73],[63,73],[88,70],[15,45],[40,48],[60,48],[85,45],[50,29],[50,13]],
+            '4-5-1': [[50,90],[12,70],[37,73],[63,73],[88,70],[13,43],[34,49],[50,35],[66,49],[87,43],[50,14]],
+            '4-1-4-1': [[50,90],[12,70],[37,73],[63,73],[88,70],[50,59],[13,40],[38,43],[62,43],[87,40],[50,14]],
+            '4-3-3 Dengeli': [[50,90],[12,70],[37,73],[63,73],[88,70],[25,48],[50,53],[75,48],[17,20],[50,13],[83,20]],
+            '4-3-3 Defansif': [[50,90],[12,70],[37,73],[63,73],[88,70],[50,58],[30,45],[70,45],[17,20],[50,13],[83,20]],
+            '4-3-3 Hücum': [[50,90],[12,70],[37,73],[63,73],[88,70],[27,49],[50,37],[73,49],[17,20],[50,13],[83,20]],
+            '4-2-3-1': [[50,90],[12,70],[37,73],[63,73],[88,70],[35,56],[65,56],[18,35],[50,34],[82,35],[50,12]],
+            '4-3-2-1': [[50,90],[12,70],[37,73],[63,73],[88,70],[24,51],[50,56],[76,51],[35,31],[65,31],[50,12]],
+            '4-2-4': [[50,90],[12,70],[37,73],[63,73],[88,70],[36,51],[64,51],[12,21],[39,15],[61,15],[88,21]],
+            '3-5-2': [[50,90],[22,72],[50,76],[78,72],[10,43],[32,49],[50,37],[68,49],[90,43],[35,15],[65,15]],
+            '3-4-3': [[50,90],[22,72],[50,76],[78,72],[12,46],[40,49],[60,49],[88,46],[17,20],[50,13],[83,20]],
+            '3-4-2-1': [[50,90],[22,72],[50,76],[78,72],[12,48],[40,51],[60,51],[88,48],[35,29],[65,29],[50,12]]
+        };
+        let masterPlayers = [];
+
+        let gameState = {
+            season: ACTIVE_SEASON.id,
+            formation: "4-3-3 Hücum",
+            budget: MANAGER_BUDGET,
+            squad: {}, 
+            selectedPlayerIds: new Set(),
+            activeSlotIndex: 0,
+            sortField: 'ovr',
+            sortOrder: 'desc',
+            playerSearch: '', playerPage: 1, playersPerPage: 12,
+            soundEnabled: true
         };
 
-        let flashInterval = null;
+        let modalTimer = null;
 
-        // Kadroyu ve Puan Durumunu Başlangıçta Çiz
-        document.addEventListener('DOMContentLoaded', () => {
-            renderSquadUI();
-            updateLeaderboardUI();
-        });
-
-        function renderSquadUI() {
-            const squadContainer = document.getElementById('squad-display');
-            squadContainer.innerHTML = '';
-            state.squad.forEach(player => {
-                squadContainer.innerHTML += `
-                    <div class="bg-gray-700/60 p-2 rounded border border-gray-600 text-xs">
-                        <div class="text-yellow-400 font-bold">${player.pos}</div>
-                        <div class="font-semibold truncate">${player.name}</div>
-                        <div class="text-gray-400 text-[10px]">${player.val}M€</div>
-                    </div>
-                `;
-            });
-        }
-
-        function updateLeaderboardUI() {
-            const tbody = document.getElementById('standings-body');
-            tbody.innerHTML = '';
-            
-            // Puanlara göre sırala
-            const sorted = [...state.season.standings].sort((a, b) => b.points - a.points);
-            
-            sorted.forEach((team, index) => {
-                const isFB = team.teamId === 'FENERBAHÇE';
-                tbody.innerHTML += `
-                    <tr class="border-b border-gray-700 ${isFB ? 'bg-yellow-400/20 font-bold text-yellow-300' : 'text-gray-300'}">
-                        <td class="py-2 px-1">${index + 1}</td>
-                        <td class="py-2 px-2">${team.name}</td>
-                        <td class="py-2 px-1 text-center">${team.played}</td>
-                        <td class="py-2 px-1 text-center font-bold">${team.points}</td>
-                    </tr>
-                `;
-            });
-        }
-
-        // HAF TAYI OYNA / SİMÜLE ET
-        function renderWeek() {
-            if (state.season.currentWeek > 38) return;
-
-            // Rastgele Maç Sonuçları Üret (Fenerbahçe için hafif avantajlı)
-            state.season.standings.forEach(team => {
-                team.played++;
-                const rand = Math.random();
-                if (team.teamId === 'FENERBAHÇE') {
-                    if (rand > 0.25) team.points += 3; // %75 Galibiyet
-                    else if (rand > 0.1) team.points += 1;
-                } else {
-                    if (rand > 0.45) team.points += 3; // Diğer takımlar %55 galibiyet
-                    else if (rand > 0.2) team.points += 1;
-                }
-            });
-
-            document.getElementById('ui-week').innerText = state.season.currentWeek;
-            updateLeaderboardUI();
-
-            if (state.season.currentWeek < 38) {
-                state.season.currentWeek++;
-            } else {
-                // 38. HAFTA BİTTİ - ŞAMPİYON KONTROLÜ
-                document.getElementById('btn-next-week').disabled = true;
-                document.getElementById('btn-next-week').innerText = "SEZON BİTTİ";
-
-                const sorted = [...state.season.standings].sort((a, b) => b.points - a.points);
-                const champion = sorted[0];
-
-                if (champion.teamId === 'FENERBAHÇE') {
-                    triggerChampionshipCelebration();
-                } else {
-                    alert(`Sezon Bitti! Şampiyon: ${champion.name}`);
-                }
-            }
-        }
-
-        // ŞAMPİYONLUK KUTLAMA MODALI VE ETKİNLİKLERİ
-        function triggerChampionshipCelebration() {
-            // 1. Tribün Sesini Çal (Telifsiz Stadyum Coşkusu)
+        let audioCtx = null;
+        function playSound(type) {
+            if (!gameState.soundEnabled) return;
             try {
-                const stadiumCheer = new Audio('https://cdn.pixabay.com/download/audio/2022/11/11/audio_1659a9416b.mp3');
-                stadiumCheer.volume = 0.4;
-                stadiumCheer.play().catch(() => console.log('Autoplay engellendi, etkileşim gerekiyor.'));
-            } catch (e) {
-                console.log('Ses çalınamadı.');
-            }
-
-            // 2. Dinamik Tweetleri Oluştur
-            generateDynamicTweets();
-
-            // 3. Modalı Göster
-            const modal = document.getElementById('championship-modal');
-            modal.classList.remove('hidden');
-
-            // 4. Stadyum Kamera Flaşlarını Başlat
-            startStadiumFlashes();
-        }
-
-        // DİNAMİK TWEET ÜRETİCİ
-        function generateDynamicTweets() {
-            const activePlayers = state.squad;
-            const starPlayer = activePlayers[Math.floor(Math.random() * activePlayers.length)].name;
-
-            const tweets = [
-                {
-                    user: "Spor Analiz 📊",
-                    handle: "@analiz_spor",
-                    avatar: "bg-blue-800",
-                    text: `Dar bütçeye rağmen ${starPlayer} hamlesi tam bir scout başarısı. 4-3-3 sistemi ona çok yaradı, sezonun tartışmasız MVP'si! 🟡🔵 #ŞampiyonFener`
-                },
-                {
-                    user: "Tribün Çocuğu",
-                    handle: "@okulaciktann",
-                    avatar: "bg-yellow-500",
-                    text: `İzmir'de Gündoğdu ve Kadıköy şimdiden sarı lacivert yıkılıyor! ${starPlayer} efsane oynadı, forması duvarıma asılacak! 🏆🔥`
-                },
-                {
-                    user: "1907 Medya",
-                    handle: "@1907_medya",
-                    avatar: "bg-gray-700",
-                    text: `Rakiplerin 100M€ bütçeyle kuramadığı kadroyu kurup şampiyon olmak... Taktik dehalık. Tebrikler Takım!`
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 }
-            ];
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
 
-            const tweetContainer = document.getElementById('tweet-container');
-            tweetContainer.innerHTML = '';
-
-            tweets.forEach(tweet => {
-                tweetContainer.innerHTML += `
-                    <div class="border-b border-gray-700 pb-3">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 ${tweet.avatar} rounded-full flex items-center justify-center font-bold text-white text-xs">
-                                ${tweet.user.charAt(0)}
-                            </div>
-                            <div>
-                                <p class="text-white font-bold text-xs">${tweet.user} <span class="text-blue-400">☑</span></p>
-                                <p class="text-gray-500 text-[10px]">${tweet.handle}</p>
-                            </div>
-                        </div>
-                        <p class="text-gray-200 mt-2 text-xs leading-relaxed">${tweet.text}</p>
-                    </div>
-                `;
-            });
+                if (type === 'select') {
+                    osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.1);
+                } else if (type === 'click') {
+                    osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.05);
+                }
+            } catch (e) {
+                console.log("Ses çalınamadı:", e);
+            }
         }
 
-        // 90'LAR STADYUM KAMERA FLAŞLARI EFEKTİ
-        function startStadiumFlashes() {
-            const modal = document.getElementById('championship-modal');
-            if (!modal) return;
+        function toggleSound() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            const text = document.getElementById('sound-text');
+            if (gameState.soundEnabled) {
+                icon.innerText = "🔊";
+                text.innerText = "Ses";
+            } else {
+                icon.innerText = "🔇";
+                text.innerText = "Sessiz";
+            }
+            playSound('click');
+        }
 
-            if (flashInterval) clearInterval(flashInterval);
+        function openModalsMenu() {
+            playSound('click');
+            document.getElementById('mods-modal').classList.remove('hidden');
+        }
+        function closeModalsMenu() {
+            playSound('click');
+            document.getElementById('mods-modal').classList.add('hidden');
+        }
+        function openNostalgiaModal(placement = 'manager_setup') {
+            playSound('click');
+            if (typeof gtag === 'function') {
+                gtag('event', 'click_fake_door', {
+                    mode_name: 'nostalgia_seasons',
+                    source_mode: 'manager',
+                    placement: placement
+                });
+            }
+            document.getElementById('nostalgia-thanks').classList.add('hidden');
+            document.getElementById('nostalgia-modal').classList.remove('hidden');
+        }
+        function closeNostalgiaModal() {
+            document.getElementById('nostalgia-modal').classList.add('hidden');
+        }
+        function requestNostalgiaSeason(season) {
+            if (typeof gtag === 'function') {
+                gtag('event', 'select_nostalgia_season', {
+                    requested_season: season,
+                    source_mode: 'manager'
+                });
+            }
+            document.getElementById('nostalgia-thanks').classList.remove('hidden');
+            setTimeout(closeNostalgiaModal, 1200);
+        }
+        async function openLeaderboard() {
+            playSound('click');
+            const modal = document.getElementById('leaderboard-modal');
+            const content = document.getElementById('leaderboard-content');
+            modal.classList.remove('hidden');
+            content.innerHTML = '<div class="text-center text-slate-400 p-4">Yükleniyor...</div>';
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                const { data, error } = await supabaseClient
+                    .from('leaderboard')
+                    .select('*')
+                    .eq('mode', 'manager')
+                    .gte('created_at', today)
+                    .order('points', { ascending: false })
+                    .limit(10);
+                if (error) throw error;
+                if (!data || data.length === 0) {
+                    content.innerHTML = '<div class="text-center text-slate-400 p-4">Bugün henüz Manager Mode skoru yok.</div>';
+                    return;
+                }
+                content.innerHTML = data.map((item, index) => `
+                    <div class="flex justify-between p-2 bg-[#040711] rounded border border-[#162038]">
+                        <span>${index + 1}. ${item.username || 'Anonim_Manager'}</span>
+                        <span class="text-fb-yellow font-bold">${item.points} P • ${item.formation || ''}</span>
+                    </div>`).join('');
+            } catch (error) {
+                console.error('Leaderboard hatası:', error);
+                content.innerHTML = '<div class="text-center text-red-400 p-4">Sıralama yüklenemedi.</div>';
+            }
+        }
+        function closeLeaderboard() {
+            playSound('click');
+            document.getElementById('leaderboard-modal').classList.add('hidden');
+        }
 
-            flashInterval = setInterval(() => {
-                if (modal.classList.contains('hidden')) {
-                    clearInterval(flashInterval);
+        function parseNum(val) {
+            if (val === null || val === undefined) return 0;
+            if (typeof val === 'number') return isNaN(val) ? 0 : val;
+            let str = String(val).trim().replace(',', '.');
+            let parsed = parseFloat(str);
+            return isNaN(parsed) ? 0 : parsed;
+        }
+
+        function getPlayerValue(p) {
+            const raw = p.Player_Value ?? p.player_value ?? p.Market_Value ?? p.market_value ?? p.Value ?? p.value ?? 0;
+            return parseNum(raw);
+        }
+
+        function getPlayerRating(p) {
+            const raw = p.Manager_Mode_Rating ?? p.manager_mode_rating ?? 0;
+            return parseNum(raw);
+        }
+
+        function getPlayerGoals(p) {
+            const raw = p.League_Goals ?? p.league_goals ?? 0;
+            return parseNum(raw);
+        }
+        function getPlayerIdentity(p) {
+            const rawId = p.Transfermarkt_Player_ID ?? p.transfermarkt_player_id ?? p.Player_ID ?? p.player_id;
+            if (rawId !== null && rawId !== undefined && String(rawId).trim() !== '') return String(rawId).trim();
+            return `name:${(p.Name || p.name || '').trim().toLocaleLowerCase('tr-TR')}`;
+        }
+
+        function isPlayerEligible(p) {
+            const val = p.Eligible !== undefined ? p.Eligible : (p.eligible !== undefined ? p.eligible : true);
+            if (typeof val === 'boolean') return val;
+            if (typeof val === 'number') return val === 1;
+            if (typeof val === 'string') {
+                const upper = val.trim().toUpperCase();
+                return upper === 'YES' || upper === 'TRUE' || upper === '1';
+            }
+            return true;
+        }
+
+        function getPlayerCardImage(player) {
+            const pName = (player.Name || player.name || '').trim();
+            const season = (player.Season || player.season || gameState.season).trim();
+            const tmPlayerId = player.Transfermarkt_Player_ID || player.transfermarkt_player_id;
+            const tmPlayerIdSeason = player.Transfermarkt_Player_ID_Season || player.transfermarkt_player_id_season;
+            
+            if (tmPlayerIdSeason) {
+                return `${SUPABASE_URL}/storage/v1/object/public/Generated%20Cards/${encodeURIComponent(tmPlayerIdSeason)}.png`;
+            } else if (tmPlayerId && season) {
+                return `${SUPABASE_URL}/storage/v1/object/public/Generated%20Cards/${tmPlayerId}_${season}.png`;
+            } else if (player.Card_URL || player.card_url || player.Card_Image_URL) {
+                return player.Card_URL || player.card_url || player.Card_Image_URL;
+            } else if (pName && season) {
+                return `${SUPABASE_URL}/storage/v1/object/public/Generated%20Cards/${encodeURIComponent(pName)}_${season}.png`;
+            } else if (pName) {
+                return `${SUPABASE_URL}/storage/v1/object/public/Generated%20Cards/${encodeURIComponent(pName)}.png`;
+            }
+            return `${SUPABASE_URL}/storage/v1/object/public/Generated%20Cards/Empty%20Field.png`;
+        }
+
+        function getFlagImg(countryCode) {
+          if (!countryCode) return '';
+          const cleanCode = countryCode.trim().toLowerCase();
+          const mapping = { 
+            "tur": "tr", "bra": "br", "nld": "nl", "ned": "nl", 
+            "prt": "pt", "sen": "sn", "bih": "ba", "rus": "ru", 
+            "fra": "fr", "deu": "de", "esp": "es", "arg": "ar" 
+          };
+          const code = mapping[cleanCode] || (cleanCode.length === 3 ? cleanCode.slice(0, 2) : cleanCode);
+          return `<img src="https://flagcdn.com/w80/${code}.png" crossorigin="anonymous" alt="${countryCode}" class="w-full h-full object-cover" onerror="this.src='https://flagcdn.com/w80/un.png'">`;
+        }
+
+        async function loadPlayersFromSupabase() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from(SUPABASE_TABLE_NAME)
+                    .select('*');
+
+                if (error) {
+                    console.error("Supabase Bağlantı Hatası:", error);
                     return;
                 }
 
-                const flash = document.createElement('div');
-                flash.className = 'flash-burst';
-
-                const size = Math.floor(Math.random() * 80) + 30;
-                const x = Math.random() * 100;
-                const y = Math.random() * 100;
-
-                flash.style.width = `${size}px`;
-                flash.style.height = `${size}px`;
-                flash.style.left = `${x}%`;
-                flash.style.top = `${y}%`;
-
-                modal.appendChild(flash);
-
-                setTimeout(() => {
-                    flash.remove();
-                }, 200);
-
-            }, 90);
+                if (data && data.length > 0) {
+                    masterPlayers = data;
+                    console.log(`Supabase veritabanından ${masterPlayers.length} oyuncu başarıyla yüklendi.`);
+                }
+            } catch (err) {
+                console.error("Veri çekme sırasında hata oluştu:", err);
+            }
         }
 
-        // YENİ SEZON SIFIRLAMA MANTIĞI
-        function resetGame() {
-            if (flashInterval) clearInterval(flashInterval);
+        document.addEventListener("DOMContentLoaded", () => {
+            gameState.season = ACTIVE_SEASON.id;
+            loadPlayersFromSupabase();
+        });
 
-            state.season.currentWeek = 1;
-            state.season.standings.forEach(t => {
-                t.played = 0;
-                t.points = 0;
+        function startSquadBuilding() {
+            playSound('select');
+            gameState.season = ACTIVE_SEASON.id;
+            gameState.formation = document.getElementById('formation-select').value;
+            gameState.squad = {};
+            gameState.selectedPlayerIds.clear();
+            gameState.budget = MANAGER_BUDGET;
+            
+            document.getElementById('disp-season').innerText = gameState.season;
+            document.getElementById('disp-formation').innerText = gameState.formation;
+            document.getElementById('header-budget-badge').classList.remove('hidden');
+
+            document.getElementById('screen-setup').classList.add('hidden');
+            document.getElementById('screen-builder').classList.remove('hidden');
+
+            renderPitchSlots();
+            activateSlot(0);
+        }
+
+        function renderPitchSlots() {
+            const container = document.getElementById('pitch-slots-container');
+            const positions = FORMATIONS[gameState.formation] || FORMATIONS['4-3-3 Hücum'];
+            const layout = FORMATION_LAYOUTS[gameState.formation] || FORMATION_LAYOUTS['4-3-3 Hücum'];
+            container.innerHTML = positions.map((pos, idx) => {
+                const coords = layout[idx] || [50, 50];
+                return `<div class="absolute -translate-x-1/2 -translate-y-1/2" style="left:${coords[0]}%;top:${coords[1]}%">${createSlotHTML({ pos, idx })}</div>`;
+            }).join('');
+        }
+
+        function createSlotHTML(item) {
+            const player = gameState.squad[item.idx];
+            const isActive = gameState.activeSlotIndex === item.idx;
+            const isFilled = !!player;
+
+            if (isFilled) {
+                const cardImg = getPlayerCardImage(player);
+                const ratingVal = getPlayerRating(player);
+                const playerVal = getPlayerValue(player);
+                const playerName = player.Name || player.name || '';
+                return `
+                    <div onclick="activateSlot(${item.idx})" 
+                         class="pitch-slot-box relative rounded-xl overflow-visible flex flex-col justify-end p-1 cursor-pointer transition ${isActive ? 'active-slot' : 'filled-slot'}"><button onclick="removePlayerFromSlot(event,${item.idx})" title="Oyuncuyu kaldır" class="absolute -top-2 -right-2 z-30 w-5 h-5 rounded-full bg-red-600 text-white text-[10px] font-bold">✕</button>
+                        <div class="absolute inset-0 z-0">
+                            <img src="${cardImg}" crossorigin="anonymous" alt="${playerName}" class="w-full h-full object-cover" onerror="this.src='https://sqecxfgbdfdebyaocrce.supabase.co/storage/v1/object/public/Generated%20Cards/Empty%20Field.png'">
+                        </div>
+                        <div class="relative z-10 bg-black/80 px-1 py-0.5 rounded w-full text-center">
+                            <span class="text-[9px] md:text-[10px] font-bold text-white block truncate leading-tight">${playerName.split(' ').pop()}</span>
+                            <div class="flex justify-center items-center gap-1 text-[8px] md:text-[9px] font-mono font-bold">
+                                <span class="text-fb-yellow">${ratingVal}R</span>
+                                <span class="text-emerald-400">${playerVal.toFixed(1)}M</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div onclick="activateSlot(${item.idx})" 
+                         class="pitch-slot-box rounded-xl flex flex-col items-center justify-between p-1.5 cursor-pointer text-center ${isActive ? 'active-slot' : ''}">
+                        <span class="font-bebas text-base md:text-lg text-fb-yellow tracking-wide leading-tight">${item.pos}</span>
+                        <div class="my-auto pt-1">
+                            <span class="text-xs md:text-sm font-bold text-slate-300 tracking-wider">BOŞ</span>
+                        </div>
+                        <div class="text-[10px] opacity-0">-</div>
+                    </div>
+                `;
+            }
+        }
+
+        function activateSlot(idx) {
+            playSound('click');
+            gameState.activeSlotIndex = idx; gameState.playerPage = 1;
+            const positions = FORMATIONS[gameState.formation] || FORMATIONS['4-3-3 Dengeli'];
+            const currentPos = positions[idx];
+
+            document.getElementById('current-pos-title').innerText = `${currentPos} POZİSYONU SEÇİMİ`;
+            document.getElementById('pos-counter-badge').innerText = `${idx + 1} / ${positions.length}`;
+
+            renderPitchSlots();
+            renderPlayerCards(currentPos);
+        }
+
+        function sortPlayers(field) {
+            playSound('click');
+            if (gameState.sortField === field) {
+                gameState.sortOrder = gameState.sortOrder === 'desc' ? 'asc' : 'desc';
+            } else {
+                gameState.sortField = field;
+                gameState.sortOrder = (field === 'name' || field === 'season') ? 'asc' : 'desc';
+            }
+
+            ['ovr', 'name', 'season', 'value', 'goals'].forEach(f => {
+                const btn = document.getElementById(`sort-btn-${f}`);
+                if (btn) {
+                    if (gameState.sortField === f) {
+                        btn.className = "px-2.5 py-1 bg-fb-yellow text-slate-950 font-bold rounded transition cursor-pointer";
+                        let labelText = f === 'ovr' ? 'Reyting' : f === 'name' ? 'İsim' : f === 'season' ? 'Sezon' : f === 'value' ? 'Değer' : 'Gol';
+                        btn.innerText = labelText + (gameState.sortOrder === 'desc' ? ' ↓' : ' ↑');
+                    } else {
+                        btn.className = "px-2.5 py-1 bg-[#040711] text-slate-300 rounded border border-[#162038] hover:border-fb-yellow transition cursor-pointer";
+                        let labelText = f === 'ovr' ? 'Reyting' : f === 'name' ? 'İsim' : f === 'season' ? 'Sezon' : f === 'value' ? 'Değer' : 'Gol';
+                        btn.innerText = labelText;
+                    }
+                }
             });
 
-            document.getElementById('ui-week').innerText = '1';
-            const btn = document.getElementById('btn-next-week');
-            btn.disabled = false;
-            btn.innerText = 'Haftayı Oyna ▶';
+            const positions = FORMATIONS[gameState.formation] || FORMATIONS['4-3-3 Dengeli'];
+            renderPlayerCards(positions[gameState.activeSlotIndex]);
+        }
 
-            updateLeaderboardUI();
+        function handlePlayerSearch(v){ gameState.playerSearch=String(v||'').trim().toLocaleLowerCase('tr-TR'); gameState.playerPage=1; const ps=FORMATIONS[gameState.formation]||[]; renderPlayerCards(ps[gameState.activeSlotIndex]); }
+        function changePlayerPage(d){ gameState.playerPage+=d; const ps=FORMATIONS[gameState.formation]||[]; renderPlayerCards(ps[gameState.activeSlotIndex]); document.getElementById('player-cards-container').scrollTop=0; }
+        function updatePlayerPagination(pages,total){ document.getElementById('player-page-info').innerText=`${gameState.playerPage} / ${pages} • ${total} oyuncu`; document.getElementById('player-prev-page').disabled=gameState.playerPage<=1; document.getElementById('player-next-page').disabled=gameState.playerPage>=pages; }
+        function renderPlayerCards(targetPos) {
+            const container = document.getElementById('player-cards-container');
+            
+            let filtered = masterPlayers.filter(p => {
+                const playerPos = (p.Position || p.position || '').trim().toUpperCase();
+                const playerId = getPlayerIdentity(p);
+                
+                const isEligible = isPlayerEligible(p);
+                const matchesPos = playerPos === targetPos.trim().toUpperCase();
+                const notAlreadySelected = !gameState.selectedPlayerIds.has(playerId);
 
-            document.getElementById('championship-modal').classList.add('hidden');
+                return isEligible && matchesPos && notAlreadySelected;
+            });
+
+            filtered.sort((a, b) => {
+                let valA, valB;
+                if (gameState.sortField === 'ovr') {
+                    valA = getPlayerRating(a);
+                    valB = getPlayerRating(b);
+                } else if (gameState.sortField === 'name') {
+                    valA = (a.Name || a.name || '').toLowerCase();
+                    valB = (b.Name || b.name || '').toLowerCase();
+                } else if (gameState.sortField === 'season') {
+                    valA = (a.Season || a.season || '').toLowerCase();
+                    valB = (b.Season || b.season || '').toLowerCase();
+                } else if (gameState.sortField === 'value') {
+                    valA = getPlayerValue(a);
+                    valB = getPlayerValue(b);
+                } else if (gameState.sortField === 'goals') {
+                    valA = getPlayerGoals(a);
+                    valB = getPlayerGoals(b);
+                }
+
+                if (valA < valB) return gameState.sortOrder === 'asc' ? -1 : 1;
+                if (valA > valB) return gameState.sortOrder === 'asc' ? 1 : -1;
+
+                // İkincil kriter (Tie-breaker): Reyting veya değer sıralamasında eşitlik varsa gol sayısına göre sırala
+                if (gameState.sortField !== 'goals') {
+                    let goalsA = getPlayerGoals(a);
+                    let goalsB = getPlayerGoals(b);
+                    if (goalsA !== goalsB) {
+                        return goalsB - goalsA; // Çok gol atan üstte
+                    }
+                }
+
+                return 0;
+            });
+
+            if(filtered.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-slate-500 text-xs font-mono">Arama ve pozisyon koşullarına uygun oyuncu bulunamadı.</div>`; updatePlayerPagination(1,0); return;
+            }
+
+            const totalPages=Math.max(1,Math.ceil(filtered.length/gameState.playersPerPage)); gameState.playerPage=Math.min(Math.max(1,gameState.playerPage),totalPages); const pagePlayers=filtered.slice((gameState.playerPage-1)*gameState.playersPerPage,gameState.playerPage*gameState.playersPerPage); updatePlayerPagination(totalPages,filtered.length);
+            container.innerHTML = pagePlayers.map(player => {
+                const globalIndex = masterPlayers.indexOf(player);
+                const pName = player.Name || player.name || 'Bilinmiyor';
+                const pSeason = player.Season || player.season || gameState.season;
+                const pApps = player.League_Apps || player.league_apps || 0;
+                const pGoals = getPlayerGoals(player);
+                const pAssists = player.League_Assists || player.league_assists || 0;
+                const pRating = getPlayerRating(player);
+                const pVal = getPlayerValue(player);
+                
+                const countryCode = player.Country_Code || player.country_code || player.Nationality || player.nationality || player.Country || player.country || '';
+                const flagElement = getFlagImg(countryCode);
+
+                return `
+                    <div onclick="selectPlayer(${globalIndex})" 
+                         class="bg-[#040711] border border-[#162038] hover:border-fb-yellow/80 px-3 py-2.5 rounded-xl cursor-pointer transition flex items-center justify-between text-xs font-mono shadow group">
+                        
+                        <div class="flex items-center gap-2 truncate pr-2">
+                            <div class="w-6 h-4 shrink-0 overflow-hidden rounded">${flagElement}</div>
+                            <span class="font-bold text-white group-hover:text-fb-yellow transition truncate">${pName}</span>
+                            <span class="text-slate-400 text-[10px] shrink-0">(${pSeason})</span>
+                        </div>
+
+                        <div class="flex items-center gap-3 shrink-0">
+                            <span class="text-slate-300">M:${pApps} G:${pGoals} A:${pAssists}</span>
+                            <span class="text-fb-yellow font-bold">Reyt:${pRating}</span>
+                            <span class="text-emerald-400 font-bold">${pVal.toFixed(1)}M€</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function removePlayerFromSlot(event,idx){ event.stopPropagation(); const p=gameState.squad[idx]; if(!p)return; gameState.budget+=getPlayerValue(p); gameState.selectedPlayerIds.delete(getPlayerIdentity(p)); delete gameState.squad[idx]; gameState.activeSlotIndex=idx; gameState.playerPage=1; playSound('click'); updateUI(); }
+        function selectPlayer(index) {
+            playSound('select');
+            const player = masterPlayers[index];
+            if (!player) return;
+            const slotIdx = gameState.activeSlotIndex;
+            const currentSelected = gameState.squad[slotIdx];
+            const playerVal = getPlayerValue(player);
+            const availableBudget = gameState.budget + (currentSelected ? getPlayerValue(currentSelected) : 0);
+            if (availableBudget < playerVal) {
+                alert(`Yetersiz Bütçe! Bu oyuncu için ${(playerVal - availableBudget).toFixed(1)}M€ daha gerekiyor.`);
+                return;
+            }
+            if (currentSelected) gameState.selectedPlayerIds.delete(getPlayerIdentity(currentSelected));
+            gameState.budget = availableBudget - playerVal;
+            gameState.squad[slotIdx] = player;
+            gameState.selectedPlayerIds.add(getPlayerIdentity(player));
+            updateUI();
+            showPlayerModal(player);
+        }
+
+        function showPlayerModal(player) {
+            const pName = player.Name || player.name || 'Oyuncu';
+            const cardImageUrl = getPlayerCardImage(player);
+
+            document.getElementById('modal-card-content').innerHTML = `
+                <div class="relative w-full max-w-[280px] mx-auto rounded-xl overflow-hidden shadow-2xl border-2 border-fb-yellow/60 group">
+                    <img src="${cardImageUrl}" 
+                         crossorigin="anonymous"
+                         alt="${pName}" 
+                         onerror="this.src='https://sqecxfgbdfdebyaocrce.supabase.co/storage/v1/object/public/Generated%20Cards/Empty%20Field.png'"
+                         class="w-full h-auto object-cover max-h-[380px] rounded-lg" />
+                </div>
+            `;
+
+            const modal = document.getElementById('detail-modal');
+            modal.classList.remove('hidden');
+
+            if (modalTimer) clearTimeout(modalTimer);
+
+            modalTimer = setTimeout(() => {
+                modal.classList.add('hidden');
+                advanceToNextSlot();
+            }, 2500);
+        }
+
+        function advanceToNextSlot() {
+            const positions = FORMATIONS[gameState.formation] || FORMATIONS['4-3-3 Dengeli'];
+            const startIdx = gameState.activeSlotIndex;
+            
+            for (let i = 1; i <= positions.length; i++) {
+                let nextIdx = (startIdx + i) % positions.length;
+                if (!gameState.squad[nextIdx]) {
+                    activateSlot(nextIdx);
+                    return;
+                }
+            }
+            activateSlot((startIdx + 1) % positions.length);
+        }
+
+        function updateUI() {
+            document.getElementById('hdr-budget').innerText = gameState.budget.toFixed(1) + "M€";
+            
+            const squadArr = Object.values(gameState.squad);
+            const positions = FORMATIONS[gameState.formation] || FORMATIONS['4-3-3 Dengeli'];
+            const squadLen = positions.length;
+            
+            const avgOvr = squadArr.length > 0 
+                ? (squadArr.reduce((a, b) => a + getPlayerRating(b), 0) / squadArr.length).toFixed(1) 
+                : "0.0";
+            
+            document.getElementById('disp-ovr').innerText = avgOvr;
+
+            const simBtn = document.getElementById('btn-start-sim');
+            if (squadArr.length === squadLen) {
+                simBtn.disabled = false;
+                simBtn.className = "w-full py-3.5 bg-fb-yellow hover:bg-yellow-400 text-slate-950 font-bebas text-2xl rounded-xl transition shadow-lg animate-bounce cursor-pointer";
+            } else {
+                simBtn.disabled = true;
+                simBtn.className = "w-full py-3.5 bg-slate-800 text-slate-500 font-bebas text-2xl rounded-xl transition cursor-not-allowed";
+            }
+
+            renderPitchSlots();
+        }
+
+        function gradeManagerTeam(rating) {
+            for (const [minRating, wins, draws, losses, label] of SEASON_GRADE_TABLE) {
+                if (rating >= minRating) return { wins, draws, losses, points: wins * 3 + draws, label, finalRating: Number(rating.toFixed(2)) };
+            }
+        }
+        function hashString(input) {
+            let hash=2166136261; for(let i=0;i<input.length;i++){hash^=input.charCodeAt(i);hash=Math.imul(hash,16777619);} return hash>>>0;
+        }
+        function seededRandom(seed) {
+            let state=seed>>>0; return function(){state+=0x6D2B79F5;let t=state;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296;};
+        }
+        function buildSquadSeed(squadArr) {
+            const keys=squadArr.map(p=>`${getPlayerIdentity(p)}:${p.Season||p.season||''}`).sort();
+            return hashString(`${keys.join('|')}|${gameState.formation}|${ACTIVE_SEASON.id}`);
+        }
+        function getOrCreateManagerUserId() {
+            const key='cubuklu11_manager_user_id'; let id=localStorage.getItem(key);
+            if(!id){id=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():`manager-${Date.now()}-${Math.random().toString(16).slice(2)}`;localStorage.setItem(key,id);} return id;
+        }
+        function controlledRecordVariation(base,rng){
+            if(base.wins===34)return{...base}; const nonWins=34-base.wins; const roll=rng(); const delta=roll<.25?-1:(roll>.75?1:0);
+            const draws=Math.max(0,Math.min(nonWins,base.draws+delta)); return{...base,draws,losses:nonWins-draws,points:base.wins*3+draws};
+        }
+        function generateFenerOutcomes(squadArr,teamRating){
+            const rng=seededRandom(buildSquadSeed(squadArr)); const base=gradeManagerTeam(teamRating); const record=controlledRecordVariation(base,rng);
+            const fenerMatches=FULL_FIXTURE_2026_27.filter(m=>m.home==='Fenerbahçe'||m.away==='Fenerbahçe').map(m=>{
+                const opponent=m.home==='Fenerbahçe'?m.away:m.home; const away=m.away==='Fenerbahçe'; const derby=['Galatasaray','Beşiktaş'].includes(opponent);
+                const difficulty=(TEAM_RATINGS_2026_27[opponent]||67)+(away?2:0)+(derby?1.5:0);
+                return{...m,opponent,difficulty,selectionScore:difficulty+rng()*9};
+            }).sort((a,b)=>b.selectionScore-a.selectionScore);
+            const nonWins=fenerMatches.slice(0,record.draws+record.losses);
+            const losses=new Set(nonWins.map(m=>({...m,lossScore:m.difficulty+rng()*5})).sort((a,b)=>b.lossScore-a.lossScore).slice(0,record.losses).map(m=>m.week));
+            const nonWinWeeks=new Set(nonWins.map(m=>m.week)); const map=new Map();
+            fenerMatches.forEach(m=>map.set(m.week,nonWinWeeks.has(m.week)?(losses.has(m.week)?'L':'D'):'W'));
+            return{record,outcomes:map};
+        }
+        function resultScore(outcome,rng,strengthGap=0){
+            if(outcome==='D'){const g=rng()<.58?1:(rng()<.8?0:2);return[g,g];}
+            const margin=strengthGap>10&&rng()<.45?2:1; const loser=rng()<.55?0:1; const winner=Math.min(5,loser+margin+(rng()<.15?1:0));
+            return outcome==='H'?[winner,loser]:[loser,winner];
+        }
+        function simulateNeutralMatch(match){
+            const homeRating=TEAM_RATINGS_2026_27[match.home]||67, awayRating=TEAM_RATINGS_2026_27[match.away]||67;
+            const rng=seededRandom(hashString(`${ACTIVE_SEASON.id}|${match.week}|${match.home}|${match.away}`));
+            const gap=(homeRating+2)-awayRating; const drawChance=Math.max(.18,.31-Math.abs(gap)*.006); const roll=rng(); let outcome;
+            if(roll<drawChance)outcome='D'; else{const homeWinChance=.5+Math.max(-.32,Math.min(.32,gap*.027));outcome=((roll-drawChance)/(1-drawChance))<homeWinChance?'H':'A';}
+            const homeData=TEAM_DATA_2026_27[match.home]||{}, awayData=TEAM_DATA_2026_27[match.away]||{};
+            const homeAttack=homeData.played?homeData.goalsFor/homeData.played:Math.max(.8,(homeRating-58)/10);
+            const awayAttack=awayData.played?awayData.goalsFor/awayData.played:Math.max(.8,(awayRating-58)/10);
+            const profileGap=Math.abs(gap)+(Math.abs(homeAttack-awayAttack)*2);
+            const [homeGoals,awayGoals]=resultScore(outcome,rng,profileGap); return{...match,homeGoals,awayGoals};
+        }
+        function simulateFenerMatch(match,outcome,teamRating,squadSeed){
+            const rng=seededRandom(hashString(`${squadSeed}|${match.week}|score`)); const isHome=match.home==='Fenerbahçe';
+            const normalized=outcome==='D'?'D':((outcome==='W')==isHome?'H':'A');
+            const opponent=isHome?match.away:match.home; const effectiveFener=teamRating+(isHome?2:0); const opp=(TEAM_RATINGS_2026_27[opponent]||67)+(!isHome?2:0);
+            const [homeGoals,awayGoals]=resultScore(normalized,rng,Math.abs(effectiveFener-opp)); return{...match,homeGoals,awayGoals};
+        }
+        function createEmptyTable(){const t={};LEAGUE_TEAMS_2026_27.forEach(team=>t[team]={team,played:0,wins:0,draws:0,losses:0,gf:0,ga:0,gd:0,points:0});return t;}
+        function applyMatch(table,m){
+            const h=table[m.home],a=table[m.away];h.played++;a.played++;h.gf+=m.homeGoals;h.ga+=m.awayGoals;a.gf+=m.awayGoals;a.ga+=m.homeGoals;
+            if(m.homeGoals>m.awayGoals){h.wins++;h.points+=3;a.losses++;}else if(m.homeGoals<m.awayGoals){a.wins++;a.points+=3;h.losses++;}else{h.draws++;a.draws++;h.points++;a.points++;}
+            h.gd=h.gf-h.ga;a.gd=a.gf-a.ga;
+        }
+        function sortedStandings(table){return Object.values(table).sort((a,b)=>b.points-a.points||b.gd-a.gd||b.gf-a.gf||(TEAM_RATINGS_2026_27[b.team]||0)-(TEAM_RATINGS_2026_27[a.team]||0)||a.team.localeCompare(b.team,'tr'));}
+        function buildLeagueSeason(squadArr,teamRating){
+            const squadSeed=buildSquadSeed(squadArr); const fener=generateFenerOutcomes(squadArr,teamRating);
+            const matches=FULL_FIXTURE_2026_27.map(m=>(m.home==='Fenerbahçe'||m.away==='Fenerbahçe')?simulateFenerMatch(m,fener.outcomes.get(m.week),teamRating,squadSeed):simulateNeutralMatch(m));
+            return{matches,fenerRecord:fener.record,teamRating,squadSeed};
+        }
+        function renderStandingsRows(rows,final=false){
+            return rows.map((r,i)=>`<tr class="${r.team==='Fenerbahçe'?'bg-yellow-500/10 text-fb-yellow':'border-t border-[#162038] text-slate-300'}"><td class="p-2">${i+1}</td><td class="p-2 font-bold whitespace-nowrap">${r.team}</td><td class="text-center">${r.played}</td><td class="text-center">${r.wins}</td><td class="text-center">${r.draws}</td><td class="text-center">${r.losses}</td>${final?`<td class="text-center">${r.gf}</td><td class="text-center">${r.ga}</td>`:''}<td class="text-center">${r.gd>0?'+':''}${r.gd}</td><td class="text-center font-bold">${r.points}</td></tr>`).join('');
+        }
+        function renderWeek(week){
+            const state=window.managerLeagueState; const table=createEmptyTable();
+            state.season.matches.filter(m=>m.week<=week).forEach(m=>applyMatch(table,m)); const weekly=state.season.matches.filter(m=>m.week===week);
+            document.getElementById('weekly-title').innerText=`${week}. HAFTA`;document.getElementById('weekly-progress').innerText=`2026-27 SÜPER LİG • ${week}/34`;
+            document.getElementById('weekly-results').innerHTML=weekly.map(m=>`<div class="flex items-center gap-2 rounded-xl px-3 py-2.5 border ${m.home==='Fenerbahçe'||m.away==='Fenerbahçe'?'border-yellow-500/50 bg-yellow-500/10':'border-[#162038] bg-[#040711]'}"><span class="flex-1 text-right text-xs font-bold">${m.home}</span><strong class="font-bebas text-xl text-white px-2">${m.homeGoals} - ${m.awayGoals}</strong><span class="flex-1 text-left text-xs font-bold">${m.away}</span></div>`).join('');
+            document.getElementById('weekly-standings').innerHTML=renderStandingsRows(sortedStandings(table),false); state.currentWeek=week;
+            const btn=document.getElementById('btn-next-week');btn.innerText=week===34?'SEZONU BİTİR ➜':'SONRAKİ HAFTA ➜';
+        }
+        function advanceWeek(){const s=window.managerLeagueState;if(!s)return;if(s.currentWeek>=34){finishLeagueSeason();return;}renderWeek(s.currentWeek+1);window.scrollTo({top:0,behavior:'smooth'});}
+        function fastForwardSeason(){if(!window.managerLeagueState)return;renderWeek(34);finishLeagueSeason();}
+        async function saveManagerResult(finalRow,result,avgRating){
+            const username=localStorage.getItem('cubuklu11_manager_username')||'Anonim_Manager';
+            try{const{error}=await supabaseClient.from('leaderboard').insert([{user_id:getOrCreateManagerUserId(),username,mode:'manager',season:ACTIVE_SEASON.id,formation:gameState.formation,wins:finalRow.wins,draws:finalRow.draws,losses:finalRow.losses,points:finalRow.points,rating:Number(avgRating.toFixed(2)),created_at:new Date().toISOString()}]);if(error)throw error;}catch(e){console.error('Manager skoru kaydedilemedi:',e);}
+            if(typeof gtag==='function')gtag('event','manager_simulation_complete',{season:ACTIVE_SEASON.id,formation:gameState.formation,points:finalRow.points,rating:Number(avgRating.toFixed(2)),league_position:result.position});
+        }
+        function playLicensedChampionshipAudio(){const a=document.getElementById('championship-audio');if(!a||!a.getAttribute('src'))return;a.currentTime=0;a.play().catch(()=>{});setTimeout(()=>{a.pause();a.currentTime=0},5000);}
+        function finishLeagueSeason(){
+            const state=window.managerLeagueState;if(!state||state.saved)return;const table=createEmptyTable();state.season.matches.forEach(m=>applyMatch(table,m));const rows=sortedStandings(table);const finalRow=rows.find(r=>r.team==='Fenerbahçe');const position=rows.findIndex(r=>r.team==='Fenerbahçe')+1;
+            document.getElementById('screen-weekly').classList.add('hidden');document.getElementById('screen-result').classList.remove('hidden');document.getElementById('res-points').innerText=finalRow.points+' Puan';document.getElementById('res-wdl').innerText=`${finalRow.wins}G - ${finalRow.draws}B - ${finalRow.losses}M`;document.getElementById('res-team-rating').innerText=state.avgRating.toFixed(2);document.getElementById('res-season-label').innerText=position===1?'ŞAMPİYON':`${position}. SIRA`;if(position===1)playLicensedChampionshipAudio();
+            const spent=MANAGER_BUDGET-gameState.budget;const s100=Math.min(100,((finalRow.points/102)*90)+((1-(spent/100))*10)).toFixed(1);document.getElementById('res-global-score').innerText=s100;document.getElementById('final-standings').innerHTML=renderStandingsRows(rows,true);
+            state.saved=true;saveManagerResult(finalRow,{position},state.avgRating);window.scrollTo({top:0,behavior:'smooth'});
+        }
+        function finishSquadAndSimulate(){
+            playSound('select');const positions=FORMATIONS[gameState.formation]||[];const squadArr=positions.map((_,i)=>gameState.squad[i]).filter(Boolean);if(squadArr.length!==positions.length)return;
+            const avgRating=squadArr.reduce((sum,p)=>sum+getPlayerRating(p),0)/squadArr.length;window.managerLeagueState={season:buildLeagueSeason(squadArr,avgRating),squadArr,avgRating,currentWeek:1,saved:false};document.getElementById('screen-builder').classList.add('hidden');document.getElementById('screen-weekly').classList.remove('hidden');renderWeek(1);window.scrollTo({top:0,behavior:'smooth'});
         }
     </script>
-</body>
+<audio id="championship-audio" preload="auto"></audio></body>
 </html>
