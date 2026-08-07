@@ -378,6 +378,28 @@
     let currentUsername = localStorage.getItem('cubuklu11_scout_username') || null;
 
     // --- MOD SEÇİMİ VE KULLANICI ADI POPUP AKIŞI ---
+    // --- MODAL AÇMA / KAPATMA FONKSİYONLARI ---
+function openModeModal() {
+    playSound('click');
+    const modeModal = document.getElementById('mode-modal');
+    if (modeModal) {
+        modeModal.classList.remove('hidden');
+        modeModal.style.display = 'flex';
+    }
+}
+
+function closeModeModal() {
+    playSound('click');
+    const modeModal = document.getElementById('mode-modal');
+    if (modeModal) {
+        modeModal.classList.add('hidden');
+        modeModal.style.display = 'none';
+    }
+}
+
+// Eski fonksiyon çağrıları kırılmasın diye yönlendirme eklendi
+function openModalsMenu() { openModeModal(); }
+function closeModalsMenu() { closeModeModal(); }
  // --- MOD SEÇİMİ VE YÖNLENDİRME AKIŞI ---
     function openModeModal() {
       const modeModal = document.getElementById('mode-modal');
